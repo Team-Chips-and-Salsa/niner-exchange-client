@@ -1,14 +1,16 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import NinerExchangeAuth from "./login.jsx";
-import NinerExchangeMessaging from "./messagingSystem.jsx";
-import NinerExchangeHome from "./homePage.jsx";
-import HomePage2 from "./homePage2.jsx";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import { AuthProvider } from './context/AuthContext.jsx';
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './routes/AppRoutes.jsx';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <NinerExchangeMessaging />
-  </StrictMode>,
-)
+ReactDOM.createRoot(document.getElementById('root')).render(
+    <React.StrictMode>
+        <AuthProvider>
+            <BrowserRouter>
+                <AppRoutes />
+            </BrowserRouter>
+        </AuthProvider>
+    </React.StrictMode>,
+);

@@ -1,23 +1,49 @@
-import React, { useState } from 'react';
-import { Mail, Lock, User, ArrowRight, Home, Package, Repeat, Crown, BookOpen } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Mail, Lock, User, ArrowRight } from 'lucide-react';
 import NinerExchangeLogo from './assets/logoTestNiner.png';
 import idea from './assets/ideaaa.png';
+import { useAuth } from './context/AuthContext.jsx';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function NinerExchangeAuth() {
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
-    const [hoveredItem, setHoveredItem] = useState(null);
+    const { login, currentUser } = useAuth();
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const handleSubmit = () => {
-        console.log('Form submitted:', { email, password, name });
+    useEffect(() => {
+        if (currentUser) {
+            const from = location.state?.from?.pathname || '/messages';
+            navigate(from, { replace: true });
+        }
+    }, [currentUser, navigate, location]);
+
+    const handleSubmit = async () => {
+        setError('');
+        try {
+            await login(email, password);
+            // Redirect to the page the user tried to access, or default to messages
+            const from = location.state?.from?.pathname || '/messages';
+            navigate(from, { replace: true });
+        } catch (err) {
+            setError('Failed to log in. Please check your credentials.');
+            console.error(err);
+        }
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-950">
+            {/* Error display */}
+            {error && (
+                <div className="bg-red-100 text-red-700 p-2 mb-4 rounded text-center max-w-md mx-auto">
+                    {error}
+                </div>
+            )}
             <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-
                 {/* Left Side - Info Section */}
                 <div className="bg-gradient-to-br from-emerald-50 to-amber-50 p-6 sm:p-8 md:p-12 flex flex-col justify-between relative overflow-hidden">
                     {/* Decorative Elements */}
@@ -29,18 +55,30 @@ export default function NinerExchangeAuth() {
                         <div className="mb-8 md:mb-12">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-700 to-emerald-900 rounded-2xl flex items-center justify-center shadow-lg">
-                                    <img src={NinerExchangeLogo} alt="Niner Exchange Logo" className="w-10 h-10 sm:w-14 sm:h-14 object-contain" />
+                                    <img
+                                        src={NinerExchangeLogo}
+                                        alt="Niner Exchange Logo"
+                                        className="w-10 h-10 sm:w-14 sm:h-14 object-contain"
+                                    />
                                 </div>
                                 <div>
-                                    <h1 className="text-2xl sm:text-3xl font-bold text-emerald-900">Niner Exchange</h1>
-                                    <p className="text-xs sm:text-sm text-emerald-700">UNCC Community Platform</p>
+                                    <h1 className="text-2xl sm:text-3xl font-bold text-emerald-900">
+                                        Niner Exchange
+                                    </h1>
+                                    <p className="text-xs sm:text-sm text-emerald-700">
+                                        UNCC Community Platform
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Diagram Section */}
                         <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg mb-6 md:mb-8">
-                            <img src={idea} alt="Niner Exchange Logo" className="" />
+                            <img
+                                src={idea}
+                                alt="Niner Exchange Logo"
+                                className=""
+                            />
                         </div>
                     </div>
                 </div>
@@ -58,7 +96,9 @@ export default function NinerExchangeAuth() {
                                 {isLogin ? 'Welcome Back' : 'Join Us'}
                             </h2>
                             <p className="text-sm sm:text-base text-emerald-100">
-                                {isLogin ? 'Sign in to your account' : 'Create your account'}
+                                {isLogin
+                                    ? 'Sign in to your account'
+                                    : 'Create your account'}
                             </p>
                         </div>
 
@@ -74,7 +114,9 @@ export default function NinerExchangeAuth() {
                                         <input
                                             type="text"
                                             value={name}
-                                            onChange={(e) => setName(e.target.value)}
+                                            onChange={(e) =>
+                                                setName(e.target.value)
+                                            }
                                             placeholder="John Doe"
                                             className="w-full pl-12 pr-4 py-3 sm:py-4 bg-white rounded-xl border-2 border-transparent focus:border-amber-400 focus:outline-none transition-all text-emerald-900 placeholder-emerald-400 text-sm sm:text-base"
                                         />
@@ -91,7 +133,9 @@ export default function NinerExchangeAuth() {
                                     <input
                                         type="email"
                                         value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        onChange={(e) =>
+                                            setEmail(e.target.value)
+                                        }
                                         placeholder="youremail@uncc.edu"
                                         className="w-full pl-12 pr-4 py-3 sm:py-4 bg-white rounded-xl border-2 border-transparent focus:border-amber-400 focus:outline-none transition-all text-emerald-900 placeholder-emerald-400 text-sm sm:text-base"
                                     />
@@ -107,7 +151,9 @@ export default function NinerExchangeAuth() {
                                     <input
                                         type="password"
                                         value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        onChange={(e) =>
+                                            setPassword(e.target.value)
+                                        }
                                         placeholder="••••••••"
                                         className="w-full pl-12 pr-4 py-3 sm:py-4 bg-white rounded-xl border-2 border-transparent focus:border-amber-400 focus:outline-none transition-all text-emerald-900 placeholder-emerald-400 text-sm sm:text-base"
                                     />
@@ -117,10 +163,16 @@ export default function NinerExchangeAuth() {
                             {isLogin && (
                                 <div className="flex items-center justify-between text-xs sm:text-sm">
                                     <label className="flex items-center text-emerald-50 cursor-pointer">
-                                        <input type="checkbox" className="mr-2 rounded" />
+                                        <input
+                                            type="checkbox"
+                                            className="mr-2 rounded"
+                                        />
                                         Remember me
                                     </label>
-                                    <button type="button" className="text-amber-300 hover:text-amber-200 transition-colors">
+                                    <button
+                                        type="button"
+                                        className="text-amber-300 hover:text-amber-200 transition-colors"
+                                    >
                                         Forgot password?
                                     </button>
                                 </div>
@@ -138,7 +190,9 @@ export default function NinerExchangeAuth() {
                         {/* Toggle Login/Register */}
                         <div className="mt-6 sm:mt-8 text-center">
                             <p className="text-sm sm:text-base text-emerald-100">
-                                {isLogin ? "Don't have an account?" : 'Already have an account?'}
+                                {isLogin
+                                    ? "Don't have an account?"
+                                    : 'Already have an account?'}
                                 <button
                                     onClick={() => setIsLogin(!isLogin)}
                                     className="ml-2 text-amber-300 hover:text-amber-200 font-semibold transition-colors underline"
@@ -152,7 +206,8 @@ export default function NinerExchangeAuth() {
                         {!isLogin && (
                             <div className="mt-4 sm:mt-6 p-4 bg-emerald-800 bg-opacity-50 rounded-xl">
                                 <p className="text-xs sm:text-sm text-emerald-50 text-center">
-                                    By signing up, you agree to support the UNCC community with respect and integrity.
+                                    By signing up, you agree to support the UNCC
+                                    community with respect and integrity.
                                 </p>
                             </div>
                         )}

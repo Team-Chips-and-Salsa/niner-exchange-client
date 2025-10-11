@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext.jsx';
 import { db } from '../firebase.js';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import PageHeader from '../components/messaging/PageHeader.jsx';
 import ConversationsList from '../components/messaging/ConversationsList.jsx';
@@ -25,6 +26,8 @@ import { getOtherParticipant } from '../helpers/messaging.js';
 
 export default function MessagingPage() {
     const { currentUser } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const [selectedConversationId, setSelectedConversationId] = useState(null);
     const [message, setMessage] = useState('');
@@ -46,6 +49,15 @@ export default function MessagingPage() {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    // If navigated here with focusList=true, show the conversation list by clearing selection and avoid auto-select.
+    useEffect(() => {
+        if (location.state?.focusList) {
+            setSelectedConversationId(null);
+            // Clear the state so future renders behave normally
+            navigate('.', { replace: true, state: {} });
+        }
+    }, [location.state, navigate]);
 
     // Subscribe to user's conversations
     useEffect(() => {
@@ -91,10 +103,12 @@ export default function MessagingPage() {
 
     // Auto-select the first conversation only on desktop when list loads.
     useEffect(() => {
+        // If the navigation requested to focus the list, skip auto-select.
+        if (location.state?.focusList) return;
         if (isDesktop && !selectedConversationId && conversations.length > 0) {
             setSelectedConversationId(conversations[0].id);
         }
-    }, [isDesktop, conversations, selectedConversationId]);
+    }, [isDesktop, conversations, selectedConversationId, location.state]);
 
     const currentConversation = useMemo(() => {
         return conversations.find((c) => c.id === selectedConversationId);
@@ -154,7 +168,7 @@ export default function MessagingPage() {
 
     return (
         <div className="h-screen bg-gray-50 flex flex-col">
-            <PageHeader />
+            <PageHeader showCategories={true} />
             <div className="flex-1 flex overflow-hidden w-full">
                 <ConversationsList
                     conversations={filteredConversations}

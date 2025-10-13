@@ -23,6 +23,12 @@ import MessagesList from '../components/messaging/MessagesList.jsx';
 import MessageInput from '../components/messaging/MessageInput.jsx';
 import EmptyState from '../components/messaging/EmptyState.jsx';
 import { getOtherParticipant } from '../helpers/messaging.js';
+import TransactionProposalModal from '../components/messaging/TransactionProposalModal.jsx';
+import {
+    getMeetupLocations,
+    createTransaction,
+    updateTransactionStatus,
+} from '../services/api.js';
 
 export default function MessagingPage() {
     const { currentUser } = useAuth();
@@ -34,6 +40,11 @@ export default function MessagingPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [conversations, setConversations] = useState([]);
     const [currentMessages, setCurrentMessages] = useState([]);
+
+    // Transaction proposal UI state
+    const [isProposalOpen, setIsProposalOpen] = useState(false);
+    const [meetupLocations, setMeetupLocations] = useState([]);
+    const [loadingLocations, setLoadingLocations] = useState(false);
 
     // Track viewport to decide desktop vs mobile behavior (Tailwind md breakpoint ~768px)
     const [isDesktop, setIsDesktop] = useState(() => {
@@ -149,6 +160,171 @@ export default function MessagingPage() {
         }
     };
 
+    // Proposal: open modal and fetch locations if needed
+    const openProposal = async () => {
+        if (!selectedConversationId || !currentConversation) return;
+        if (meetupLocations.length === 0 && !loadingLocations) {
+            setLoadingLocations(true);
+            try {
+                const locs = await getMeetupLocations();
+                setMeetupLocations(
+                    Array.isArray(locs) ? locs : locs?.results || [],
+                );
+            } catch (e) {
+                console.error('Failed to fetch meetup locations', e);
+            } finally {
+                setLoadingLocations(false);
+            }
+        }
+        setIsProposalOpen(true);
+    };
+
+    const handleSubmitProposal = async ({
+        price,
+        meetup_location,
+        exchangeZoneName,
+        exchangeLat,
+        exchangeLng,
+    }) => {
+        if (!db || !currentUser || !currentConversation || !otherParticipant)
+            return;
+
+        // use Firebase UIDs directly for the backend
+        const buyerUuid = currentUser.uid;
+        const sellerUuid = otherParticipant.uid; // first UUID is the other person
+
+        if (!buyerUuid || !sellerUuid) {
+            console.error('Missing participant IDs');
+            alert('Cannot create transaction: missing participant IDs.');
+            return;
+        }
+
+        // Create transaction in Django
+        let tx;
+        try {
+            tx = await createTransaction({
+                buyer: buyerUuid,
+                seller: sellerUuid,
+                meetup_location,
+                final_price: price,
+            });
+        } catch (e) {
+            console.error('Failed to create transaction', e);
+            alert('Failed to create transaction. Please try again.');
+            return;
+        }
+
+        const transactionUuid = tx?.uuid || tx?.id || tx?.transaction_uuid;
+        const zoneName =
+            exchangeZoneName ||
+            meetupLocations.find(
+                (z) => String(z.id) === String(meetup_location),
+            )?.name ||
+            'Selected Location';
+
+        if (!transactionUuid) {
+            console.error('Backend did not return a transaction UUID');
+            alert(
+                'Transaction was created but missing a UUID in the response.',
+            );
+            return;
+        }
+
+        // Post special proposal message to Firestore
+        const convRef = doc(db, 'conversations', selectedConversationId);
+        const msgCol = collection(convRef, 'messages');
+        const proposalMsg = {
+            type: 'TRANSACTION_PROPOSAL',
+            transactionUuid,
+            price,
+            meetup_location,
+            exchangeZoneName: zoneName,
+            exchangeLat: Number.isFinite(exchangeLat) ? exchangeLat : undefined,
+            exchangeLng: Number.isFinite(exchangeLng) ? exchangeLng : undefined,
+            status: 'PENDING',
+            senderId: currentUser.uid,
+            createdAt: serverTimestamp(),
+        };
+        // Include listing fields only if present to avoid undefined values
+        if (currentConversation?.listing) {
+            proposalMsg.listingTitle = currentConversation.listing;
+        }
+        if (currentConversation?.listingId != null) {
+            proposalMsg.listingId = currentConversation.listingId;
+        }
+        try {
+            await addDoc(msgCol, proposalMsg);
+            const updates = {
+                lastMessage: `[Proposal] $${price} at ${zoneName}`,
+                lastMessageAt: serverTimestamp(),
+            };
+            if (otherParticipant?.uid) {
+                updates[`unreadCounts.${otherParticipant.uid}`] = increment(1);
+            }
+            await updateDoc(convRef, updates);
+        } catch (e) {
+            console.error('Failed to add proposal message', e);
+            alert('Failed to add proposal message.');
+        }
+    };
+
+    const handleAcceptProposal = async (msg) => {
+        if (!db || !selectedConversationId || !msg?.transactionUuid) return;
+        try {
+            await updateTransactionStatus(msg.transactionUuid, 'ACCEPTED');
+        } catch (e) {
+            console.error('Failed to accept transaction', e);
+            alert('Failed to accept transaction.');
+            return;
+        }
+        try {
+            const msgRef = doc(
+                db,
+                'conversations',
+                selectedConversationId,
+                'messages',
+                msg.id,
+            );
+            await updateDoc(msgRef, { status: 'ACCEPTED' });
+            // Update conversation preview
+            const convRef = doc(db, 'conversations', selectedConversationId);
+            await updateDoc(convRef, {
+                lastMessage: 'Meetup Accepted',
+                lastMessageAt: serverTimestamp(),
+            });
+        } catch (e) {
+            console.error('Failed to update Firestore message status', e);
+        }
+    };
+
+    const handleRejectProposal = async (msg) => {
+        if (!db || !selectedConversationId || !msg?.transactionUuid) return;
+        try {
+            await updateTransactionStatus(msg.transactionUuid, 'REJECTED');
+        } catch (e) {
+            console.error('Failed to reject transaction', e);
+            alert('Failed to reject transaction.');
+            return;
+        }
+        try {
+            const msgRef = doc(
+                db,
+                'conversations',
+                selectedConversationId,
+                'messages',
+                msg.id,
+            );
+            await updateDoc(msgRef, { status: 'REJECTED' });
+            const convRef = doc(db, 'conversations', selectedConversationId);
+            await updateDoc(convRef, {
+                lastMessage: 'Meetup Declined',
+                lastMessageAt: serverTimestamp(),
+            });
+        } catch (e) {
+            console.error('Failed to update Firestore message status', e);
+        }
+    };
+
     const filteredConversations = useMemo(() => {
         const q = searchQuery.trim().toLowerCase();
         if (!q) return conversations;
@@ -189,12 +365,15 @@ export default function MessagingPage() {
                         <MessagesList
                             messages={currentMessages}
                             currentUser={currentUser}
+                            onAcceptProposal={handleAcceptProposal}
+                            onRejectProposal={handleRejectProposal}
                         />
                         <MessageInput
                             message={message}
                             setMessage={setMessage}
                             onSend={handleSendMessage}
                             disabled={!db}
+                            onOpenProposal={openProposal}
                         />
                     </div>
                 ) : (
@@ -207,6 +386,13 @@ export default function MessagingPage() {
                     to enable messaging.
                 </div>
             )}
+
+            <TransactionProposalModal
+                isOpen={isProposalOpen}
+                onClose={() => setIsProposalOpen(false)}
+                onSubmit={handleSubmitProposal}
+                locations={meetupLocations}
+            />
         </div>
     );
 }

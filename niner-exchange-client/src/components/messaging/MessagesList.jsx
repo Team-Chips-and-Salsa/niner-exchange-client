@@ -1,8 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import { Check } from 'lucide-react';
 import { formatRelativeTime } from '../../helpers/messaging';
+import TransactionRequestCard from './TransactionRequestCard';
 
-export default function MessagesList({ messages = [], currentUser }) {
+export default function MessagesList({
+    messages = [],
+    currentUser,
+    onAcceptProposal,
+    onRejectProposal,
+}) {
     const bottomRef = useRef(null);
 
     useEffect(() => {
@@ -14,6 +20,19 @@ export default function MessagesList({ messages = [], currentUser }) {
             <div className="w-full space-y-4">
                 {messages.map((msg) => {
                     const isMe = msg.senderId === currentUser?.uid;
+
+                    if (msg.type === 'TRANSACTION_PROPOSAL') {
+                        return (
+                            <TransactionRequestCard
+                                key={msg.id}
+                                msg={msg}
+                                isMe={isMe}
+                                onAccept={() => onAcceptProposal?.(msg)}
+                                onReject={() => onRejectProposal?.(msg)}
+                            />
+                        );
+                    }
+
                     const time = msg.createdAt
                         ? formatRelativeTime(msg.createdAt)
                         : '';

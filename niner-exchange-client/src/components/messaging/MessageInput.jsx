@@ -1,17 +1,28 @@
 import React from 'react';
-import { Send, Paperclip, Image, Smile } from 'lucide-react';
+import { Send, Paperclip, Image, Smile, DollarSign } from 'lucide-react';
 
 export default function MessageInput({
     message,
     setMessage,
     onSend,
     disabled,
+    onOpenProposal,
 }) {
     const canSend = !!message.trim() && !disabled;
     return (
         <div className="p-4 bg-white border-t border-gray-200">
             <div className="w-full">
                 <div className="flex items-end gap-2">
+                    {onOpenProposal && (
+                        <button
+                            onClick={onOpenProposal}
+                            disabled={disabled}
+                            className="p-2 hover:bg-emerald-50 disabled:hover:bg-transparent rounded-lg transition-colors flex-shrink-0 group"
+                            title="Create Transaction Request"
+                        >
+                            <DollarSign className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
+                        </button>
+                    )}
                     <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0">
                         <Paperclip className="w-5 h-5 text-gray-600" />
                     </button>

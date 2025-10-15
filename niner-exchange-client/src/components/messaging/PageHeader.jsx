@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import {
     Crown,
     Bell,
@@ -16,6 +16,17 @@ export default function PageHeader({ showCategories = true }) {
     const [activeCategory, setActiveCategory] = useState('all');
     const [mobileCatsOpen, setMobileCatsOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        const qp = searchParams.get('category');
+        if (qp) {
+            setActiveCategory(qp);
+        } else {
+            setActiveCategory((prev) => prev || 'all');
+        }
+    }, [location.search, searchParams]);
 
     const categories = [
         { id: 'all', title: 'All', icon: Package },
@@ -53,9 +64,14 @@ export default function PageHeader({ showCategories = true }) {
                                 return (
                                     <button
                                         key={category.id}
-                                        onClick={() =>
-                                            setActiveCategory(category.id)
-                                        }
+                                        onClick={() => {
+                                            setActiveCategory(category.id);
+                                            navigate(
+                                                `/search?category=${encodeURIComponent(
+                                                    category.id,
+                                                )}`,
+                                            );
+                                        }}
                                         className={`flex flex-col items-center gap-0.5 pb-1 px-2 xl:px-3 border-b-2 transition-all ${
                                             isActive
                                                 ? 'border-amber-400 text-white'
@@ -132,6 +148,11 @@ export default function PageHeader({ showCategories = true }) {
                                         onClick={() => {
                                             setActiveCategory(category.id);
                                             setMobileCatsOpen(false);
+                                            navigate(
+                                                `/search?category=${encodeURIComponent(
+                                                    category.id,
+                                                )}`,
+                                            );
                                         }}
                                         className={`flex flex-col items-center gap-0.5 pb-1 px-2 border-b-2 transition-all flex-shrink-0 ${
                                             isActive

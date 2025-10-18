@@ -40,7 +40,7 @@ export default function AppRoutes() {
                 path="/create"
                 element={
                     <ProtectedRoute>
-                        <CreateListingPagePage />
+                        <CreateListingPage />
                     </ProtectedRoute>
                 }
             />

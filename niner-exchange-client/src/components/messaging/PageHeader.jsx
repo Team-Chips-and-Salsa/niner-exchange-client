@@ -41,19 +41,25 @@ export default function PageHeader({ showCategories = true }) {
             <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
                 <div className="flex items-center justify-between gap-3 sm:gap-6">
                     {/* Logo */}
-                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 min-w-0">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-800 rounded-xl flex items-center justify-center">
-                            <Crown className="w-6 h-6 sm:w-7 sm:h-7 text-amber-400" />
+                    <button
+                        onClick={() => {
+                            navigate('/home');
+                        }}
+                    >
+                        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 min-w-0">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-800 rounded-xl flex items-center justify-center">
+                                <Crown className="w-6 h-6 sm:w-7 sm:h-7 text-amber-400" />
+                            </div>
+                            <div className="hidden sm:block truncate">
+                                <h1 className="text-xl sm:text-2xl font-bold leading-tight truncate">
+                                    Niner Exchange
+                                </h1>
+                                <p className="text-[10px] sm:text-xs text-emerald-100 truncate">
+                                    UNCC Community Platform
+                                </p>
+                            </div>
                         </div>
-                        <div className="hidden sm:block truncate">
-                            <h1 className="text-xl sm:text-2xl font-bold leading-tight truncate">
-                                Niner Exchange
-                            </h1>
-                            <p className="text-[10px] sm:text-xs text-emerald-100 truncate">
-                                UNCC Community Platform
-                            </p>
-                        </div>
-                    </div>
+                    </button>
 
                     {/* Categories Navigation - Center (desktop only) */}
                     {showCategories && (
@@ -102,7 +108,12 @@ export default function PageHeader({ showCategories = true }) {
                                 <List className="w-5 h-5" />
                             </button>
                         )}
-                        <button className="hidden md:inline-flex items-center gap-2 bg-amber-400 text-emerald-900 px-3 sm:px-4 py-2 rounded-lg font-bold hover:bg-amber-500 transition-all shadow-lg whitespace-nowrap">
+                        <button
+                            onClick={() => {
+                                navigate('/create');
+                            }}
+                            className="hidden md:inline-flex items-center gap-2 bg-amber-400 text-emerald-900 px-3 sm:px-4 py-2 rounded-lg font-bold hover:bg-amber-500 transition-all shadow-lg whitespace-nowrap"
+                        >
                             Post Listing
                         </button>
                         <button

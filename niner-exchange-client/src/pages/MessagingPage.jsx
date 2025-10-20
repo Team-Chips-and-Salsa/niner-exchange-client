@@ -1,3 +1,10 @@
+/*
+    Used AI to generate this UI component based on our own design without connection with backend code
+    Used AI to figure out how to use Firebase Firestore for real-time messaging
+    Used AI to figure out how to implement a location picker with react-leaflet
+    Used AI to improve site responsiveness
+    We modularized the messaging UI into components under src/components/messaging/
+ */
 import React, { useEffect, useMemo, useState } from 'react';
 import {
     addDoc,
@@ -16,14 +23,14 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { db } from '../firebase.js';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import PageHeader from '../components/messaging/PageHeader.jsx';
+import PageHeader from '../components/PageHeader.jsx';
 import ConversationsList from '../components/messaging/ConversationsList.jsx';
 import ChatHeader from '../components/messaging/ChatHeader.jsx';
 import MessagesList from '../components/messaging/MessagesList.jsx';
 import MessageInput from '../components/messaging/MessageInput.jsx';
 import EmptyState from '../components/messaging/EmptyState.jsx';
 import { getOtherParticipant } from '../helpers/messaging.js';
-import TransactionProposalModal from '../components/messaging/TransactionProposalModal.jsx';
+import TransactionProposalModal from '../components/messaging/transaction/TransactionProposalModal.jsx';
 import {
     getMeetupLocations,
     createTransaction,
@@ -65,7 +72,6 @@ export default function MessagingPage() {
     useEffect(() => {
         if (location.state?.focusList) {
             setSelectedConversationId(null);
-            // Clear the state so future renders behave normally
             navigate('.', { replace: true, state: {} });
         }
     }, [location.state, navigate]);
@@ -155,7 +161,6 @@ export default function MessagingPage() {
             await updateDoc(convRef, updates);
         } catch (e) {
             console.error('Failed to send message', e);
-            // restore input on failure
             setMessage(text);
         }
     };
@@ -382,8 +387,8 @@ export default function MessagingPage() {
             </div>
             {!db && (
                 <div className="p-2 text-center text-sm text-red-600 bg-red-50 border-t border-red-200">
-                    Firebase is not configured. Set VITE_FIREBASE_* in your .env
-                    to enable messaging.
+                    Firebase is not configured. Set VITE_FIREBASE_* in .env to
+                    enable messaging.
                 </div>
             )}
 

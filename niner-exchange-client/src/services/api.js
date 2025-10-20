@@ -1,7 +1,6 @@
-// src/services/api.js
 import axios from 'axios';
 
-// Create an axios instance with your Django backend's base URL
+// Create an axios instance
 const apiClient = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
 });

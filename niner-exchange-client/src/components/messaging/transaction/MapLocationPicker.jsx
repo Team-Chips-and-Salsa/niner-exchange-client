@@ -12,7 +12,7 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-// Small helper to adjust view when selection changes
+// Small helper to adjust view when selection changes (Used AI to smooth UX)
 function FlyToSelection({ center, zoom }) {
     const map = useMap();
     useEffect(() => {

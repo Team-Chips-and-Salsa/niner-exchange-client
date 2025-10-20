@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+/*Used AI to help me learn more about tailwind css.
+The design of the footer is based off our team's figma design */
 export default function Footer() {
     const navigate = useNavigate();
     return (

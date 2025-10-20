@@ -15,7 +15,7 @@ import {
     Award,
     CheckCircle,
 } from 'lucide-react';
-import PageHeader from '../components/messaging/PageHeader.jsx';
+import PageHeader from '../components/PageHeader.jsx';
 import Footer from '../components/Footer.jsx';
 
 /*Used AI to help generate the tailwind css based off our team's figma design*/

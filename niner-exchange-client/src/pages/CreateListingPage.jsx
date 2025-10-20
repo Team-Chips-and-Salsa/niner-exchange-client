@@ -16,7 +16,7 @@ import {
     Award,
     CheckCircle,
 } from 'lucide-react';
-import PageHeader from '../components/messaging/PageHeader.jsx';
+import PageHeader from '../components/PageHeader.jsx';
 import Footer from '../components/Footer.jsx';
 
 const CATEGORIES = [
@@ -42,7 +42,7 @@ export default function CreateListingPage({ initialCategory = 'textbooks' }) {
         if (selectedCategory === 'services') return '/hr';
         if (selectedCategory === 'sublease') return '/mo';
         return '$';
-    }, [selectedCategory]); 
+    }, [selectedCategory]);
 
     const showCondition = CATEGORIES_WITH_CONDITION.has(selectedCategory);
 
@@ -51,13 +51,13 @@ export default function CreateListingPage({ initialCategory = 'textbooks' }) {
         if (!CATEGORIES_WITH_CONDITION.has(catId)) setCondition('');
     }
 
-        return (
-            <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-                {/* Header */}
-                <PageHeader showCategories={true} />
-                
-                {/* Footer */}
-                <Footer />
-            </div>
-        );
+    return (
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+            {/* Header */}
+            <PageHeader showCategories={true} />
+
+            {/* Footer */}
+            <Footer />
+        </div>
+    );
 }

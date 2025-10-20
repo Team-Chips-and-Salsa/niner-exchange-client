@@ -7,7 +7,7 @@ import {
     Clock,
     ExternalLink,
 } from 'lucide-react';
-import { formatRelativeTime } from '../../helpers/messaging';
+import { formatRelativeTime } from '../../../helpers/messaging.js';
 import { MapContainer, TileLayer, Marker, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';

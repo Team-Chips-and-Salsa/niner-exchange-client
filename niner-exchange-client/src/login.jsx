@@ -1,3 +1,8 @@
+/*
+    Used AI to generate this UI component based on our own design without connection with backend code
+    Used AI to improve site responsiveness
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, User, ArrowRight } from 'lucide-react';
 import NinerExchangeLogo from './assets/logoTestNiner.png';
@@ -26,7 +31,6 @@ export default function NinerExchangeAuth() {
         setError('');
         try {
             await login(email, password);
-            // Redirect to the page the user tried to access, or default to messages
             const from = location.state?.from?.pathname || '/messages';
             navigate(from, { replace: true });
         } catch (err) {

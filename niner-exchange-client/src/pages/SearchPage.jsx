@@ -16,7 +16,7 @@ import {
     Award,
     CheckCircle,
 } from 'lucide-react';
-import PageHeader from '../components/messaging/PageHeader.jsx';
+import PageHeader from '../components/PageHeader.jsx';
 import Footer from '../components/Footer.jsx';
 import FilterSidebar from '../components/filterSidebar/FilterSidebar.jsx';
 
@@ -84,7 +84,7 @@ export default function SearchPage() {
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
             {/* Header */}
             <PageHeader showCategories={true} />
-            <FilterSidebar/>
+            <FilterSidebar />
             {/* Footer */}
             <Footer />
         </div>

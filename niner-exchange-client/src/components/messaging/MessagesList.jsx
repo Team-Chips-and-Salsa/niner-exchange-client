@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Check } from 'lucide-react';
 import { formatRelativeTime } from '../../helpers/messaging';
-import TransactionRequestCard from './TransactionRequestCard';
+import TransactionRequestCard from './transaction/TransactionRequestCard.jsx';
 
 export default function MessagesList({
     messages = [],

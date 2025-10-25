@@ -23,8 +23,6 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { db } from '../firebase.js';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-// Header provided by MainLayout
-// import PageHeader from '../components/PageHeader.jsx';
 import ConversationsList from '../components/messaging/ConversationsList.jsx';
 import ChatHeader from '../components/messaging/ChatHeader.jsx';
 import MessagesList from '../components/messaging/MessagesList.jsx';

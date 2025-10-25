@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Force scrollbar to always show - prevents layout shift */
 html {
   overflow-y: scroll;
 }

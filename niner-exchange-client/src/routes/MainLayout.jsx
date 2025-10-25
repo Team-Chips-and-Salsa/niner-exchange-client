@@ -5,12 +5,22 @@ import Footer from '../components/Footer.jsx';
 
 export default function MainLayout() {
     const location = useLocation();
-    const hideFooter = location.pathname.startsWith('/messages');
+    const isMessagingPage = location.pathname.startsWith('/messages');
+    const hideFooter = isMessagingPage;
 
     return (
-        <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white">
+        // Used AI to fix messages scroll-overflow
+        <div
+            className={`${
+                isMessagingPage ? 'h-screen' : 'min-h-screen'
+            } flex flex-col bg-gradient-to-b from-gray-50 to-white`}
+        >
             <PageHeader showCategories={true} />
-            <main className="flex-1 flex flex-col min-h-0">
+            <main
+                className={`flex-1 flex flex-col ${
+                    isMessagingPage ? 'min-h-0 overflow-hidden' : ''
+                }`}
+            >
                 <Outlet />
             </main>
             {!hideFooter && <Footer />}

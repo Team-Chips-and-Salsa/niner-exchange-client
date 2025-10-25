@@ -41,13 +41,17 @@ export default function ListingsSection({ listings }) {
                             className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden group cursor-pointer"
                         >
                             <div className="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center text-6xl group-hover:scale-105 transition-transform relative">
-                                {
+                                {listing.images?.[0]?.image ? (
                                     <img
                                         src={listing.images[0].image}
-                                        alt={'listing image'}
-                                        className={'w-full h-full object-cover'}
+                                        alt="listing image"
+                                        className="w-full h-full object-cover"
                                     />
-                                }
+                                ) : (
+                                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
+                                        No image
+                                    </div>
+                                )}
                             </div>
                             <div className="p-5">
                                 <h4 className="font-bold text-gray-900 text-lg mb-1 line-clamp-1">

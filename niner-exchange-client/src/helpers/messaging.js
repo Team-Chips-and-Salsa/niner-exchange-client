@@ -1,4 +1,8 @@
 /**
+ * Used AI to help with the implementation of messaging service
+ */
+
+/**
  * Format a Firestore Timestamp or Date/string into a compact relative time.
  * @param {import('firebase/firestore').Timestamp|Date|string|number|null|undefined} ts
  * @returns {string}

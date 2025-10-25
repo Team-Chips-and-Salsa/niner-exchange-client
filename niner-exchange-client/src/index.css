@@ -2,39 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* We are removing the default body and #root styles that were
-  centering the content and limiting its width. This allows
-  your component to take up the full screen.
-*/
-body {
-  margin: 0;
-  /* The following properties were removed because they were forcing
-    your component into the center of the page:
-    - display: flex;
-    - place-items: center;
-    - min-width: 320px;
-  */
-}
-
-/* The #root selector's styles have been removed. The max-width
-  and margin properties were preventing your component from
-  being full-width.
-*/
-#root {
-  /*
-    The following properties were removed:
-    - max-width: 1280px;
-    - margin: 0 auto;
-    - padding: 2rem;
-    - text-align: center;
-  */
-}
-
-/* Utility: hide scrollbars (used in header mobile categories) */
-.scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+/* Force scrollbar to always show - prevents layout shift */
+html {
+  overflow-y: scroll;
 }

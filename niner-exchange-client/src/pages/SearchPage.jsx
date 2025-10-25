@@ -16,8 +16,9 @@ import {
     Award,
     CheckCircle,
 } from 'lucide-react';
-import PageHeader from '../components/PageHeader.jsx';
-import Footer from '../components/Footer.jsx';
+// Removed PageHeader and Footer imports; provided by MainLayout
+// import PageHeader from '../components/PageHeader.jsx';
+// import Footer from '../components/Footer.jsx';
 import FilterSidebar from '../components/filterSidebar/FilterSidebar.jsx';
 
 export default function SearchPage() {
@@ -81,12 +82,10 @@ export default function SearchPage() {
     }, [recentListings, urlCategory]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-            {/* Header */}
-            <PageHeader showCategories={true} />
+        <div className="min-h-[60vh] bg-gradient-to-b from-gray-50 to-white">
+            {/* Header moved to layout */}
             <FilterSidebar />
-            {/* Footer */}
-            <Footer />
+            {/* Footer moved to layout */}
         </div>
     );
 }

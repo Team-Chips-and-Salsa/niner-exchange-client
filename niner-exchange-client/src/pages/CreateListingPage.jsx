@@ -16,8 +16,6 @@ import {
     Award,
     CheckCircle,
 } from 'lucide-react';
-import PageHeader from '../components/PageHeader.jsx';
-import Footer from '../components/Footer.jsx';
 
 const CATEGORIES = [
     { id: 'all', title: 'All', icon: Package },
@@ -52,12 +50,8 @@ export default function CreateListingPage({ initialCategory = 'textbooks' }) {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-            {/* Header */}
-            <PageHeader showCategories={true} />
-
-            {/* Footer */}
-            <Footer />
+        <div className="min-h-[60vh] bg-gradient-to-b from-gray-50 to-white">
+            {/* Page content goes here; header/footer provided by layout */}
         </div>
     );
 }

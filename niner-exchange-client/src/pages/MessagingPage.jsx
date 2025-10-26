@@ -23,7 +23,8 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { db } from '../firebase.js';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import PageHeader from '../components/PageHeader.jsx';
+// Header provided by MainLayout
+// import PageHeader from '../components/PageHeader.jsx';
 import ConversationsList from '../components/messaging/ConversationsList.jsx';
 import ChatHeader from '../components/messaging/ChatHeader.jsx';
 import MessagesList from '../components/messaging/MessagesList.jsx';
@@ -348,8 +349,7 @@ export default function MessagingPage() {
     }, [conversations, searchQuery, currentUser]);
 
     return (
-        <div className="h-screen bg-gray-50 flex flex-col">
-            <PageHeader showCategories={true} />
+        <div className="flex-1 bg-gray-50 flex flex-col min-h-0">
             <div className="flex-1 flex overflow-hidden w-full">
                 <ConversationsList
                     conversations={filteredConversations}

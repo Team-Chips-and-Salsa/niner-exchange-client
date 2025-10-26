@@ -7,6 +7,8 @@ import MessagingPage from '../pages/MessagingPage.jsx';
 import HomePage from '../pages/HomePage.jsx';
 import SearchPage from '../pages/SearchPage.jsx';
 import CreateListingPage from '../pages/CreateListingPage.jsx';
+import MainLayout from './MainLayout.jsx';
+import ListingDetailPage from '../pages/ListingDetailPage.jsx';
 
 function RootRedirect() {
     const { currentUser } = useAuth();
@@ -19,38 +21,22 @@ export default function AppRoutes() {
         <Routes>
             <Route path="/" element={<RootRedirect />} />
             <Route path="/login" element={<NinerExchangeAuth />} />
+
+            {/* Protected app with shared layout */}
             <Route
-                path="/home"
                 element={
                     <ProtectedRoute>
-                        <HomePage />
+                        <MainLayout />
                     </ProtectedRoute>
                 }
-            />
-            <Route
-                path="/search"
-                element={
-                    <ProtectedRoute>
-                        <SearchPage />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/create"
-                element={
-                    <ProtectedRoute>
-                        <CreateListingPage />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/messages"
-                element={
-                    <ProtectedRoute>
-                        <MessagingPage />
-                    </ProtectedRoute>
-                }
-            />
+            >
+                <Route path="home" element={<HomePage />} />
+                <Route path="search" element={<SearchPage />} />
+                <Route path="create" element={<CreateListingPage />} />
+                <Route path="messages" element={<MessagingPage />} />
+                <Route path="listing/:id" element={<ListingDetailPage />} />
+            </Route>
+
             {/* Catch-all */}
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

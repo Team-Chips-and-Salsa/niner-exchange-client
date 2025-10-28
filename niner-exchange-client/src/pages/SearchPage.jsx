@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import React, { useState, useMemo } from 'react';
 import {
     Search,
     BookOpen,
@@ -24,9 +25,20 @@ import ListingsGrid from '../components/SearchPage/ListingsGrid.jsx';
 import ResultHeader from '../components/SearchPage/ResultHeader.jsx';
 
 export default function NinerListingsBrowser() {
-    const [selectedCategory, setSelectedCategory] = useState('all');
+    const { search } = useLocation();
+
+    // 2. Parse the query string. useMemo prevents this from re-running on every render
+    const queryParams = useMemo(() => new URLSearchParams(search), [search]);
+
+    // 3. Get the specific values from the URL
+    const searchQuery = queryParams.get('search') || '';
+    const categoryFromUrl = queryParams.get('category') || 'all';
+
+    // --- END NEW CODE ---
+
+    // 4. Use the value from the URL to initialize your category state
+    const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl);
     const [viewMode, setViewMode] = useState('grid');
-    const [searchQuery, setSearchQuery] = useState('');
 
     const categories = [
         { id: 'all', label: 'All Categories', icon: Grid, count: 234 },
@@ -187,7 +199,6 @@ export default function NinerListingsBrowser() {
         <div className="min-h-screen bg-gray-50">
             <SearchSection
                 searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
                 selectedCategory={selectedCategory}
                 setSelectedCategory={setSelectedCategory}
                 viewMode={viewMode}

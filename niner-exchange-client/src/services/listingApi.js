@@ -19,10 +19,11 @@ export async function fetchListings() {
 }
 
 export async function fetchListingById(listingId) {
+    console.log('Fetching listing with ID:', listingId);
     const token = localStorage.getItem('django_access_token');
-    
+
     if (!token) {
-        throw new Error('Unauthorized ');
+        throw new Error('Unauthorized');
     }
 
     const response = await fetch(`${BASE_URL}/api/listings/${listingId}/`, {
@@ -33,6 +34,7 @@ export async function fetchListingById(listingId) {
         throw new Error('Network response was not ok');
     }
 
-    return await response.json();
-
+    const data = await response.json();
+    console.log('Fetched listing data:', data);
+    return data;
 }

@@ -12,6 +12,7 @@ import PriceCard from '../components/listingDetail/priceCard';
 import ListingImageGallery from '../components/listingDetail/listingImage';
 import DescriptionSection from '../components/listingDetail/descriptionSection';
 import DetailSection from '../components/listingDetail/detailSection';
+import { fetchListingById } from '../services/listingApi';
 
 const ListingDetailPage = () => {
     // Sample listing data - this would come from your Django API
@@ -43,13 +44,32 @@ const ListingDetailPage = () => {
     const { id } = useParams();
 
     useEffect(() => {
-        fetchListingById(id).then((data) => {
-            setListing(data);
-        });
+        console.log("Effect running with id:", id);
+        if (id) {
+            fetchListingById(id)
+                .then((data) => {
+                    console.log("Data received in component:", data);
+                    setListing(data);
+                })
+                .catch((err) => console.error("Fetch error:", err));
+        } else {
+            console.warn("No id found in route params!");
+        }
     }, [id]);
 
-    console.log('Listing Data:', listing);
-    const [images, setImages] = useState(listing?.images || []);
+    const [images, setImages] = useState([]);
+    useEffect(() => {
+        setImages(listing?.images || []);
+    }, [listing]);
+
+    // Loading guard: only render children when listing is loaded
+    if (!listing) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-lg text-gray-500">Loading listing...</div>
+            </div>
+        );
+    }
 
     const getConditionColor = (condition) => {
         switch (condition) {

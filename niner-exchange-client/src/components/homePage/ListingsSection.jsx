@@ -38,7 +38,7 @@ export default function ListingsSection({ listings }) {
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {listings.map((listing) => (
                         <div
-                            key={listing.id}
+                            key={listing.listing_id}
                             className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden group cursor-pointer"
                         >
                             <div className="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center text-6xl group-hover:scale-105 transition-transform relative">

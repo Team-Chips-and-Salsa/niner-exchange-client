@@ -44,10 +44,7 @@ export default function PriceCard({ listing, formatDate }) {
             </div>
 
             <div className="space-y-3">
-                <button className="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">
-                    Contact Seller
-                </button>
-                <button className="w-full border-2 border-emerald-600 text-emerald-600 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition flex items-center justify-center space-x-2">
+                <button className="w-full bg-emerald-600 border-2 border-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-50 transition flex items-center justify-center space-x-2">
                     <MessageCircle className="w-5 h-5" />
                     <span>Send Message</span>
                 </button>

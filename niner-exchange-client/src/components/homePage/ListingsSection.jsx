@@ -1,5 +1,6 @@
 import { BookOpen, Briefcase, ChevronRight, Home, Package } from 'lucide-react';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const categories = [
     { id: 'all', title: 'All', icon: Package },
@@ -37,7 +38,7 @@ export default function ListingsSection({ listings }) {
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {listings.map((listing) => (
                         <div
-                            key={listing.id}
+                            key={listing.listing_id}
                             className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden group cursor-pointer"
                         >
                             <div className="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center text-6xl group-hover:scale-105 transition-transform relative">
@@ -48,8 +49,8 @@ export default function ListingsSection({ listings }) {
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
-                                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
-                                        No image
+                                    <div className="text-gray-300">
+                                        No Image Available
                                     </div>
                                 )}
                             </div>
@@ -80,9 +81,11 @@ export default function ListingsSection({ listings }) {
                                             </span>
                                         )}
                                     </div>
-                                    <button className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors">
-                                        View
-                                    </button>
+                                    <Link to={`/listing/${listing.listing_id}`}>
+                                        <button className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors">
+                                            View
+                                        </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

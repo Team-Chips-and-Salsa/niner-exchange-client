@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+
+
 export default function SearchBar() {
     const [searchTerm, setSearchTerm] = React.useState('');
     const navigate = useNavigate();

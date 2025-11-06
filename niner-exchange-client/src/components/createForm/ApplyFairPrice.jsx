@@ -1,18 +1,15 @@
 import {
     ChevronLeft,
 } from 'lucide-react';
+import { submitFullListing } from '../../services/listingApi';
 
 
-export default function ApplyFairPrice({formData, onChange, onBackClick}) {
+export default function ApplyFairPrice({formData, imageFiles, onChange, onBackClick}) {
 
-    function handleSubmit(event) {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        
-        fetch('listings/', {
-            method: 'POST',
-            mode: 'cors',
-            body: formData
-        })
+        const newLisitng = await submitFullListing(formData, imageFiles)
+        //Add navigation?
     }
     
 
@@ -26,7 +23,7 @@ export default function ApplyFairPrice({formData, onChange, onBackClick}) {
                 <label htmlFor="price">Price: </label>
                 <input type="number" name="price" id="price" placeholder={'$'} required value={formData.price} onChange={onChange}/>
             </div>
-            <button type='submit' onSubmit={handleSubmit} className='my-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700'>Post</button>
+            <button type='submit' onClick={handleSubmit} className='my-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700'>Post</button>
         </div>
     )
 }

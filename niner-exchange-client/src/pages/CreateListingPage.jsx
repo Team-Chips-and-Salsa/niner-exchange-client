@@ -13,7 +13,6 @@ import MarketplaceForm from '../components/createForm/MarketplaceForm.jsx';
 import ApplyFairPrice from '../components/createForm/ApplyFairPrice.jsx';
 import { submitFullListing } from '../services/listingApi.js';
 
-
 // Gemini's guided learning helped me debug an issue with sending form data between components
 export default function CreateListingPage() {
     const [viewMode, setViewMode] = useState('form');
@@ -77,9 +76,15 @@ export default function CreateListingPage() {
         }
     };
 
+    function resetForm() {
+        setFormData(allformData);
+        setImageFiles([]);
+    }
+
+
     // I may reset the fields if the category is changed
     function handleIconClick(catId) {
-        setFormData(allformData);
+        resetForm()
         allformData.category = catId;
     }
 
@@ -130,7 +135,7 @@ export default function CreateListingPage() {
                     </div>
                     <div className='flex flex-col gap-1'>
                         {(formData.category === 'Textbook' || formData.category === 'Marketplace') && (
-                            <small className='text-red-500'>*Price can be set in the next step with our <em>"Fair Price Calculator"</em></small>
+                            <small className='text-yellow-700'>*Price can be set in the next step with our <em>"Fair Price Calculator"</em></small>
                         )}
                         <label htmlFor="title">Title: </label>
                         <input type="text" name="title" id="title" placeholder='Title here' required value={formData.title} onChange={handleChange}/>
@@ -149,7 +154,7 @@ export default function CreateListingPage() {
                     <div>
                         <label htmlFor="images" className='inline-block my-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700'>Upload Images</label>
                         <input type="file" name='images' id='images' multiple accept='.png, .jpeg' className='opacity-0 absolute' required onChange={handleImageUpload}/>
-                        <small className='text-red-500'> *Maximum of 3 images per post</small>
+                        <small className='text-yellow-700'> *Maximum of 3 images per post</small>
                         <div className='flex flex-row justify-around gap-1'>
                             {/* https://reacthustle.com/blog/react-preview-images-before-uploading */}
                             {urls.map((url, i) => (
@@ -165,7 +170,7 @@ export default function CreateListingPage() {
                         }
                     </button>
                 </form> ) : (
-                <ApplyFairPrice formData={formData} imageFiles={imageFiles} onChange={handleChange} onBackClick={() => setViewMode('form')}/>
+                <ApplyFairPrice formData={formData} imageFiles={imageFiles} onChange={handleChange} onBackClick={() =>  setViewMode('form')}/>
                 )}
             </main>
         </div>

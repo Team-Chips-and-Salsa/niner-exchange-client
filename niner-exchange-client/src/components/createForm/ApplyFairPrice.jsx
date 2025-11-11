@@ -2,14 +2,48 @@ import {
     ChevronLeft,
 } from 'lucide-react';
 import { submitFullListing } from '../../services/listingApi';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
 export default function ApplyFairPrice({formData, imageFiles, onChange, onBackClick}) {
+    const [suggested_price, setSuggestedPrice] = useState(null);
+    const navigate = useNavigate()
+    
+    useEffect(() => {
+        console.log("fetching price")
+        const token = localStorage.getItem('django_access_token');
+        if (!token) {
+            throw new Error("Unauthorized");
+        }
+        
+        const fetchPrice = async (token, formData) => {
+            const response = await fetch(`${BASE_URL}/api/pricing/suggest/`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                mode: 'cors',
+                body: JSON.stringify(formData)
+            })
 
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const suggested_price = await response.json();
+            setSuggestedPrice(suggested_price);
+            console.log(suggested_price)
+        }
+        fetchPrice(token, formData)
+    }, []);
+    
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const newLisitng = await submitFullListing(formData, imageFiles)
-        //Add navigation?
+        const newListing = await submitFullListing(formData, imageFiles)
+        navigate(`/listing/${newListing}`)
     }
     
 
@@ -19,6 +53,16 @@ export default function ApplyFairPrice({formData, imageFiles, onChange, onBackCl
                 <ChevronLeft/>
             </button>
             <h1>Fair Price Calculation</h1>
+            {/* Fair Price Suggestion */}
+            <div className='flex flex-col items-end'>
+                <p>Suggested price: </p>
+                <small><em>according to data from eBay</em></small>
+                {(suggested_price != null) ? (
+                    <p className='text-green-500 text-3xl font-bold underline'>${Object.values(suggested_price)[0]}</p>
+                ) : (
+                    <p className='text-3xl font-bold'>Loading...</p>
+                )}
+            </div>
             <div className='flex flex-col gap-1'>
                 <label htmlFor="price">Price: </label>
                 <input type="number" name="price" id="price" placeholder={'$'} required value={formData.price} onChange={onChange}/>

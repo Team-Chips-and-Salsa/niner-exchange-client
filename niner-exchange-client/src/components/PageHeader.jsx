@@ -13,18 +13,18 @@ import {
 import NinerExchangeLogo from '../assets/logoTestNiner.png';
 
 export default function PageHeader({ showListingTypes = true }) {
-    const [activeListingType, setActiveListingType] = useState('all');
+    const [activeListingType, setActiveListingType] = useState('ALL');
     const [mobileCatsOpen, setMobileCatsOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
 
     useEffect(() => {
-        const qp = searchParams.get('category');
+        const qp = searchParams.get('listing_type');
         if (qp) {
             setActiveListingType(qp);
         } else {
-            setActiveListingType((prev) => prev || 'all');
+            setActiveListingType((prev) => prev || 'ALL');
         }
     }, [location.search, searchParams]);
 
@@ -35,6 +35,15 @@ export default function PageHeader({ showListingTypes = true }) {
         { id: 'ITEM', title: 'Marketplace', icon: Package },
         { id: 'SERVICE', title: 'Services', icon: Briefcase },
     ];
+
+    // Helper to navigate while treating "ALL" as removing the filter param
+    const navigateWithListingType = (type) => {
+        if (String(type).toUpperCase() === 'ALL') {
+            navigate('/search');
+        } else {
+            navigate(`/search?listing_type=${encodeURIComponent(type)}`);
+        }
+    };
 
     return (
         <header className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white sticky top-0 z-50 shadow-lg">
@@ -79,10 +88,8 @@ export default function PageHeader({ showListingTypes = true }) {
                                             setActiveListingType(
                                                 listingType.id,
                                             );
-                                            navigate(
-                                                `/search?listing_type=${encodeURIComponent(
-                                                    listingType.id,
-                                                )}`,
+                                            navigateWithListingType(
+                                                listingType.id,
                                             );
                                         }}
                                         className={`flex flex-col items-center gap-0.5 pb-1 px-2 xl:px-3 border-b-2 transition-all ${
@@ -169,10 +176,8 @@ export default function PageHeader({ showListingTypes = true }) {
                                                 listingType.id,
                                             );
                                             setMobileCatsOpen(false);
-                                            navigate(
-                                                `/search?listing_type=${encodeURIComponent(
-                                                    listingType.id,
-                                                )}`,
+                                            navigateWithListingType(
+                                                listingType.id,
                                             );
                                         }}
                                         className={`flex flex-col items-center gap-0.5 pb-1 px-2 border-b-2 transition-all flex-shrink-0 ${

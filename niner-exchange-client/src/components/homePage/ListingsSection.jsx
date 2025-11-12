@@ -3,11 +3,11 @@ import React, { useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const listingTypes = [
-    { id: 'all', title: 'All', icon: Package },
-    { id: 'textbooks', title: 'Textbooks', icon: BookOpen },
-    { id: 'sublease', title: 'Housing', icon: Home },
-    { id: 'marketplace', title: 'Marketplace', icon: Package },
-    { id: 'services', title: 'Services', icon: Briefcase },
+    { id: 'ALL', title: 'All', icon: Package },
+    { id: 'TEXTBOOK', title: 'Textbooks', icon: BookOpen },
+    { id: 'SUBLEASE', title: 'Housing', icon: Home },
+    { id: 'ITEM', title: 'Marketplace', icon: Package },
+    { id: 'SERVICE', title: 'Services', icon: Briefcase },
 ];
 
 export default function ListingsSection({ listings }) {

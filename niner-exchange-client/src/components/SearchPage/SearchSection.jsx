@@ -9,6 +9,7 @@ export default function SearchSection({
     listingTypes,
     viewMode,
     setViewMode,
+    onFilterClick,
 }) {
     const [localSearch, setLocalSearch] = useState(searchQuery);
 
@@ -40,7 +41,10 @@ export default function SearchSection({
 
                     {/* Filter & View Options */}
                     <div className="flex gap-2">
-                        <button className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors">
+                        <button
+                            onClick={onFilterClick}
+                            className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors"
+                        >
                             <SlidersHorizontal className="w-5 h-5 text-gray-600" />
                             <span className="hidden sm:inline text-sm font-medium text-gray-700">
                                 Filters

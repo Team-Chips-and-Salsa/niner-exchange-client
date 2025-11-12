@@ -10,6 +10,13 @@ export async function fetchListings(params = {}) {
     const filteredParams = {};
     for (const key in params) {
         if (params[key]) {
+            // Omit listing_type when it's "ALL" (treat as no filter)
+            if (
+                key === 'listing_type' &&
+                String(params[key]).trim().toUpperCase() === 'ALL'
+            ) {
+                continue;
+            }
             filteredParams[key] = params[key];
         }
     }

@@ -1,31 +1,24 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-export async function fetchListings() {
+export async function fetchListings(params = {}) {
     const token = localStorage.getItem('django_access_token');
 
     if (!token) {
         throw new Error('Unauthorized ');
     }
 
-    const response = await fetch(`${BASE_URL}/api/listings/`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
+    const filteredParams = {};
+    for (const key in params) {
+        if (params[key]) {
+            filteredParams[key] = params[key];
+        }
     }
 
-    return await response.json();
-}
+    const queryString = new URLSearchParams(filteredParams).toString();
 
-export async function searchListing(params) {
-    const token = localStorage.getItem('django_access_token');
+    const url = `${BASE_URL}/api/listings/${queryString ? `?${queryString}` : ''}`;
 
-    if (!token) {
-        throw new Error('Unauthorized ');
-    }
-
-    const response = await fetch(`${BASE_URL}/api/listings/${params}`, {
+    const response = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
     });
 

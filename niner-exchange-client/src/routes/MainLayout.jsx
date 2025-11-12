@@ -15,7 +15,7 @@ export default function MainLayout() {
                 isMessagingPage ? 'h-screen' : 'min-h-screen'
             } flex flex-col bg-gradient-to-b from-gray-50 to-white`}
         >
-            <PageHeader showCategories={true} />
+            <PageHeader showListingTypes={true} />
             <main
                 className={`flex-1 flex flex-col ${
                     isMessagingPage ? 'min-h-0 overflow-hidden' : ''

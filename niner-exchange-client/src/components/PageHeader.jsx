@@ -12,8 +12,8 @@ import {
 } from 'lucide-react';
 import NinerExchangeLogo from '../assets/logoTestNiner.png';
 
-export default function PageHeader({ showCategories = true }) {
-    const [activeCategory, setActiveCategory] = useState('all');
+export default function PageHeader({ showListingTypes = true }) {
+    const [activeListingType, setActiveListingType] = useState('all');
     const [mobileCatsOpen, setMobileCatsOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
@@ -22,18 +22,18 @@ export default function PageHeader({ showCategories = true }) {
     useEffect(() => {
         const qp = searchParams.get('category');
         if (qp) {
-            setActiveCategory(qp);
+            setActiveListingType(qp);
         } else {
-            setActiveCategory((prev) => prev || 'all');
+            setActiveListingType((prev) => prev || 'all');
         }
     }, [location.search, searchParams]);
 
-    const categories = [
-        { id: 'all', title: 'All', icon: Package },
-        { id: 'textbooks', title: 'Textbooks', icon: BookOpen },
-        { id: 'sublease', title: 'Housing', icon: Home },
-        { id: 'marketplace', title: 'Marketplace', icon: Package },
-        { id: 'services', title: 'Services', icon: Briefcase },
+    const listingTypes = [
+        { id: 'ALL', title: 'All', icon: Package },
+        { id: 'TEXTBOOK', title: 'Textbooks', icon: BookOpen },
+        { id: 'SUBLEASE', title: 'Housing', icon: Home },
+        { id: 'ITEM', title: 'Marketplace', icon: Package },
+        { id: 'SERVICE', title: 'Services', icon: Briefcase },
     ];
 
     return (
@@ -66,19 +66,22 @@ export default function PageHeader({ showCategories = true }) {
                     </button>
 
                     {/* Categories Navigation - Center (desktop only) */}
-                    {showCategories && (
+                    {showListingTypes && (
                         <nav className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 justify-center">
-                            {categories.map((category) => {
-                                const Icon = category.icon;
-                                const isActive = activeCategory === category.id;
+                            {listingTypes.map((listingType) => {
+                                const Icon = listingType.icon;
+                                const isActive =
+                                    activeListingType === listingType.id;
                                 return (
                                     <button
-                                        key={category.id}
+                                        key={listingType.id}
                                         onClick={() => {
-                                            setActiveCategory(category.id);
+                                            setActiveListingType(
+                                                listingType.id,
+                                            );
                                             navigate(
-                                                `/search?category=${encodeURIComponent(
-                                                    category.id,
+                                                `/search?listing_type=${encodeURIComponent(
+                                                    listingType.id,
                                                 )}`,
                                             );
                                         }}
@@ -90,7 +93,7 @@ export default function PageHeader({ showCategories = true }) {
                                     >
                                         <Icon className="w-4 h-4 xl:w-5 xl:h-5" />
                                         <span className="text-[10px] xl:text-xs font-medium whitespace-nowrap">
-                                            {category.title}
+                                            {listingType.title}
                                         </span>
                                     </button>
                                 );
@@ -100,7 +103,7 @@ export default function PageHeader({ showCategories = true }) {
 
                     {/* Right Side Actions */}
                     <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
-                        {showCategories && (
+                        {showListingTypes && (
                             <button
                                 type="button"
                                 className="lg:hidden p-2 hover:bg-emerald-700 rounded-lg transition-colors"
@@ -148,24 +151,27 @@ export default function PageHeader({ showCategories = true }) {
                 </div>
 
                 {/* Mobile Categories (collapsible) */}
-                {showCategories && (
+                {showListingTypes && (
                     <div
                         id="mobile-categories"
                         className={`lg:hidden ${mobileCatsOpen ? 'block' : 'hidden'} mt-3`}
                     >
                         <div className="flex flex-wrap items-center justify-center gap-3 pb-1 px-2">
-                            {categories.map((category) => {
-                                const Icon = category.icon;
-                                const isActive = activeCategory === category.id;
+                            {listingTypes.map((listingType) => {
+                                const Icon = listingType.icon;
+                                const isActive =
+                                    activeListingType === listingType.id;
                                 return (
                                     <button
-                                        key={category.id}
+                                        key={listingType.id}
                                         onClick={() => {
-                                            setActiveCategory(category.id);
+                                            setActiveListingType(
+                                                listingType.id,
+                                            );
                                             setMobileCatsOpen(false);
                                             navigate(
-                                                `/search?category=${encodeURIComponent(
-                                                    category.id,
+                                                `/search?listing_type=${encodeURIComponent(
+                                                    listingType.id,
                                                 )}`,
                                             );
                                         }}
@@ -177,7 +183,7 @@ export default function PageHeader({ showCategories = true }) {
                                     >
                                         <Icon className="w-4 h-4" />
                                         <span className="text-[10px] font-medium whitespace-nowrap">
-                                            {category.title}
+                                            {listingType.title}
                                         </span>
                                     </button>
                                 );

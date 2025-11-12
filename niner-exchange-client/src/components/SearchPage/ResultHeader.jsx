@@ -1,21 +1,31 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function ResultHeader({
-    selectedCategory,
-    categories,
-    filteredListings,
+    selectedListingType,
+    listingTypes,
+    listings,
 }) {
+    const { search } = useLocation();
+
+    const queryParams = useMemo(() => {
+        return new URLSearchParams(search);
+    }, [search]);
+
+    const activeListingType = queryParams.get('listing_type') || '';
+
+    console.log(activeListingType, listingTypes, selectedListingType);
     return (
         <div className="flex items-center justify-between mb-6">
             <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                    {selectedCategory === 'all'
+                    {activeListingType === ''
                         ? 'All Listings'
-                        : categories.find((c) => c.id === selectedCategory)
-                              ?.label}
+                        : listingTypes.find((c) => c.id === activeListingType)
+                              ?.title}
                 </h2>
                 <p className="text-sm text-gray-600 mt-1">
-                    {filteredListings.length} results found
+                    {listings.length} results found
                 </p>
             </div>
         </div>

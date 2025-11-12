@@ -1,8 +1,8 @@
 import { BookOpen, Briefcase, ChevronRight, Home, Package } from 'lucide-react';
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
-const categories = [
+const listingTypes = [
     { id: 'all', title: 'All', icon: Package },
     { id: 'textbooks', title: 'Textbooks', icon: BookOpen },
     { id: 'sublease', title: 'Housing', icon: Home },
@@ -11,7 +11,15 @@ const categories = [
 ];
 
 export default function ListingsSection({ listings }) {
-    const [activeCategory] = useState('all');
+    const { search } = useLocation();
+
+    const queryParams = useMemo(() => {
+        return new URLSearchParams(search);
+    }, [search]);
+
+    const activeListingType = queryParams.get('listing_type') || '';
+
+    console.log(activeListingType);
 
     return (
         <section className="py-16 sm:py-20">
@@ -19,10 +27,10 @@ export default function ListingsSection({ listings }) {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h3 className="text-3xl font-bold text-gray-900 mb-2">
-                            {activeCategory === 'all'
+                            {activeListingType === ''
                                 ? 'All Listings'
-                                : categories.find(
-                                      (c) => c.id === activeCategory,
+                                : listingTypes.find(
+                                      (c) => c.id === activeListingType,
                                   )?.title}
                         </h3>
                         <p className="text-gray-600">
@@ -58,8 +66,8 @@ export default function ListingsSection({ listings }) {
                                 <h4 className="font-bold text-gray-900 text-lg mb-1 line-clamp-1">
                                     {listing.title}
                                 </h4>
-                                {(listing.category === 'textbooks' ||
-                                    listing.category === 'marketplace') &&
+                                {(listing.listing_type === 'TEXTBOOK' ||
+                                    listing.listing_type === 'ITEM') &&
                                     listing.condition && (
                                         <p className="text-sm text-gray-500 mb-3">
                                             {listing.condition}
@@ -70,12 +78,13 @@ export default function ListingsSection({ listings }) {
                                         <span className="text-2xl font-bold text-emerald-600">
                                             ${listing.price}
                                         </span>
-                                        {listing.category === 'services' && (
+                                        {listing.listing_type === 'SERVICE' && (
                                             <span className="text-sm text-gray-500">
                                                 /hr
                                             </span>
                                         )}
-                                        {listing.category === 'sublease' && (
+                                        {listing.listing_type ===
+                                            'SUBLEASE' && (
                                             <span className="text-sm text-gray-500">
                                                 /mo
                                             </span>

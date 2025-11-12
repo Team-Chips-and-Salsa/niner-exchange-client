@@ -1,15 +1,26 @@
 import { Grid, List, Search, SlidersHorizontal } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function SearchSection({
     searchQuery,
-    setSearchQuery,
+    selectedListingType,
+    onListingTypeChange,
+    onSearchSubmit,
+    listingTypes,
     viewMode,
     setViewMode,
-    onSearchChange,
-    onViewModeChange,
-    onSearchSubmit,
 }) {
+    const [localSearch, setLocalSearch] = useState(searchQuery);
+
+    useEffect(() => {
+        setLocalSearch(searchQuery);
+    }, [searchQuery]);
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            onSearchSubmit(localSearch);
+        }
+    };
     return (
         <div className="bg-white border-b border-gray-200 sticky top-16 z-40 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
@@ -20,8 +31,9 @@ export default function SearchSection({
                         <input
                             type="text"
                             placeholder="Search listings..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            value={localSearch}
+                            onChange={(e) => setLocalSearch(e.target.value)}
+                            onKeyDown={handleKeyDown}
                             className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                         />
                     </div>

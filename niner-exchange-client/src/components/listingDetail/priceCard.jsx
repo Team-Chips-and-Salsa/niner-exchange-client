@@ -21,6 +21,9 @@ export default function PriceCard({ listing, formatDate }) {
                         {listing.price}
                     </span>
                 </div>
+                <div className="text-sm text-gray-500 mt-1">
+                    Price new: {listing.price_new ? `$${listing.price_new}` : 'N/A'}
+                </div>
             </div>
 
             <div className="border-t border-gray-200 pt-6 mb-6">
@@ -35,12 +38,9 @@ export default function PriceCard({ listing, formatDate }) {
                         <p className="font-medium text-gray-900">
                             {listing.seller.name}
                         </p>
-                        <p className="text-sm text-gray-500">UNCC Student</p>
+                        <p className="text-sm text-gray-500">{listing.seller}</p>
                     </div>
                 </div>
-                <p className="text-xs text-gray-500">
-                    Member since {formatDate(listing.seller.joined)}
-                </p>
             </div>
 
             <div className="space-y-3">

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import 'leaflet/dist/leaflet.css';
+import ScrollToTop from './components/ScrollToTop.jsx';
 
 import L from 'leaflet';
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <AuthProvider>
             <BrowserRouter>
+                <ScrollToTop />
                 <AppRoutes />
             </BrowserRouter>
         </AuthProvider>

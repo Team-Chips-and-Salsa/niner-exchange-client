@@ -58,8 +58,15 @@ const ListingDetailPage = () => {
     }, [id]);
 
     const [images, setImages] = useState([]);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     useEffect(() => {
-        setImages(listing?.images || []);
+        // Normalize images to an array of URL strings.
+        const normalized = (listing?.images || []).map((item) => {
+            if (!item) return null;
+            return typeof item === 'string' ? item : item.image || item.url || null;
+        }).filter(Boolean);
+        setImages(normalized);
+        setSelectedImageIndex(0);
     }, [listing]);
 
     // Loading guard: only render children when listing is loaded
@@ -113,9 +120,9 @@ const ListingDetailPage = () => {
                     {/* Left Column - Images */}
                     <div className="lg:col-span-2">
                         <ListingImageGallery
-                            listing={listing}
-                            selectedImages={images}
-                            setSelectedImages={setImages}
+                            images={images}
+                            selectedImage={selectedImageIndex}
+                            setSelectedImage={setSelectedImageIndex}
                         />
                         {console.log('Listing Images:', listing)}
                         {/* Mobile Price Card - Only visible on mobile */}

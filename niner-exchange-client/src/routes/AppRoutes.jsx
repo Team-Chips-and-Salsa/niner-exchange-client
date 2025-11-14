@@ -9,6 +9,7 @@ import SearchPage from '../pages/SearchPage.jsx';
 import CreateListingPage from '../pages/CreateListingPage.jsx';
 import MainLayout from './MainLayout.jsx';
 import ListingDetailPage from '../pages/ListingDetailPage.jsx';
+import EditListingPage from '../pages/EditListingPage.jsx';
 
 function RootRedirect() {
     const { currentUser } = useAuth();
@@ -35,6 +36,7 @@ export default function AppRoutes() {
                 <Route path="create" element={<CreateListingPage />} />
                 <Route path="messages" element={<MessagingPage />} />
                 <Route path="listing/:id" element={<ListingDetailPage />} />
+                <Route path="listing/edit/:id" element={<EditListingPage />} />
             </Route>
 
             {/* Catch-all */}

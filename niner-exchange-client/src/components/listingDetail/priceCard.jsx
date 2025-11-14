@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, User, MessageCircle } from 'lucide-react';
+import { DollarSign, User, MessageCircle, Pen } from 'lucide-react';
 
 
 export default function PriceCard({ listing, formatDate }) {
@@ -10,7 +10,7 @@ export default function PriceCard({ listing, formatDate }) {
                     {listing.title}
                 </h1>
                 <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-sm font-medium">
-                    {listing.category.name}
+                    {listing.listing_type}
                 </span>
             </div>
 
@@ -33,7 +33,7 @@ export default function PriceCard({ listing, formatDate }) {
                     </div>
                     <div>
                         <p className="font-medium text-gray-900">
-                            {listing.seller.name}
+                            {listing.seller}
                         </p>
                         <p className="text-sm text-gray-500">UNCC Student</p>
                     </div>
@@ -44,20 +44,23 @@ export default function PriceCard({ listing, formatDate }) {
             </div>
 
             <div className="space-y-3">
-                <button className="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">
+                {/* <button className="w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">
                     Contact Seller
-                </button>
+                </button> */}
                 <button className="w-full border-2 border-emerald-600 text-emerald-600 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition flex items-center justify-center space-x-2">
                     <MessageCircle className="w-5 h-5" />
                     <span>Send Message</span>
                 </button>
-            </div>
-
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <p className="text-xs text-blue-800">
-                    <strong>Safety Tip:</strong> Meet in a public place on
-                    campus. Never share personal financial information.
-                </p>
+                <div className="p-4 bg-blue-50 rounded-lg">
+                    <p className="text-xs text-blue-800">
+                        <strong>Safety Tip:</strong> Meet in a public place on
+                        campus. Never share personal financial information.
+                    </p>
+                </div>
+                <button className="w-1/3 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2">
+                    <Pen className="w-6 h-6 text-emerald-600" />
+                    <span>Edit</span>
+                </button>
             </div>
         </div>
     );

@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 
 const categories = [
     { id: 'all', title: 'All', icon: Package },
-    { id: 'textbooks', title: 'Textbooks', icon: BookOpen },
-    { id: 'sublease', title: 'Housing', icon: Home },
-    { id: 'marketplace', title: 'Marketplace', icon: Package },
-    { id: 'services', title: 'Services', icon: Briefcase },
+    { id: 'TEXTBOOK', title: 'Textbooks', icon: BookOpen },
+    { id: 'SUBLEASE', title: 'Housing', icon: Home },
+    { id: 'ITEM', title: 'Marketplace', icon: Package },
+    { id: 'SERVICE', title: 'Services', icon: Briefcase },
 ];
 
 export default function ListingsSection({ listings }) {
@@ -42,7 +42,7 @@ export default function ListingsSection({ listings }) {
                             className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden group cursor-pointer"
                         >
                             <div className="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center text-6xl group-hover:scale-105 transition-transform relative">
-                                {listings.images?.[0].image ? (
+                                {listing.images?.[0].image ? (
                                     <img
                                         src={listing.images[0].image}
                                         alt={'listing image'}
@@ -58,8 +58,8 @@ export default function ListingsSection({ listings }) {
                                 <h4 className="font-bold text-gray-900 text-lg mb-1 line-clamp-1">
                                     {listing.title}
                                 </h4>
-                                {(listing.category === 'textbooks' ||
-                                    listing.category === 'marketplace') &&
+                                {(listing.listing_type === 'TEXTBOOK' ||
+                                    listing.listing_type === 'ITEM') &&
                                     listing.condition && (
                                         <p className="text-sm text-gray-500 mb-3">
                                             {listing.condition}
@@ -70,12 +70,12 @@ export default function ListingsSection({ listings }) {
                                         <span className="text-2xl font-bold text-emerald-600">
                                             ${listing.price}
                                         </span>
-                                        {listing.category === 'services' && (
+                                        {listing.listing_type === 'SERVICE' && (
                                             <span className="text-sm text-gray-500">
                                                 /hr
                                             </span>
                                         )}
-                                        {listing.category === 'sublease' && (
+                                        {listing.listing_type === 'SUBLEASE' && (
                                             <span className="text-sm text-gray-500">
                                                 /mo
                                             </span>

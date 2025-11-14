@@ -114,8 +114,6 @@ const ListingDetailPage = () => {
                     <div className="lg:col-span-2">
                         <ListingImageGallery
                             listing={listing}
-                            selectedImages={images}
-                            setSelectedImages={setImages}
                         />
                         {console.log('Listing Images:', listing)}
                         {/* Mobile Price Card - Only visible on mobile */}

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 
-export default function ListingImageGallery({ listing, selectedImage, setSelectedImage }) {
+export default function ListingImageGallery({ listing}) {
+    const [selectedIndex, setSelectedIndex] = useState(0)
+
     if (!listing || !listing.images) {
         return null; // Or a loading spinner or fallback UI
     }
@@ -10,9 +12,9 @@ export default function ListingImageGallery({ listing, selectedImage, setSelecte
                             {/* Main Image */}
                             <div className="aspect-video bg-gray-100 flex items-center justify-center">
                                 <img
-                                    src={listing.images[selectedImage]}
+                                    src={listing.images[selectedIndex].image}
                                     alt={listing.title}
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-contain"
                                 />
                             </div>
 
@@ -23,16 +25,16 @@ export default function ListingImageGallery({ listing, selectedImage, setSelecte
                                         <button
                                             key={idx}
                                             onClick={() =>
-                                                setSelectedImage(idx)
+                                                setSelectedIndex(idx)
                                             }
                                             className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                                                selectedImage === idx
+                                                selectedIndex === idx
                                                     ? 'border-emerald-600'
                                                     : 'border-gray-200'
                                             }`}
                                         >
                                             <img
-                                                src={img}
+                                                src={img.image}
                                                 alt={`Thumbnail ${idx + 1}`}
                                                 className="w-full h-full object-cover"
                                             />

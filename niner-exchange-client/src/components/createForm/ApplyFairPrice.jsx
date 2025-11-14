@@ -42,7 +42,13 @@ export default function ApplyFairPrice({formData, imageFiles, onChange, onBackCl
     
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const newListing = await submitFullListing(formData, imageFiles)
+        
+        const payload = {
+            ...formData,
+            price_new: suggested_price['median_price_new']
+        };
+
+        const newListing = await submitFullListing(payload, imageFiles)
         navigate(`/listing/${newListing}`)
     }
     
@@ -58,7 +64,16 @@ export default function ApplyFairPrice({formData, imageFiles, onChange, onBackCl
                 <p>Suggested price: </p>
                 <small><em>according to data from eBay</em></small>
                 {(suggested_price != null) ? (
-                    <p className='text-green-500 text-3xl font-bold underline'>${Object.values(suggested_price)[0]}</p>
+                    <div>
+                        <p>Market Price (NEW): </p>
+                        <p className='text-green-500 text-3xl font-bold underline'>${Object.values(suggested_price)[0]}</p>
+                        {(formData.condition != "NEW") && (
+                            <>
+                                <p>Market Price ({formData.condition}) </p>
+                                <p className='text-orange-500 text-3xl font-bold underline'>${Object.values(suggested_price)[1]}</p>
+                            </>
+                        )}
+                    </div>
                 ) : (
                     <p className='text-3xl font-bold'>Loading...</p>
                 )}

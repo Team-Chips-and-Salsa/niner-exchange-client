@@ -27,26 +27,34 @@ export default function SearchSection({
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
                 <div className="flex flex-col sm:flex-row gap-3">
                     {/* Search Bar */}
-                    <div className="flex-1 relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search listings..."
-                            value={localSearch}
-                            onChange={(e) => setLocalSearch(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                        />
+                    <div className="flex-1 flex gap-2">
+                        <div className="flex-1 relative">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Search listings..."
+                                value={localSearch}
+                                onChange={(e) => setLocalSearch(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                            />
+                        </div>
+                        <button
+                            onClick={() => onSearchSubmit(localSearch)}
+                            className="px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium"
+                        >
+                            Search
+                        </button>
                     </div>
 
                     {/* Filter & View Options */}
                     <div className="flex gap-2">
                         <button
                             onClick={onFilterClick}
-                            className="flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors"
+                            className="sm:hidden flex items-center gap-2 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors"
                         >
                             <SlidersHorizontal className="w-5 h-5 text-gray-600" />
-                            <span className="hidden sm:inline text-sm font-medium text-gray-700">
+                            <span className="text-sm font-medium text-gray-700">
                                 Filters
                             </span>
                         </button>

@@ -57,23 +57,13 @@ export default function FilterSidebar({
 
     return (
         <>
-            {/* Mobile Overlay */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
-                    onClick={onClose}
-                />
-            )}
-
-            {/* Sidebar */}
+            {/* Mobile: render inline above results; Desktop: sticky sidebar */}
             <aside
                 className={`
-                    fixed lg:sticky top-0 left-0 h-screen lg:h-auto lg:top-6
-                    w-80 bg-white border-r lg:border-r-0 lg:border border-gray-200 
-                    rounded-none lg:rounded-2xl shadow-xl lg:shadow-sm
-                    transition-transform duration-300 ease-in-out z-30
-                    overflow-y-auto
-                    ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                    ${isOpen ? 'block' : 'hidden'} lg:block
+                    lg:sticky lg:top-6
+                    w-full lg:w-80 bg-white border border-gray-200 
+                    rounded-2xl shadow-sm
                 `}
             >
                 <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between lg:rounded-t-2xl z-10">
@@ -95,7 +85,7 @@ export default function FilterSidebar({
                     {getFilterComponent()}
 
                     {/* Action Buttons */}
-                    <div className="mt-6 space-y-3 sticky bottom-0 bg-white pt-4">
+                    <div className="mt-6 space-y-3 bottom-0 bg-white pt-4">
                         <button
                             onClick={() => {
                                 onApplyFilters();

@@ -21,6 +21,24 @@ export default function ListingsSection({ listings }) {
 
     console.log(activeListingType);
 
+    function getPriceUnitLabel(listing) {
+        if (listing.listing_type === 'SERVICE') {
+            if (listing.rate_type === 'HOURLY') {
+                return "/hr";
+            }
+            else if (listing.rate_type === 'PERSON') {
+                return "/person"
+            }
+            else if (listing.rate_type === 'GROUP') {
+                return "/group"
+            }
+            else if (listing.rate_type === 'UNIT') {
+                return "/unit"
+            }
+        }
+        if (listing.listing_type === 'SUBLEASE') return '/mo';
+    }
+
     return (
         <section className="py-16 sm:py-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -30,8 +48,8 @@ export default function ListingsSection({ listings }) {
                             {activeListingType === ''
                                 ? 'All Listings'
                                 : listingTypes.find(
-                                      (c) => c.id === activeListingType,
-                                  )?.title}
+                                    (c) => c.id === activeListingType,
+                                )?.title}
                         </h3>
                         <p className="text-gray-600">
                             Fresh opportunities from your peers -{' '}
@@ -78,17 +96,9 @@ export default function ListingsSection({ listings }) {
                                         <span className="text-2xl font-bold text-emerald-600">
                                             ${listing.price}
                                         </span>
-                                        {listing.listing_type === 'SERVICE' && (
-                                            <span className="text-sm text-gray-500">
-                                                /hr
-                                            </span>
-                                        )}
-                                        {listing.listing_type ===
-                                            'SUBLEASE' && (
-                                            <span className="text-sm text-gray-500">
-                                                /mo
-                                            </span>
-                                        )}
+                                        <span className="text-sm text-gray-500">
+                                            {getPriceUnitLabel(listing)}
+                                        </span>
                                     </div>
                                     <Link
                                         to={`/listing/${listing.listing_id}`}

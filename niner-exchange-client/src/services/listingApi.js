@@ -118,16 +118,16 @@ export async function submitFullListing(formData, imageFiles) {
     
     // For multi-table inheritance we have different endpoints
     switch(formData.listing_type) {
-        case "textbook":
+        case "TEXTBOOK":
             endpoint = `/api/textbooks/`;
         break;
-        case "sublease":
+        case "SUBLEASE":
             endpoint = `/api/subleases/`;
         break;
-        case "item":
+        case "ITEM":
             endpoint = `/api/items/`;
         break;
-        case "service":
+        case "SERVICE":
             endpoint = `/api/services/`;
         break;
     }

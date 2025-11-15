@@ -15,31 +15,6 @@ import DetailSection from '../components/listingDetail/detailSection';
 import { fetchListingById } from '../services/listingApi';
 
 const ListingDetailPage = () => {
-    // Sample listing data - this would come from your Django API
-
-    /*
-    const [listing] = useState({
-        listing_id: '123e4567-e89b-12d3-a456-426614174000',
-        title: 'Calculus III Textbook',
-        description:
-            'Excellent condition calculus textbook. Used for one semester. All pages intact, minimal highlighting. Perfect for MATH 2241 students.',
-        price: '45.00',
-        condition: 'LIKE_NEW',
-        status: 'ACTIVE',
-        category: { name: 'Textbooks', icon: '📚' },
-        seller: {
-            name: 'Sarah Johnson',
-            email: 'sjohnson@uncc.edu',
-            joined: '2024-01-15',
-        },
-        created_at: '2025-10-20T10:30:00Z',
-        updated_at: '2025-10-20T10:30:00Z',
-        images: [
-            'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800&h=600&fit=crop',
-        ],
-    });
-    */
-
     const [listing, setListing] = useState();
     const { id } = useParams();
 

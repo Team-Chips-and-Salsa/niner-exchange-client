@@ -11,7 +11,6 @@ export default function NinerExchangeAuth() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // This effect is perfect, no changes needed
     useEffect(() => {
         if (currentUser) {
             const from = location.state?.from?.pathname || '/home';
@@ -24,7 +23,6 @@ export default function NinerExchangeAuth() {
         setError('');
         try {
             await login(email, password);
-            // Navigation is handled by the useEffect above
         } catch (err) {
             setError('Failed to log in. Please check your credentials.');
             console.error(err);
@@ -35,9 +33,7 @@ export default function NinerExchangeAuth() {
     const handleRegister = async ({ name, email, password }) => {
         setError('');
         try {
-            // You'll need to add a 'register' function to your AuthContext
             await register(name, email, password);
-            // Navigation is handled by the useEffect above
         } catch (err) {
             setError('Failed to create account. Please try again.');
             console.error(err);

@@ -6,7 +6,7 @@ export default function LoginForm({ onSubmit }) {
     const [password, setPassword] = useState('');
 
     const handleSubmit = (e) => {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault();
         onSubmit({ email, password });
     };
 

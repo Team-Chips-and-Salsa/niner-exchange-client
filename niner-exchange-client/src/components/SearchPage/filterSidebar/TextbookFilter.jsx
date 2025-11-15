@@ -86,7 +86,7 @@ export default function TextbookFilters({ filters, onFilterChange }) {
                 </h3>
                 <input
                     type="text"
-                    placeholder="e.g., MATH 1241, ITSC 1212"
+                    placeholder="MATH1241, ITSC1212"
                     value={filters.courseCode || ''}
                     onChange={(e) =>
                         onFilterChange('courseCode', e.target.value)

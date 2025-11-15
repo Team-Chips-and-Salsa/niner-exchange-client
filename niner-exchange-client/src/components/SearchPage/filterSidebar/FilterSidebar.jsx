@@ -1,9 +1,9 @@
 import React from 'react';
 import { SlidersHorizontal, X } from 'lucide-react';
 import TextbookFilters from './TextbookFilter.jsx';
-import SubleaseFilters from './ServicesFilter.jsx';
+import SubleaseFilters from './SubleasingFilter.jsx';
 import ItemFilters from './MarketplaceFilter.jsx';
-import ServiceFilters from './SubleasingFilter.jsx';
+import ServiceFilters from './ServicesFilter.jsx';
 import AllListingsFilters from './AllFilter.jsx';
 
 export default function FilterSidebar({

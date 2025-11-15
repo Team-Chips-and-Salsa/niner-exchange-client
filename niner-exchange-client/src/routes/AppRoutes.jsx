@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
-import NinerExchangeAuth from '../login.jsx';
+import NinerExchangeAuth from '../pages/AuthPage.jsx';
 import MessagingPage from '../pages/MessagingPage.jsx';
 import HomePage from '../pages/HomePage.jsx';
 import SearchPage from '../pages/SearchPage.jsx';

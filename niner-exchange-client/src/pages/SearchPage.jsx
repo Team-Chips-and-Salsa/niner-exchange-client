@@ -1,5 +1,5 @@
 /*
-    Used AI to help with the filtering logic
+    Used AI to help with the filtering logic and create the filters sidebar according to our figma design
 */
 import { useLocation, useNavigate } from 'react-router-dom';
 import React, { useState, useMemo, useEffect } from 'react';

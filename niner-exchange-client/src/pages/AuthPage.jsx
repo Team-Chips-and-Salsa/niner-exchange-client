@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LeftSide from '../components/auth/LeftSide.jsx';
-import RightSide from '../components/auth/RightSide.jsx'; // This will be the "Form Switcher"
+import RightSide from '../components/auth/RightSide.jsx';
 
 export default function NinerExchangeAuth() {
     const [isLogin, setIsLogin] = useState(true);

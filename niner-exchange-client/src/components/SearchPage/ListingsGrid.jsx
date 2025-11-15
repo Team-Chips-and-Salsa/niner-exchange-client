@@ -1,6 +1,7 @@
 import { Clock, DollarSign, Heart, MapPin } from 'lucide-react';
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { Link } from 'react-router-dom';
 
 export default function ListingsGrid({ listings, viewMode, categories }) {
     return (
@@ -115,9 +116,12 @@ export default function ListingsGrid({ listings, viewMode, categories }) {
 
                             {/* Footer */}
                             <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                                <button className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors text-sm">
-                                    View Details
-                                </button>
+                                <Link
+                                    to={`/listing/${listing.listing_id}`}
+                                    className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors text-sm inline-block text-center"
+                                >
+                                    View
+                                </Link>
                             </div>
                         </div>
                     </div>

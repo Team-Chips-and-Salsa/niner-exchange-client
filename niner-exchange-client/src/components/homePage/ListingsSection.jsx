@@ -90,10 +90,11 @@ export default function ListingsSection({ listings }) {
                                             </span>
                                         )}
                                     </div>
-                                    <Link to={`/listing/${listing.listing_id}`}>
-                                        <button className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors">
-                                            View
-                                        </button>
+                                    <Link
+                                        to={`/listing/${listing.listing_id}`}
+                                        className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors text-sm inline-block text-center"
+                                    >
+                                        View 
                                     </Link>
                                 </div>
                             </div>
@@ -104,4 +105,3 @@ export default function ListingsSection({ listings }) {
         </section>
     );
 }
-

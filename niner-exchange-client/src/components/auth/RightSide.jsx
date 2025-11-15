@@ -8,6 +8,7 @@ export default function RightSide({
     onLoginSubmit,
     onRegisterSubmit,
     error,
+    successMessage,
 }) {
     return (
         <div className="bg-gradient-to-br from-emerald-700 to-emerald-900 p-6 sm:p-8 md:p-12 flex flex-col justify-center relative overflow-hidden">
@@ -30,6 +31,12 @@ export default function RightSide({
                     <LoginForm onSubmit={onLoginSubmit} />
                 ) : (
                     <RegisterForm onSubmit={onRegisterSubmit} />
+                )}
+
+                {successMessage && (
+                    <div className="mt-4 p-3 bg-emerald-100 border border-emerald-400 text-emerald-700 rounded-xl text-center text-sm">
+                        {successMessage}
+                    </div>
                 )}
 
                 {/* Display Error Message */}

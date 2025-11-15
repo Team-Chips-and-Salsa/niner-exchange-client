@@ -15,15 +15,6 @@ apiClient.interceptors.request.use((config) => {
     return config;
 });
 
-// Function to handle the login API call
-export const loginUser = async (email, password) => {
-    const response = await apiClient.post('/api/auth/login/', {
-        email,
-        password,
-    });
-    return response.data;
-};
-
 // Meetup Locations
 export const getMeetupLocations = async () => {
     const response = await apiClient.get('/api/meetup-locations/');

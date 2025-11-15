@@ -1,3 +1,7 @@
+/*
+ * Used AI to figure out how to validate registration with email
+ * */
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -7,6 +11,7 @@ import RightSide from '../components/auth/RightSide.jsx';
 export default function NinerExchangeAuth() {
     const [isLogin, setIsLogin] = useState(true);
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     const { login, register, currentUser } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
@@ -32,11 +37,13 @@ export default function NinerExchangeAuth() {
     // Handle REGISTER submission
     const handleRegister = async ({ name, email, password }) => {
         setError('');
+        setSuccessMessage('');
         try {
-            await register(name, email, password);
+            const message = await register(name, email, password);
+            setSuccessMessage(message);
+            setIsLogin(true);
         } catch (err) {
-            setError('Failed to create account. Please try again.');
-            console.error(err);
+            setError(err.message || 'Failed to create account.');
         }
     };
 
@@ -50,6 +57,7 @@ export default function NinerExchangeAuth() {
                     onLoginSubmit={handleLogin}
                     onRegisterSubmit={handleRegister}
                     error={error}
+                    successMessage={successMessage}
                 />
             </div>
         </div>

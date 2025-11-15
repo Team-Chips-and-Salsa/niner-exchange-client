@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import {
     Bell,
@@ -9,12 +9,18 @@ import {
     Package,
     Briefcase,
     List,
+    LogOut,
+    Link,
 } from 'lucide-react';
 import NinerExchangeLogo from '../assets/logoTestNiner.png';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function PageHeader({ showListingTypes = true }) {
     const [activeListingType, setActiveListingType] = useState('ALL');
     const [mobileCatsOpen, setMobileCatsOpen] = useState(false);
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const { currentUser, logout } = useAuth();
+    const profileMenuRef = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
@@ -36,7 +42,24 @@ export default function PageHeader({ showListingTypes = true }) {
         { id: 'SERVICE', title: 'Services', icon: Briefcase },
     ];
 
-    // Helper to navigate while treating "ALL" as removing the filter param
+    useEffect(() => {
+        function handleClickOutside(event) {
+            // If the menu is open and the click is outside the menu's ref
+            if (
+                profileMenuRef.current &&
+                !profileMenuRef.current.contains(event.target)
+            ) {
+                setIsProfileMenuOpen(false);
+            }
+        }
+        // Add event listener
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            // Cleanup
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [profileMenuRef]);
+
     const navigateWithListingType = (type) => {
         if (String(type).toUpperCase() === 'ALL') {
             navigate('/search');
@@ -148,12 +171,66 @@ export default function PageHeader({ showListingTypes = true }) {
                         >
                             <MessageCircle className="w-5 h-5" />
                         </button>
-                        <button
-                            className="p-2 hover:bg-emerald-700 rounded-full transition-colors"
-                            aria-label="Profile"
-                        >
-                            <User className="w-5 h-5" />
-                        </button>
+                        <div className="relative" ref={profileMenuRef}>
+                            {/* This is the button that opens the menu */}
+                            <button
+                                onClick={() =>
+                                    setIsProfileMenuOpen((prev) => !prev)
+                                }
+                                className="p-2 hover:bg-emerald-700 rounded-full transition-colors"
+                                aria-label="Profile menu"
+                            >
+                                {currentUser?.profile_image_url ? (
+                                    <img
+                                        src={currentUser.profile_image_url}
+                                        alt="Profile"
+                                        className="w-5 h-5 rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <User className="w-5 h-5" />
+                                )}
+                            </button>
+
+                            {isProfileMenuOpen && (
+                                <div className="absolute right-0 top-12 w-56 bg-white rounded-lg shadow-xl py-2 z-50 text-gray-800 border border-gray-200">
+                                    {/* Menu Header */}
+                                    <div className="px-4 py-2 border-b border-gray-100">
+                                        <p className="text-sm font-semibold truncate">
+                                            {currentUser?.first_name}{' '}
+                                            {currentUser?.last_name}
+                                        </p>
+                                        <p className="text-xs text-gray-500 truncate">
+                                            {currentUser?.email}
+                                        </p>
+                                    </div>
+
+                                    {/* Menu Links */}
+                                    <div className="py-1">
+                                        <Link
+                                            to={`/profile/${currentUser?.id}`}
+                                            onClick={() =>
+                                                setIsProfileMenuOpen(false)
+                                            }
+                                            className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                                        >
+                                            <User className="w-4 h-4 text-gray-600" />
+                                            <span>My Profile</span>
+                                        </Link>
+
+                                        <button
+                                            onClick={() => {
+                                                logout();
+                                                setIsProfileMenuOpen(false);
+                                            }}
+                                            className="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left transition-colors"
+                                        >
+                                            <LogOut className="w-4 h-4" />
+                                            <span>Logout</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 

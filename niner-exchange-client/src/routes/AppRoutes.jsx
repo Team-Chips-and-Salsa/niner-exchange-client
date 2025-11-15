@@ -10,6 +10,7 @@ import CreateListingPage from '../pages/CreateListingPage.jsx';
 import MainLayout from './MainLayout.jsx';
 import ListingDetailPage from '../pages/ListingDetailPage.jsx';
 import EditListingPage from '../pages/EditListingPage.jsx';
+import VerifyEmailPage from '../pages/VerifyEmailPage.jsx';
 
 function RootRedirect() {
     const { currentUser } = useAuth();
@@ -22,6 +23,10 @@ export default function AppRoutes() {
         <Routes>
             <Route path="/" element={<RootRedirect />} />
             <Route path="/login" element={<NinerExchangeAuth />} />
+            <Route
+                path="/verify-email/:uidb64/:token"
+                element={<VerifyEmailPage />}
+            />
 
             {/* Protected app with shared layout */}
             <Route

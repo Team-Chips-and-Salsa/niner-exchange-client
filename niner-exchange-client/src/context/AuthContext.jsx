@@ -1,3 +1,7 @@
+/*
+ * Used AI to improve login/register flow and security
+ * */
+
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { auth } from '../firebase';
 import {
@@ -5,79 +9,101 @@ import {
     onAuthStateChanged,
     signOut,
 } from 'firebase/auth';
-import { loginUser as apiLogin } from '../services/api';
+import { useNavigate } from 'react-router-dom';
+import {
+    apiLogin,
+    apiLogout,
+    apiRegister,
+    apiGetMe,
+} from '../services/auth.js';
 
-// Create the context
+// Context
 export const AuthContext = createContext();
 
-// Create a custom hook to use the context easily
 export function useAuth() {
     return useContext(AuthContext);
 }
 
-// Create the Provider component
 export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState(null);
-    const [loading, setLoading] = useState(true); // To check if auth state is loaded
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
-    // The login function that the form will call
+    // Django login AND Firebase login
     const login = async (email, password) => {
-        if (!auth) {
-            throw new Error(
-                'Firebase is not configured. Please set VITE_FIREBASE_* env vars.',
-            );
-        }
-        // Get tokens from Django backend
         const { django_tokens, firebase_token } = await apiLogin(
             email,
             password,
         );
 
-        // Store the Django token for future API calls
         localStorage.setItem('django_access_token', django_tokens.access);
+        localStorage.setItem('django_refresh_token', django_tokens.refresh);
 
-        // Use the Firebase token to sign in to Firebase
         await signInWithCustomToken(auth, firebase_token);
     };
 
-    const logout = () => {
-        if (auth) {
-            signOut(auth);
-        }
-        localStorage.removeItem('django_access_token');
+    // Django registration
+    const register = async (name, email, password) => {
+        const data = await apiRegister(name, email, password);
+        return data.message;
     };
 
-    // Listen for changes in Firebase auth state
+    // Handles Django logout AND Firebase logout
+    const logout = async () => {
+        const accessToken = localStorage.getItem('django_access_token');
+        const refreshToken = localStorage.getItem('django_refresh_token');
+        await apiLogout(accessToken, refreshToken);
+
+        localStorage.removeItem('django_access_token');
+        localStorage.removeItem('django_refresh_token');
+
+        if (auth) {
+            await signOut(auth);
+        }
+    };
+
     useEffect(() => {
         if (!auth) {
-            // Firebase not initialized yet; don’t block UI
             setLoading(false);
             return;
         }
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user);
+
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                const accessToken = localStorage.getItem('django_access_token');
+                if (accessToken) {
+                    try {
+                        const djangoUser = await apiGetMe(accessToken);
+                        setCurrentUser(djangoUser);
+                    } catch (e) {
+                        console.error(e);
+                        await logout();
+                    }
+                }
+            } else {
+                setCurrentUser(null);
+            }
             setLoading(false);
         });
-        return unsubscribe; // Cleanup on unmount
+
+        return unsubscribe;
     }, []);
 
     const value = {
         currentUser,
+        loading,
         login,
+        register,
         logout,
     };
 
     return (
         <AuthContext.Provider value={value}>
             {loading ? (
-                <div
-                    style={{
-                        color: 'red',
-                        textAlign: 'center',
-                        marginTop: '2rem',
-                    }}
-                >
-                    Loading authentication state...
+                <div className="flex h-screen w-full items-center justify-center">
+                    <p className="text-xl text-emerald-600">
+                        Loading Authentication...
+                    </p>
                 </div>
             ) : (
                 children

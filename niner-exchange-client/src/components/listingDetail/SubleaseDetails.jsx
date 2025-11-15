@@ -59,6 +59,23 @@ export default function SubleaseDetails({ listing, formatDate }) {
                 </div>
             </div>
             <div className="flex items-center space-x-3">
+                {(listing.property_type == "APARTMENT") ? (
+                    <Building className="w-5 h-5 text-emerald-600" />
+                ) : (
+                    <House className="w-5 h-5 text-emerald-600" />
+                )}
+                <div>
+                    <p className="text-sm text-gray-500">
+                        Address
+                    </p>
+                    <span
+                        className={`text-sm font-medium`}
+                    >
+                        {listing.physical_address}
+                    </span>
+                </div>
+            </div>
+            <div className="flex items-center space-x-3">
                 <PersonStanding className="w-5 h-5 text-emerald-600" />
                 <div>
                     <p className="text-sm text-gray-500">

@@ -36,6 +36,7 @@ export default function CreateListingPage() {
         distance_from_campus_minutes: '',
         number_of_bedrooms: '',
         number_of_roommates: '',
+        physical_address: '',
 
         rate_type: 'FIXED',
     };

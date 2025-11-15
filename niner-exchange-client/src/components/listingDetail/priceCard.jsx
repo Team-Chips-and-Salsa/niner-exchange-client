@@ -58,9 +58,9 @@ export default function PriceCard({ listing, formatDate }) {
                     </div>
                     <div>
                         <p className="font-medium text-gray-900">
-                            {listing.seller}
+                            {`${listing.seller.first_name} ${listing.seller.last_name}`}
                         </p>
-                        <p className="text-sm text-gray-500">{listing.seller}</p>
+                        <p className="text-sm text-gray-500">{listing.seller.email}</p>
                     </div>
                 </div>
             </div>

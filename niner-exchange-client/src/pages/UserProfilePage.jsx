@@ -225,7 +225,7 @@ const UserProfilePage = () => {
                     <p className="text-emerald-600 font-bold text-lg mb-2">
                       ${listing.price.toFixed(2)}
                     </p>
-                    <p className="text-xs text-gray-500">Seller: {listing.seller}</p>
+                    <p className="text-xs text-gray-500">Seller: `${listing.seller.first_name} ${listing.seller.last_name}`</p>
                   </div>
                 </div>
               ))}

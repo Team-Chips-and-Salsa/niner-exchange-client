@@ -77,21 +77,18 @@ export default function ListingsGrid({ listings, viewMode, categories }) {
                             {/* Seller Info */}
                             <div className="flex items-center gap-2 mb-3 text-sm">
                                 <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                                    {listing.seller
-                                        .split(' ')
-                                        .map((n) => n[0])
-                                        .join('')}
+                                    {listing.seller.first_name[0] + listing.seller.last_name[0]}
                                 </div>
                                 <div>
                                     <p className="font-medium text-gray-900">
-                                        {listing.seller}
+                                        {`${listing.seller.first_name} ${listing.seller.last_name}`}
                                     </p>
                                     <div className="flex items-center gap-1">
                                         <span className="text-amber-500">
                                             ★
                                         </span>
                                         <span className="text-gray-600 text-xs">
-                                            {listing.sellerRating}
+                                            {listing.seller.avg_rating}
                                         </span>
                                     </div>
                                 </div>

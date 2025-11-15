@@ -1,42 +1,57 @@
 import React from 'react';
-import { Calendar, Package } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import { useMemo } from 'react';
+import SubleaseDetails from './SubleaseDetails';
+import ItemTextbookDetails from './ItemTextbookDetails';
+import ServiceDetails from './ServiceDetails';
 
 export default function DetailSection({ listing, formatDate, getConditionText, getConditionColor }) {
-    return(
+    const categoryDetails = useMemo(() => {
+        switch (listing.listing_type) {
+            case 'SUBLEASE':
+                return <SubleaseDetails
+                    listing={listing}
+                    formatDate={formatDate}
+                />
+            case 'TEXTBOOK':
+                return <ItemTextbookDetails
+                    listing={listing}
+                    getConditionText={getConditionText}
+                    getConditionColor={getConditionColor}
+                />
+            case 'ITEM':
+                return <ItemTextbookDetails
+                    listing={listing}
+                    getConditionText={getConditionText}
+                    getConditionColor={getConditionColor}
+                />
+            case 'SERVICE':
+                return <ServiceDetails
+                    listing={listing} />
+            default:
+                return <></>
+        }
+    }, [listing]);
+
+    return (
         <div className="bg-white rounded-lg shadow-md p-6 mt-6">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">
-                                Details
-                            </h2>
-                            <div className="grid grid-cols-2 gap-4">
-                                {(listing.listing_type === 'ITEM' || listing.listing_type === 'TEXTBOOK') && (
-                                    <div className="flex items-center space-x-3">
-                                        <Package className="w-5 h-5 text-emerald-600" />
-                                        <div>
-                                            <p className="text-sm text-gray-500">
-                                                Condition
-                                            </p>
-                                            <span
-                                                className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getConditionColor(listing.condition)}`}
-                                            >
-                                                {getConditionText(
-                                                    listing.condition,
-                                                )}
-                                            </span>
-                                        </div>
-                                    </div>
-                                )}
-                                <div className="flex items-center space-x-3">
-                                    <Calendar className="w-5 h-5 text-emerald-600" />
-                                    <div>
-                                        <p className="text-sm text-gray-500">
-                                            Posted
-                                        </p>
-                                        <p className="text-sm font-medium text-gray-900">
-                                            {formatDate(listing.created_at)}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+                Details
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+                {categoryDetails}
+                <div className="flex items-center space-x-3">
+                    <Calendar className="w-5 h-5 text-emerald-600" />
+                    <div>
+                        <p className="text-sm text-gray-500">
+                            Posted
+                        </p>
+                        <p className="text-sm font-medium text-gray-900">
+                            {formatDate(listing.created_at)}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }

@@ -1,8 +1,30 @@
 import React from 'react';
+import { useMemo } from 'react';
 import { DollarSign, User, MessageCircle, Pen } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function PriceCard({ listing, formatDate }) {
+    const navigate = useNavigate();
+
+    const priceUnitLabel = useMemo(() => {
+        if (listing.listing_type === 'SERVICE') {
+            if (listing.rate_type === 'HOURLY') {
+                return "/hr";
+            }
+            else if (listing.rate_type === 'PERSON') {
+                return "/person"
+            }
+            else if (listing.rate_type === 'GROUP') {
+                return "/group"
+            }
+            else if (listing.rate_type === 'UNIT') {
+                return "/unit"
+            }
+        }
+        if (listing.listing_type === 'SUBLEASE') return '/mo';
+    }, [listing.listing_type]);
+
     return (
         <div className="bg-white rounded-lg shadow-md p-6">
             <div className="mb-6">
@@ -18,7 +40,7 @@ export default function PriceCard({ listing, formatDate }) {
                 <div className="flex items-baseline">
                     <DollarSign className="w-6 h-6 text-emerald-600" />
                     <span className="text-4xl font-bold text-emerald-600">
-                        {listing.price}
+                        {listing.price}{priceUnitLabel}
                     </span>
                 </div>
                 <div className="text-sm text-gray-500 mt-1">
@@ -54,7 +76,7 @@ export default function PriceCard({ listing, formatDate }) {
                         campus. Never share personal financial information.
                     </p>
                 </div>
-                <button className="w-1/3 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2">
+                <button type='button' onClick={() => navigate(`/listing/edit/${listing.listing_id}`)} className="w-1/3 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2">
                     <Pen className="w-6 h-6 text-emerald-600" />
                     <span>Edit</span>
                 </button>

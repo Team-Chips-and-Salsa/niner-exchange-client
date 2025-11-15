@@ -3,9 +3,23 @@ import { useMemo } from 'react';
 import { DollarSign, User, MessageCircle, Pen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import {
+    collection,
+    query,
+    where,
+    getDocs,
+    addDoc,
+    serverTimestamp,
+} from 'firebase/firestore';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { db } from '../../firebase.js';
+
 
 export default function PriceCard({ listing, formatDate }) {
     const navigate = useNavigate();
+    const { currentUser } = useAuth();
+
+    const isOwner = currentUser && listing && currentUser.id === listing.seller.id;
 
     const priceUnitLabel = useMemo(() => {
         if (listing.listing_type === 'SERVICE') {
@@ -24,6 +38,70 @@ export default function PriceCard({ listing, formatDate }) {
         }
         if (listing.listing_type === 'SUBLEASE') return '/mo';
     }, [listing.listing_type]);
+
+    console.log("Creating conversation with participants:", [
+        currentUser.id, listing.seller.id
+    ]);
+
+    const handleSendMessage = async () => {
+        if (!currentUser) {
+            alert('Please log in to send a message.');
+            return;
+        }
+
+        if (isOwner) {
+            alert("You can't start a conversation about your own listing.");
+            return;
+        }
+
+        try {
+            const conversationsRef = collection(db, 'conversations');
+
+            const q = query(
+                conversationsRef,
+                where('participants', 'array-contains', currentUser.id)
+            );
+
+            const querySnapshot = await getDocs(q);
+
+            const existingConvo = querySnapshot.docs.find(doc =>
+                doc.data().participants.includes(listing.seller.id) &&
+                doc.data().listingId === listing.listing_id
+            );
+
+            // TO DO: Add an id to the convo to take u to that specific convo
+            if (existingConvo) {
+                navigate('/messages');
+            } else {
+                await addDoc(conversationsRef, {
+                    participants: [currentUser.id, listing.seller.id].sort(),
+                    participantInfo: {
+                        [currentUser.id]: {
+                            name: `${currentUser.first_name} ${currentUser.last_name}`,
+                        },
+                        [listing.seller.id]: {
+                            name: `${listing.seller.first_name} ${listing.seller.last_name}`,
+                        },
+                    },
+                    listingId: listing.listing_id,
+                    listingImage: listing.images?.[0]?.image,
+                    listingPrice: listing.price,
+                    listingTitle: listing.title,
+                    lastMessage: null,
+                    lastMessageAt: serverTimestamp(),
+                    unreadCounts: {
+                        [currentUser.id]: 0,
+                        [listing.seller.id]: 0,
+                    },
+                });
+
+                navigate('/messages');
+            }
+        } catch (err) {
+            console.error('Error creating or finding conversation:', err);
+            alert('Could not start a conversation. Please try again.');
+        }
+    };
 
     return (
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -66,7 +144,8 @@ export default function PriceCard({ listing, formatDate }) {
             </div>
 
             <div className="space-y-3">
-                <button className="w-full border-2 border-emerald-600 text-emerald-600 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition flex items-center justify-center space-x-2">
+                <button onClick={handleSendMessage}
+                        className="w-full border-2 border-emerald-600 text-emerald-600 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition flex items-center justify-center space-x-2">
                     <MessageCircle className="w-5 h-5" />
                     <span>Send Message</span>
                 </button>

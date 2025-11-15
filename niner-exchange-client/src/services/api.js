@@ -23,12 +23,16 @@ export const getMeetupLocations = async () => {
 
 // Transactions
 export const createTransaction = async ({
+    listing,
     buyer,
     seller,
     meetup_location,
     final_price,
 }) => {
+
+    console.log(listing, buyer, seller, meetup_location, final_price)
     const response = await apiClient.post('/api/transactions/', {
+        listing,
         buyer,
         seller,
         meetup_location,

@@ -57,8 +57,8 @@ export default function TransactionProposalModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-3xl shadow-2xl">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pointer-events-auto">
+            <div className="relative bg-white rounded-2xl w-full max-w-3xl shadow-2xl z-50">
                 <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                     <h2 className="text-xl font-bold text-gray-900">
                         Propose Meetup

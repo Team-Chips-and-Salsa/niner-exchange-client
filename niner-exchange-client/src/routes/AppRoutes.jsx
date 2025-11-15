@@ -15,7 +15,7 @@ import UserProfilePage from '../pages/UserProfilePage.jsx';
 
 function RootRedirect() {
     const { currentUser } = useAuth();
-    const to = currentUser ? '/messages' : '/login';
+    const to = currentUser ? '/home' : '/login';
     return <Navigate to={to} replace />;
 }
 

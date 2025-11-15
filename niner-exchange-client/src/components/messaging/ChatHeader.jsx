@@ -23,28 +23,20 @@ export default function ChatHeader({
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <div className="relative">
-                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-full flex items-center justify-center text-white font-bold">
-                            {otherParticipant.avatar}
-                        </div>
+                        <img
+                            src={currentConversation.listingImage}
+                            alt={'Listing Image'}
+                            className="w-10 h-10 rounded-full object-cover"
+                        />
                     </div>
                     <div>
                         <h2 className="font-semibold text-gray-900">
-                            {otherParticipant.name}
+                            {`${otherParticipant.name} - ${currentConversation.listingTitle}`}
                         </h2>
                         <div className="flex items-center gap-2">
-                            {otherParticipant.username && (
-                                <p className="text-xs text-gray-500">
-                                    {otherParticipant.username}
+                                <p className="text-xs text-emerald-700 font-medium">
+                                    {`Asking Price: $${ currentConversation.listingPrice }`}
                                 </p>
-                            )}
-                            {currentConversation?.listing && (
-                                <>
-                                    <span className="text-gray-300">•</span>
-                                    <p className="text-xs text-emerald-700 font-medium">
-                                        {currentConversation?.listing}
-                                    </p>
-                                </>
-                            )}
                         </div>
                     </div>
                 </div>

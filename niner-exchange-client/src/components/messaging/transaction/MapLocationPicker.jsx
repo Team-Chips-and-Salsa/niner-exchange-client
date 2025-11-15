@@ -12,12 +12,11 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-// Small helper to adjust view when selection changes (Used AI to smooth UX)
+// Smooth flying animation
 function FlyToSelection({ center, zoom }) {
     const map = useMap();
     useEffect(() => {
         if (!map || !center) return;
-        // Use flyTo for smooth UX; guard against invalid coords
         const [lat, lng] = center;
         if (Number.isFinite(lat) && Number.isFinite(lng)) {
             map.flyTo(center, zoom ?? 16, { duration: 0.75 });
@@ -27,26 +26,28 @@ function FlyToSelection({ center, zoom }) {
 }
 
 export default function MapLocationPicker({
-    locations = [],
-    selectedId,
-    onSelect,
-    className = '',
-    heightClass = 'h-72',
-}) {
-    // Prepare a default icon
-    const defaultIcon = useMemo(() => {
-        return new L.Icon({
-            iconUrl: markerIcon,
-            iconRetinaUrl: markerIcon2x,
-            shadowUrl: markerShadow,
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41],
-        });
-    }, []);
+                                              locations = [],
+                                              selectedId,
+                                              onSelect,
+                                              className = '',
+                                              heightClass = 'h-72',
+                                          }) {
+    // Prepare the default marker icon
+    const defaultIcon = useMemo(
+        () =>
+            new L.Icon({
+                iconUrl: markerIcon,
+                iconRetinaUrl: markerIcon2x,
+                shadowUrl: markerShadow,
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41],
+            }),
+        []
+    );
 
-    // Parse and sanitize locations
+    // Parse locations safely
     const parsed = useMemo(() => {
         return (locations || [])
             .map((l) => ({
@@ -65,23 +66,26 @@ export default function MapLocationPicker({
 
     const defaultCenter = useMemo(() => {
         if (parsed.length > 0) return [parsed[0].lat, parsed[0].lng];
-        // UNC Charlotte general fallback
-        return [35.3075, -80.734];
+        return [35.3075, -80.734]; // UNCC fallback
     }, [parsed]);
 
-    const selectedLoc = useMemo(() => {
-        return parsed.find((l) => String(l.id) === String(selectedId));
-    }, [parsed, selectedId]);
+    const selectedLoc = useMemo(
+        () => parsed.find((l) => String(l.id) === String(selectedId)),
+        [parsed, selectedId]
+    );
 
     const selectionCenter = selectedLoc
         ? [selectedLoc.lat, selectedLoc.lng]
         : null;
 
+    const mapKey = `${parsed.length}-${selectedId}`;
+
     return (
         <div
-            className={`relative w-full overflow-hidden rounded-xl border border-gray-200 ${heightClass} ${className}`}
+            className={`relative z-0 w-full overflow-hidden rounded-xl border border-gray-200 ${heightClass} ${className}`}
         >
             <MapContainer
+                key={mapKey}          // ← the fix
                 center={defaultCenter}
                 zoom={15}
                 scrollWheelZoom={false}
@@ -92,12 +96,10 @@ export default function MapLocationPicker({
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
-                {/* Smoothly center to selection */}
                 {selectionCenter && (
                     <FlyToSelection center={selectionCenter} zoom={17} />
                 )}
 
-                {/* Render available zones */}
                 {parsed.map((zone) => (
                     <Marker
                         key={zone.id}
@@ -130,7 +132,6 @@ export default function MapLocationPicker({
                     </Marker>
                 ))}
 
-                {/* Visual highlight of selected location */}
                 {selectedLoc && (
                     <Circle
                         center={[selectedLoc.lat, selectedLoc.lng]}
@@ -144,7 +145,6 @@ export default function MapLocationPicker({
                 )}
             </MapContainer>
 
-            {/* Top overlay title */}
             <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow text-xs font-medium text-gray-700">
                 Tap a pin to choose the exchange zone
             </div>

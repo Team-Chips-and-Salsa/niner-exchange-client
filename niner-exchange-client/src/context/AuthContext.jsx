@@ -70,23 +70,18 @@ export function AuthProvider({ children }) {
 
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
-                const accessToken = localStorage.getItem('django_access_token');
-                if (accessToken) {
-                    try {
-                        const djangoUser = await apiGetMe(accessToken);
-                        setCurrentUser(djangoUser);
-                    } catch (e) {
-                        console.error(e);
-                        await logout();
-                    }
+                try {
+                    const djangoUser = await apiGetMe();
+                    setCurrentUser(djangoUser);
+                } catch (e) {
+                    console.error('Session invalid, logging out:', e);
+                    await logout(); // Logout the user
                 }
             } else {
                 setCurrentUser(null);
             }
             setLoading(false);
         });
-
-        return unsubscribe;
     }, []);
 
     const value = {

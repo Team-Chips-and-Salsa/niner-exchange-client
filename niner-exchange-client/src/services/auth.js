@@ -44,15 +44,73 @@ export async function apiRegister(name, email, password) {
     return await response.json();
 }
 
-//Fetches the full Django user profile
-export async function apiGetMe(token) {
-    const response = await fetch(`${BASE_URL}/api/auth/get-me/`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok) {
-        throw new Error('Failed to fetch user profile');
+// Silent Refresh
+export async function apiRefreshToken() {
+    const refreshToken = localStorage.getItem('django_refresh_token');
+    if (!refreshToken) {
+        throw new Error('No refresh token available');
     }
+
+    const response = await fetch(`${BASE_URL}/api/auth/token/refresh/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    if (!response.ok) {
+        throw new Error('Refresh token invalid');
+    }
+
+    const data = await response.json(); // { access: "..." }
+    localStorage.setItem('django_access_token', data.access);
+    return data.access;
+}
+
+//Smartly fetches the full Django user profile
+export async function fetchWithAuth(url, options = {}) {
+    let accessToken = localStorage.getItem('django_access_token');
+
+    let response = await fetch(url, {
+        ...options,
+        headers: {
+            ...options.headers,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+        },
+    });
+
+    // If it's a 401 (Unauthorized), try to refresh
+    if (response.status === 401) {
+        console.log('Access token expired, attempting refresh...');
+        try {
+            const newAccessToken = await apiRefreshToken();
+
+            response = await fetch(url, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${newAccessToken}`,
+                },
+            });
+        } catch (refreshError) {
+            console.error('Refresh failed:', refreshError);
+            throw refreshError;
+        }
+    }
+
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || 'API request failed');
+    }
+
     return await response.json();
+}
+
+export async function apiGetMe() {
+    return await fetchWithAuth(`${BASE_URL}/api/auth/get-me/`, {
+        method: 'GET',
+    });
 }
 
 //Blacklists the Django refresh token

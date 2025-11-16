@@ -19,6 +19,7 @@ export default function TransactionRequestCard({
     isMe,
     onAccept,
     onReject,
+    isSubmitting,
 }) {
     const statusLc = String(msg.status || 'PENDING').toLowerCase();
     const isPending = statusLc === 'pending';
@@ -180,6 +181,7 @@ export default function TransactionRequestCard({
                         <div className="px-4 pb-4 flex gap-2">
                             <button
                                 onClick={onReject}
+                                disabled={isSubmitting}
                                 className="flex-1 px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
                             >
                                 <X className="w-4 h-4" />
@@ -190,7 +192,7 @@ export default function TransactionRequestCard({
                                 className="flex-1 px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-lg font-medium text-sm transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                             >
                                 <Check className="w-4 h-4" />
-                                Accept
+                                {isSubmitting ? 'Submitting...' : 'Accept'}
                             </button>
                         </div>
                     )}

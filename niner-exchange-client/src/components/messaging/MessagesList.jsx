@@ -8,6 +8,7 @@ export default function MessagesList({
     currentUser,
     onAcceptProposal,
     onRejectProposal,
+    isSubmitting,
 }) {
     const bottomRef = useRef(null);
 
@@ -29,6 +30,7 @@ export default function MessagesList({
                                 isMe={isMe}
                                 onAccept={() => onAcceptProposal?.(msg)}
                                 onReject={() => onRejectProposal?.(msg)}
+                                isSubmitting={isSubmitting}
                             />
                         );
                     }

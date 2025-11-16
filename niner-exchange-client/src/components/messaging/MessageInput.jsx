@@ -1,5 +1,5 @@
 import React from 'react';
-import { Send, Paperclip, Image, Smile, DollarSign } from 'lucide-react';
+import { Send, Smile, DollarSign } from 'lucide-react';
 
 export default function MessageInput({
     message,
@@ -23,12 +23,6 @@ export default function MessageInput({
                             <DollarSign className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
                         </button>
                     )}
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0">
-                        <Paperclip className="w-5 h-5 text-gray-600" />
-                    </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0 hidden sm:block">
-                        <Image className="w-5 h-5 text-gray-600" />
-                    </button>
                     <div className="flex-1 relative">
                         <textarea
                             value={message}
@@ -43,9 +37,6 @@ export default function MessageInput({
                             rows="1"
                             className="w-full px-4 py-3 pr-10 bg-gray-100 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                         />
-                        <button className="absolute right-2 bottom-2 p-1.5 hover:bg-gray-200 rounded-lg transition-colors">
-                            <Smile className="w-5 h-5 text-gray-600" />
-                        </button>
                     </div>
                     <button
                         onClick={onSend}
@@ -55,9 +46,7 @@ export default function MessageInput({
                         <Send className="w-5 h-5" />
                     </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-2 text-center hidden sm:block">
-                    Press Enter to send, Shift + Enter for new line
-                </p>
+
             </div>
         </div>
     );

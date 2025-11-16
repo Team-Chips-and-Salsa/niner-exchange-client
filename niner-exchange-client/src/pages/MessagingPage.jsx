@@ -46,6 +46,7 @@ export default function MessagingPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [conversations, setConversations] = useState([]);
     const [currentMessages, setCurrentMessages] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Transaction proposal UI state
     const [isProposalOpen, setIsProposalOpen] = useState(false);
@@ -269,12 +270,15 @@ export default function MessagingPage() {
     };
 
     const handleAcceptProposal = async (msg) => {
+        if (isSubmitting) return;
         if (!db || !selectedConversationId || !msg?.transactionUuid) return;
+        setIsSubmitting(true);
         try {
             await updateTransactionStatus(msg.transactionUuid, 'ACCEPTED');
         } catch (e) {
             console.error('Failed to accept transaction', e);
             alert('Failed to accept transaction.');
+            setIsSubmitting(false);
             return;
         }
         try {
@@ -295,15 +299,19 @@ export default function MessagingPage() {
         } catch (e) {
             console.error('Failed to update Firestore message status', e);
         }
+        setIsSubmitting(false);
     };
 
     const handleRejectProposal = async (msg) => {
+        if (isSubmitting) return;
         if (!db || !selectedConversationId || !msg?.transactionUuid) return;
+        setIsSubmitting(true);
         try {
             await updateTransactionStatus(msg.transactionUuid, 'REJECTED');
         } catch (e) {
             console.error('Failed to reject transaction', e);
             alert('Failed to reject transaction.');
+            setIsSubmitting(false);
             return;
         }
         try {
@@ -323,6 +331,7 @@ export default function MessagingPage() {
         } catch (e) {
             console.error('Failed to update Firestore message status', e);
         }
+        setIsSubmitting(false);
     };
 
     const filteredConversations = useMemo(() => {
@@ -366,6 +375,7 @@ export default function MessagingPage() {
                             currentUser={currentUser}
                             onAcceptProposal={handleAcceptProposal}
                             onRejectProposal={handleRejectProposal}
+                            isSubmitting={isSubmitting}
                         />
                         <MessageInput
                             message={message}

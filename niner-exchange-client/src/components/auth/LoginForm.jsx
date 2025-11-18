@@ -47,10 +47,6 @@ export default function LoginForm({ onSubmit }) {
             </div>
 
             <div className="flex items-center justify-between text-xs sm:text-sm">
-                <label className="flex items-center text-emerald-50 cursor-pointer">
-                    <input type="checkbox" className="mr-2 rounded" />
-                    Remember me
-                </label>
                 <button
                     type="button"
                     className="text-amber-300 hover:text-amber-200 transition-colors"

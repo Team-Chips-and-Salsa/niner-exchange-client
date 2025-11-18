@@ -243,23 +243,28 @@ export default function MessagingPage() {
         if (!db || !currentUser || !currentConversation || !otherParticipant)
             return;
 
-        // use Firebase UIDs directly for the backend
-        const buyerUuid = currentUser.id;
-        const sellerUuid = otherParticipant.uid;
+        let finalBuyerId, finalSellerId;
 
-        if (!buyerUuid || !sellerUuid) {
+        if (isSeller) {
+            finalSellerId = currentUser.id;
+            finalBuyerId = otherParticipant.id || otherParticipant.uid;
+        } else {
+            finalBuyerId = currentUser.id;
+            finalSellerId = otherParticipant.id || otherParticipant.uid;
+        }
+
+        if (!finalBuyerId || !finalSellerId) {
             console.error('Missing participant IDs');
             alert('Cannot create transaction: missing participant IDs.');
             return;
         }
-        // Create transaction in Django
+
         let tx;
-        console.log(currentConversation.listingId);
         try {
             tx = await createTransaction({
                 listing: currentConversation.listingId,
-                buyer: buyerUuid,
-                seller: sellerUuid,
+                buyer: finalBuyerId,
+                seller: finalSellerId,
                 meetup_location,
                 final_price: price,
             });

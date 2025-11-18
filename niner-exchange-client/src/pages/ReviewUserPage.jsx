@@ -1,14 +1,21 @@
 /*
-*  Used AI to generate the UI based on the design based in our figma design and help with user validations
-*
-* */
-
+ *  Used AI to generate the UI based on the design based in our figma design and help with user validations
+ *
+ * */
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Star, Send, AlertCircle } from 'lucide-react';
 import { createReviews } from '../services/reviewsApi.js';
 import { fetchTransaction } from '../services/transactionsApi.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import {
+    collection,
+    getDocs,
+    query,
+    where,
+    deleteDoc,
+} from 'firebase/firestore';
+import { db } from '../firebase.js';
 
 export default function SubmitReviewPage() {
     const { revieweeId, transactionId } = useParams();
@@ -39,18 +46,26 @@ export default function SubmitReviewPage() {
                 setTransaction(data);
 
                 console.log(data);
-                if (data.buyer.id === revieweeId && data.seller.id === currentUser.id) {
+                if (
+                    data.buyer.id === revieweeId &&
+                    data.seller.id === currentUser.id
+                ) {
                     setReviewee(data.buyer);
                     setReviewer(data.seller);
-                } else if (data.seller.id === revieweeId && data.buyer.id === currentUser.id) {
+                } else if (
+                    data.seller.id === revieweeId &&
+                    data.buyer.id === currentUser.id
+                ) {
                     setReviewee(data.seller);
                     setReviewer(data.buyer);
                 } else {
-                    setError("You do not have permission to review this transaction.");
-                    throw new Error("User mismatch");
+                    setError(
+                        'You do not have permission to review this transaction.',
+                    );
+                    throw new Error('User mismatch');
                 }
             } catch (err) {
-                setError(err.message || "Could not load transaction details.");
+                setError(err.message || 'Could not load transaction details.');
             }
         };
 
@@ -73,10 +88,26 @@ export default function SubmitReviewPage() {
                 transaction: transactionId,
                 reviewee: revieweeId,
                 rating: rating,
-                comment: comment
+                comment: comment,
             };
 
             await createReviews(reviewData);
+
+            try {
+                const notifQuery = query(
+                    collection(db, 'notifications'),
+                    where('userId', '==', currentUser.id),
+                    where('transactionId', '==', transactionId),
+                );
+
+                const querySnapshot = await getDocs(notifQuery);
+
+                querySnapshot.forEach((doc) => {
+                    deleteDoc(doc.ref);
+                });
+            } catch (notifError) {
+                console.error('Failed to delete notification:', notifError);
+            }
 
             navigate(`/home`);
         } catch (err) {
@@ -158,14 +189,15 @@ export default function SubmitReviewPage() {
                             </div>
                             <div className="flex-1">
                                 <h3 className="font-bold text-gray-900 text-lg">
-                                    {reviewee.first_name}{' '}
-                                    {reviewee.last_name}
+                                    {reviewee.first_name} {reviewee.last_name}
                                 </h3>
                                 <p className="text-gray-600 text-sm mb-2">
                                     {reviewee.email}
                                 </p>
                                 <div className="bg-gray-50 rounded-lg p-3 mt-3">
-                                    <p className="text-sm text-gray-600 mb-1">Item</p>
+                                    <p className="text-sm text-gray-600 mb-1">
+                                        Item
+                                    </p>
                                     <p className="font-semibold text-gray-900">
                                         {transaction.listing.title}
                                     </p>
@@ -194,15 +226,17 @@ export default function SubmitReviewPage() {
                                 <span className="text-red-500 ml-1">*</span>
                             </label>
                             <div className="flex gap-2 justify-center sm:justify-start">
-                                {[1, 2, 3, 4, 5].map((index) => renderStar(index))}
+                                {[1, 2, 3, 4, 5].map((index) =>
+                                    renderStar(index),
+                                )}
                             </div>
                             {rating > 0 && (
                                 <p className="mt-3 text-gray-600 text-center sm:text-left">
-                                    {rating === 1 && "Poor"}
-                                    {rating === 2 && "Fair"}
-                                    {rating === 3 && "Good"}
-                                    {rating === 4 && "Very Good"}
-                                    {rating === 5 && "Excellent"}
+                                    {rating === 1 && 'Poor'}
+                                    {rating === 2 && 'Fair'}
+                                    {rating === 3 && 'Good'}
+                                    {rating === 4 && 'Very Good'}
+                                    {rating === 5 && 'Excellent'}
                                 </p>
                             )}
                         </div>

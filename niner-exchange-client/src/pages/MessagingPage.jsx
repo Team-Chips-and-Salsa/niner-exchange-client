@@ -69,7 +69,6 @@ export default function MessagingPage() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // If navigated here with focusList=true, show the conversation list by clearing selection and avoid auto-select.
     useEffect(() => {
         if (location.state?.focusList) {
             setSelectedConversationId(null);
@@ -135,9 +134,10 @@ export default function MessagingPage() {
     const activeTransaction = useMemo(() => {
         return [...currentMessages]
             .reverse()
-            .find(msg =>
-                msg.type === 'TRANSACTION_PROPOSAL' &&
-                msg.status === 'ACCEPTED'
+            .find(
+                (msg) =>
+                    msg.type === 'TRANSACTION_PROPOSAL' &&
+                    msg.status === 'ACCEPTED',
             );
     }, [currentMessages]);
 
@@ -147,27 +147,37 @@ export default function MessagingPage() {
 
     const handleCompleteTransaction = async () => {
         if (!activeTransaction || isCompleting || !otherParticipant?.uid) {
-            console.error("Cannot complete transaction: Missing data", {
+            console.error('Cannot complete transaction: Missing data', {
                 activeTransaction,
                 isCompleting,
-                otherParticipant
+                otherParticipant,
             });
-            alert("Could not complete transaction, user data is missing.");
+            alert('Could not complete transaction, user data is missing.');
             return;
         }
 
         setIsCompleting(true);
         try {
-            await updateTransactionStatus(activeTransaction.transactionUuid, 'COMPLETED');
+            await updateTransactionStatus(
+                activeTransaction.transactionUuid,
+                'COMPLETED',
+            );
 
-            const msgRef = doc(db, 'conversations', selectedConversationId, 'messages', activeTransaction.id);
+            const msgRef = doc(
+                db,
+                'conversations',
+                selectedConversationId,
+                'messages',
+                activeTransaction.id,
+            );
             await updateDoc(msgRef, { status: 'COMPLETED' });
 
-            navigate(`/review-user/${otherParticipant.uid}/${activeTransaction.transactionUuid}`);
-
+            navigate(
+                `/review-user/${otherParticipant.uid}/${activeTransaction.transactionUuid}`,
+            );
         } catch (err) {
-            console.error("Failed to complete transaction:", err);
-            alert("Failed to complete transaction. Please try again.");
+            console.error('Failed to complete transaction:', err);
+            alert('Failed to complete transaction. Please try again.');
         } finally {
             setIsCompleting(false);
         }
@@ -194,7 +204,7 @@ export default function MessagingPage() {
                 lastMessage: text,
                 lastMessageAt: serverTimestamp(),
             };
-            if (otherParticipant?.id) {
+            if (otherParticipant?.uid) {
                 updates[`unreadCounts.${otherParticipant.uid}`] = increment(1);
             }
             await updateDoc(convRef, updates);
@@ -235,7 +245,7 @@ export default function MessagingPage() {
 
         // use Firebase UIDs directly for the backend
         const buyerUuid = currentUser.id;
-        const sellerUuid = otherParticipant.uid; // first UUID is the other person
+        const sellerUuid = otherParticipant.uid;
 
         if (!buyerUuid || !sellerUuid) {
             console.error('Missing participant IDs');
@@ -244,7 +254,7 @@ export default function MessagingPage() {
         }
         // Create transaction in Django
         let tx;
-        console.log(currentConversation.listingId)
+        console.log(currentConversation.listingId);
         try {
             tx = await createTransaction({
                 listing: currentConversation.listingId,
@@ -298,7 +308,7 @@ export default function MessagingPage() {
                 lastMessage: `Proposal: $${price} at ${zoneName}`,
                 lastMessageAt: serverTimestamp(),
             };
-            if (otherParticipant?.id) {
+            if (otherParticipant?.uid) {
                 updates[`unreadCounts.${otherParticipant.uid}`] = increment(1);
             }
             await updateDoc(convRef, updates);

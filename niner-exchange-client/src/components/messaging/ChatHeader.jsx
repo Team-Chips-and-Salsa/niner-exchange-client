@@ -1,10 +1,13 @@
 import React from 'react';
-import { Phone, Video, Info, MoreVertical, ArrowLeft } from 'lucide-react';
+import { Phone, Video, Info, MoreVertical, ArrowLeft, CheckCircle } from 'lucide-react';
 
 export default function ChatHeader({
     otherParticipant,
     currentConversation,
     onBack,
+    canComplete,
+    isCompleting,
+    onCompleteTransaction,
 }) {
     return (
         <div className="px-4 sm:px-6 py-4 border-b border-gray-200 bg-white">
@@ -40,7 +43,18 @@ export default function ChatHeader({
                         </div>
                     </div>
                 </div>
+
                 <div className="flex items-center gap-2">
+                    {canComplete && (
+                        <button
+                            onClick={onCompleteTransaction}
+                            disabled={isCompleting}
+                            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 disabled:bg-gray-400 transition-colors"
+                        >
+                            <CheckCircle className="w-5 h-5" />
+                            {isCompleting ? 'Completing...' : 'Complete Transaction'}
+                        </button>
+                    )}
                     <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                         <MoreVertical className="w-5 h-5 text-gray-600" />
                     </button>

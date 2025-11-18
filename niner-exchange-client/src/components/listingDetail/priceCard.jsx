@@ -87,6 +87,7 @@ export default function PriceCard({ listing, formatDate }) {
                     listingImage: listing.images?.[0]?.image,
                     listingPrice: listing.price,
                     listingTitle: listing.title,
+                    listingSellerId: listing.seller.id,
                     lastMessage: null,
                     lastMessageAt: serverTimestamp(),
                     unreadCounts: {

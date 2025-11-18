@@ -43,7 +43,7 @@ export const createTransaction = async ({
 
 export const updateTransactionStatus = async (transactionUuid, status) => {
     const response = await apiClient.patch(
-        `/api/transactions/${transactionUuid}/`,
+        `/api/transactions/${transactionUuid}/update-status/`,
         {
             status,
         },

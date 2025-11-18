@@ -47,6 +47,7 @@ export default function MessagingPage() {
     const [conversations, setConversations] = useState([]);
     const [currentMessages, setCurrentMessages] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isCompleting, setIsCompleting] = useState(false);
 
     // Transaction proposal UI state
     const [isProposalOpen, setIsProposalOpen] = useState(false);
@@ -131,6 +132,46 @@ export default function MessagingPage() {
         return conversations.find((c) => c.id === selectedConversationId);
     }, [conversations, selectedConversationId]);
 
+    const activeTransaction = useMemo(() => {
+        return [...currentMessages]
+            .reverse()
+            .find(msg =>
+                msg.type === 'TRANSACTION_PROPOSAL' &&
+                msg.status === 'ACCEPTED'
+            );
+    }, [currentMessages]);
+
+    const isSeller = currentUser?.id === currentConversation?.listingSellerId;
+
+    const canComplete = isSeller && activeTransaction;
+
+    const handleCompleteTransaction = async () => {
+        if (!activeTransaction || isCompleting || !otherParticipant?.uid) {
+            console.error("Cannot complete transaction: Missing data", {
+                activeTransaction,
+                isCompleting,
+                otherParticipant
+            });
+            alert("Could not complete transaction, user data is missing.");
+            return;
+        }
+
+        setIsCompleting(true);
+        try {
+            await updateTransactionStatus(activeTransaction.transactionUuid, 'COMPLETED');
+
+            const msgRef = doc(db, 'conversations', selectedConversationId, 'messages', activeTransaction.id);
+            await updateDoc(msgRef, { status: 'COMPLETED' });
+
+            navigate(`/review-user/${otherParticipant.uid}/${activeTransaction.transactionUuid}`);
+
+        } catch (err) {
+            console.error("Failed to complete transaction:", err);
+            alert("Failed to complete transaction. Please try again.");
+        } finally {
+            setIsCompleting(false);
+        }
+    };
     const otherParticipant = useMemo(() => {
         return getOtherParticipant(currentConversation, currentUser?.id);
     }, [currentConversation, currentUser]);
@@ -149,12 +190,10 @@ export default function MessagingPage() {
         };
         try {
             await addDoc(msgCol, newMsg);
-            // Update conversation preview and time
             const updates = {
                 lastMessage: text,
                 lastMessageAt: serverTimestamp(),
             };
-            // Increment unread count for the other participant
             if (otherParticipant?.id) {
                 updates[`unreadCounts.${otherParticipant.uid}`] = increment(1);
             }
@@ -369,6 +408,9 @@ export default function MessagingPage() {
                             otherParticipant={otherParticipant}
                             currentConversation={currentConversation}
                             onBack={() => setSelectedConversationId(null)}
+                            canComplete={canComplete}
+                            isCompleting={isCompleting}
+                            onCompleteTransaction={handleCompleteTransaction}
                         />
                         <MessagesList
                             messages={currentMessages}

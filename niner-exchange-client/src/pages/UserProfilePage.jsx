@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 import ProfileHeader from './PageHeader.jsx';
 import ProfilePurchaseBuyerTab from './profilePurchaseBuyerTab.jsx';
 import ListingsGrid from '../components/SearchPage/ListingsGrid';
-import { fetchUserProfile } from '../services/user.js';
+import { fetchUserProfile } from '../services/userApi.js';
 
 const UserProfilePage = () => {
   const { userId } = useParams();

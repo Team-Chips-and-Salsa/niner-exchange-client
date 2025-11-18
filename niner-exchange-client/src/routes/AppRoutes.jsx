@@ -13,6 +13,7 @@ import EditListingPage from '../pages/EditListingPage.jsx';
 import VerifyEmailPage from '../pages/VerifyEmailPage.jsx';
 import UserProfilePage from '../pages/UserProfilePage.jsx';
 import ReviewUserPage from '../pages/ReviewUserPage.jsx';
+import ReviewsPage from '../pages/ReviewsPage.jsx';
 
 function RootRedirect() {
     const { currentUser } = useAuth();
@@ -43,7 +44,11 @@ export default function AppRoutes() {
                 <Route path="create" element={<CreateListingPage />} />
                 <Route path="profile/:userId" element={<UserProfilePage />} />
                 <Route path="messages" element={<MessagingPage />} />
-                <Route path="review-user/:revieweeId/:transactionId" element={<ReviewUserPage />} />
+                <Route
+                    path="review-user/:revieweeId/:transactionId"
+                    element={<ReviewUserPage />}
+                />
+                <Route path="reviews/:userId" element={<ReviewsPage />} />
                 <Route path="listing/:id" element={<ListingDetailPage />} />
                 <Route path="listing/edit/:id" element={<EditListingPage />} />
             </Route>

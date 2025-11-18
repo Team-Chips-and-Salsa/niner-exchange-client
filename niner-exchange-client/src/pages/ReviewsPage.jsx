@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Star, User, Calendar, MessageSquare } from 'lucide-react';
+import { fetchReviews, fetchUserProfile } from '../services/reviewsApi.js';
 
 export default function ReviewsPage() {
     const { userId } = useParams();
@@ -10,81 +11,46 @@ export default function ReviewsPage() {
     const [stats, setStats] = useState({
         averageRating: 0,
         totalReviews: 0,
-        ratingBreakdown: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+        ratingBreakdown: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
     });
 
     useEffect(() => {
-        const fetchUserReviews = async () => {
+        if (!userId) {
+            setLoading(false);
+            return;
+        }
+
+        const fetchData = async () => {
             try {
-                // const response = await fetch(`/api/users/${userId}/reviews/`);
-                // const data = await response.json();
+                setLoading(true);
 
-                // Mock data for demonstration
-                const mockData = {
-                    user: {
-                        email: 'student@uncc.edu',
-                        first_name: 'John',
-                        last_name: 'Doe'
-                    },
-                    reviews: [
-                        {
-                            review_id: '1',
-                            reviewer: { email: 'buyer1@uncc.edu', first_name: 'Alice', last_name: 'Smith' },
-                            rating: 5,
-                            comment: 'Great seller! Item was exactly as described and delivery was prompt.',
-                            created_at: '2024-11-10T10:30:00Z'
-                        },
-                        {
-                            review_id: '2',
-                            reviewer: { email: 'buyer2@uncc.edu', first_name: 'Bob', last_name: 'Johnson' },
-                            rating: 4,
-                            comment: 'Good experience overall. Communication could have been better.',
-                            created_at: '2024-11-08T14:20:00Z'
-                        },
-                        {
-                            review_id: '3',
-                            reviewer: { email: 'buyer3@uncc.edu', first_name: 'Carol', last_name: 'Williams' },
-                            rating: 5,
-                            comment: 'Excellent transaction! Highly recommend.',
-                            created_at: '2024-11-05T09:15:00Z'
-                        },
-                        {
-                            review_id: '4',
-                            reviewer: { email: 'buyer4@uncc.edu', first_name: 'David', last_name: 'Brown' },
-                            rating: 3,
-                            comment: 'Average experience. Item was fine but took longer than expected.',
-                            created_at: '2024-11-01T16:45:00Z'
-                        }
-                    ]
-                };
+                const [userData, reviewsData] = await Promise.all([
+                    fetchUserProfile(userId),
+                    fetchReviews(userId),
+                ]);
 
-                setUserInfo(mockData.user);
-                setReviews(mockData.reviews);
-
-                // Calculate stats
-                const total = mockData.reviews.length;
-                const sum = mockData.reviews.reduce((acc, review) => acc + review.rating, 0);
-                const avg = total > 0 ? (sum / total).toFixed(1) : 0;
-
-                const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-                mockData.reviews.forEach(review => {
-                    breakdown[review.rating]++;
-                });
+                setUserInfo(userData);
+                setReviews(reviewsData);
 
                 setStats({
-                    averageRating: avg,
-                    totalReviews: total,
-                    ratingBreakdown: breakdown
+                    averageRating: userData.avg_rating || 0,
+                    totalReviews: userData.review_count || 0,
+                    ratingBreakdown: userData.rating_breakdown || {
+                        5: 0,
+                        4: 0,
+                        3: 0,
+                        2: 0,
+                        1: 0,
+                    },
                 });
-
-                setLoading(false);
             } catch (error) {
-                console.error('Error fetching reviews:', error);
+                console.error('Error fetching user data:', error);
+            } finally {
                 setLoading(false);
             }
         };
 
-        fetchUserReviews();
+        fetchData();
     }, [userId]);
 
     const renderStars = (rating) => {
@@ -109,14 +75,16 @@ export default function ReviewsPage() {
         return date.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
         });
     };
 
     if (loading) {
         return (
             <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
-                <div className="text-emerald-600 text-xl">Loading reviews...</div>
+                <div className="text-emerald-600 text-xl">
+                    Loading reviews...
+                </div>
             </div>
         );
     }
@@ -139,17 +107,22 @@ export default function ReviewsPage() {
                             <h1 className="text-3xl sm:text-4xl font-bold mb-1">
                                 {userInfo?.first_name} {userInfo?.last_name}
                             </h1>
-                            <p className="text-emerald-100">{userInfo?.email}</p>
+                            <p className="text-emerald-100">
+                                {userInfo?.email}
+                            </p>
                         </div>
                     </div>
 
                     <div className="flex flex-wrap gap-6 items-center">
                         <div className="flex items-center gap-3">
                             {renderStars(Math.round(stats.averageRating))}
-                            <span className="text-2xl font-bold">{stats.averageRating}</span>
+                            <span className="text-2xl font-bold">
+                                {stats.averageRating}
+                            </span>
                         </div>
                         <div className="text-emerald-100">
-                            {stats.totalReviews} {stats.totalReviews === 1 ? 'Review' : 'Reviews'}
+                            {stats.totalReviews}{' '}
+                            {stats.totalReviews === 1 ? 'Review' : 'Reviews'}
                         </div>
                     </div>
                 </div>
@@ -161,25 +134,34 @@ export default function ReviewsPage() {
                     <div className="grid lg:grid-cols-3 gap-8">
                         {/* Rating Breakdown */}
                         <div className="lg:col-span-1">
-                            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-6">
+                            <div className="bg-white rounded-2xl shadow-lg p-6 top-6">
                                 <h3 className="text-xl font-bold text-gray-900 mb-6">
                                     Rating Breakdown
                                 </h3>
                                 <div className="space-y-3">
                                     {[5, 4, 3, 2, 1].map((rating) => {
-                                        const count = stats.ratingBreakdown[rating];
-                                        const percentage = stats.totalReviews > 0
-                                            ? (count / stats.totalReviews) * 100
-                                            : 0;
+                                        const count =
+                                            stats.ratingBreakdown[rating];
+                                        const percentage =
+                                            stats.totalReviews > 0
+                                                ? (count / stats.totalReviews) *
+                                                  100
+                                                : 0;
                                         return (
-                                            <div key={rating} className="flex items-center gap-3">
+                                            <div
+                                                key={rating}
+                                                className="flex items-center gap-3"
+                                            >
                                                 <span className="text-sm font-medium text-gray-700 w-12">
-                                                    {rating} <Star className="w-3 h-3 inline fill-amber-400 text-amber-400" />
+                                                    {rating}{' '}
+                                                    <Star className="w-3 h-3 inline fill-amber-400 text-amber-400" />
                                                 </span>
                                                 <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
                                                     <div
                                                         className="h-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all"
-                                                        style={{ width: `${percentage}%` }}
+                                                        style={{
+                                                            width: `${percentage}%`,
+                                                        }}
                                                     ></div>
                                                 </div>
                                                 <span className="text-sm text-gray-600 w-8">
@@ -210,16 +192,30 @@ export default function ReviewsPage() {
                                         key={review.review_id}
                                         className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow"
                                     >
+                                        {/* Reviewer Info & Rating */}
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex items-center gap-3">
+                                                {/* ... (Reviewer Avatar) ... */}
                                                 <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center text-emerald-700 font-bold">
-                                                    {review.reviewer.first_name[0]}
-                                                    {review.reviewer.last_name[0]}
+                                                    {
+                                                        review.reviewer
+                                                            .first_name[0]
+                                                    }
+                                                    {
+                                                        review.reviewer
+                                                            .last_name[0]
+                                                    }
                                                 </div>
                                                 <div>
                                                     <h4 className="font-bold text-gray-900">
-                                                        {review.reviewer.first_name}{' '}
-                                                        {review.reviewer.last_name}
+                                                        {
+                                                            review.reviewer
+                                                                .first_name
+                                                        }{' '}
+                                                        {
+                                                            review.reviewer
+                                                                .last_name
+                                                        }
                                                     </h4>
                                                     <p className="text-sm text-gray-500">
                                                         {review.reviewer.email}
@@ -229,12 +225,41 @@ export default function ReviewsPage() {
                                             {renderStars(review.rating)}
                                         </div>
 
+                                        {/* Listing Info */}
+                                        <Link
+                                            to={`/listing/${review.listing.listing_id}`}
+                                            className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors my-4"
+                                        >
+                                            <div className="w-10 h-10 bg-gray-200 rounded-full flex-shrink-0 overflow-hidden">
+                                                <img
+                                                    src={
+                                                        review.listing
+                                                            .cover_image
+                                                            .image ||
+                                                        '/img/placeholder.png'
+                                                    }
+                                                    alt={review.listing.title}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-gray-500">
+                                                    Reviewed Listing:
+                                                </p>
+                                                <p className="text-sm font-semibold text-gray-800">
+                                                    {review.listing.title}
+                                                </p>
+                                            </div>
+                                        </Link>
+
+                                        {/* Review Comment */}
                                         {review.comment && (
                                             <p className="text-gray-700 mb-4 leading-relaxed">
                                                 {review.comment}
                                             </p>
                                         )}
 
+                                        {/* Date */}
                                         <div className="flex items-center gap-2 text-sm text-gray-500">
                                             <Calendar className="w-4 h-4" />
                                             {formatDate(review.created_at)}

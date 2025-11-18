@@ -1,23 +1,17 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+import { fetchWithAuth } from './auth.js';
+
 export async function fetchReviews(userId) {
-    const token = localStorage.getItem('django_access_token');
+    const url = `${BASE_URL}/api/users/${userId}/reviews/`;
 
-    if (!token) {
-        throw new Error('Unauthorized');
-    }
+    return await fetchWithAuth(url, { method: 'GET' });
+}
 
-    const response = await fetch(`${BASE_URL}/api/reviews/${userId}/`, {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${token}` },
-    });
+export async function fetchUserProfile(userId) {
+    const url = `${BASE_URL}/api/users/${userId}/`;
 
-    if (!response.ok) {
-        throw new Error(`Failed to fetch user reviews: ${response.status}`);
-    }
-
-
-    return await response.json();
+    return await fetchWithAuth(url, { method: 'GET' });
 }
 
 export async function createReviews(reviewData) {
@@ -31,14 +25,14 @@ export async function createReviews(reviewData) {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'},
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify(reviewData),
     });
 
     if (!response.ok) {
         throw new Error(`Failed to create review: ${response.status}`);
     }
-
 
     return await response.json();
 }

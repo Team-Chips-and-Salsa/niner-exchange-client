@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMemo } from 'react';
-import { DollarSign, User, MessageCircle, Pen } from 'lucide-react';
+import { DollarSign, User, MessageCircle, Pen, Flag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -79,12 +79,18 @@ export default function PriceCard({ listing, formatDate }) {
                         campus. Never share personal financial information.
                     </p>
                 </div>
-                {(listing.seller.id == auth.currentUser.id) && (
-                    <button type='button' onClick={() => navigate(`/listing/edit/${listing.listing_id}`)} className="w-1/3 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2">
-                        <Pen className="w-6 h-6 text-emerald-600" />
-                        <span>Edit</span>
+                <div className='flex flex-row space-x-3'>
+                    {(listing.seller.id == auth.currentUser.id) && (
+                        <button type='button' onClick={() => navigate(`/listing/edit/${listing.listing_id}`)} className="w-1/3 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2">
+                            <Pen className="w-6 h-6 text-emerald-600" />
+                            <span>Edit</span>
+                        </button>
+                    )}
+                    <button type='button' onClick={() => navigate(`/report/listing/${listing.listing_id}`)} className="w-1/3 h-12 bg-red-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2">
+                        <Flag className="w-6 h-6 text-red-600" />
+                        <span>Report</span>
                     </button>
-                )}
+                </div>
             </div>
         </div>
     );

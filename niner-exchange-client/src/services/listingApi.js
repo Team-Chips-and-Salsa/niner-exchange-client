@@ -64,8 +64,6 @@ export async function createListing(formData, endpoint) {
     if (!token) {
         throw new Error("Unauthorized");
     }
-    console.log(formData)
-    console.log(BASE_URL,endpoint)
 
     const response = await fetch(`${BASE_URL}${endpoint}`, {
         headers: {

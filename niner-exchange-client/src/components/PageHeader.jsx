@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-dom';
 import {
     Bell,
     MessageCircle,
@@ -10,7 +10,6 @@ import {
     Briefcase,
     List,
     LogOut,
-    Link,
 } from 'lucide-react';
 import NinerExchangeLogo from '../assets/logoTestNiner.png';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -289,6 +288,7 @@ export default function PageHeader({
 
                                     {/* Menu Links */}
                                     <div className="py-1">
+                                        {console.log('currentUser:', currentUser)}
                                         <Link
                                             to={`/profile/${currentUser?.id}`}
                                             onClick={() =>

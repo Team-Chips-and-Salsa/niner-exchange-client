@@ -12,6 +12,8 @@ import ListingDetailPage from '../pages/ListingDetailPage.jsx';
 import EditListingPage from '../pages/EditListingPage.jsx';
 import VerifyEmailPage from '../pages/VerifyEmailPage.jsx';
 import UserProfilePage from '../pages/UserProfilePage.jsx';
+import AdminPage from '../pages/AdminPage.jsx';
+import CreateReportPage from '../pages/CreateReportPage.jsx';
 
 function RootRedirect() {
     const { currentUser } = useAuth();
@@ -44,6 +46,8 @@ export default function AppRoutes() {
                 <Route path="messages" element={<MessagingPage />} />
                 <Route path="listing/:id" element={<ListingDetailPage />} />
                 <Route path="listing/edit/:id" element={<EditListingPage />} />
+                <Route path="admin" element={<AdminPage />} />
+                <Route path='report/:type/:id' element={<CreateReportPage />} />
             </Route>
 
             {/* Catch-all */}

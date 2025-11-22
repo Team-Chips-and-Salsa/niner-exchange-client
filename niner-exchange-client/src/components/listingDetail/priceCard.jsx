@@ -1,7 +1,8 @@
 import React from 'react';
 import { useMemo } from 'react';
-import { DollarSign, User, MessageCircle, Pen } from 'lucide-react';
+import { DollarSign, User, MessageCircle, Pen, Flag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 import {
     collection,
@@ -20,6 +21,7 @@ export default function PriceCard({ listing, formatDate }) {
     const { currentUser } = useAuth();
 
     const isOwner = currentUser && listing && currentUser.id === listing.seller.id;
+    const auth = useAuth();
 
     const priceUnitLabel = useMemo(() => {
         if (listing.listing_type === 'SERVICE') {
@@ -143,23 +145,31 @@ export default function PriceCard({ listing, formatDate }) {
                     </div>
                 </div>
             </div>
-
             <div className="space-y-3">
-                <button onClick={handleSendMessage}
-                        className="w-full border-2 border-emerald-600 text-emerald-600 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition flex items-center justify-center space-x-2">
-                    <MessageCircle className="w-5 h-5" />
-                    <span>Send Message</span>
-                </button>
+                {(listing.seller.id != auth.currentUser.id) && (
+                    <button className="w-full border-2 border-emerald-600 text-emerald-600 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition flex items-center justify-center space-x-2">
+                        <MessageCircle className="w-5 h-5" />
+                        <span>Send Message</span>
+                    </button>
+                )}
                 <div className="p-4 bg-blue-50 rounded-lg">
                     <p className="text-xs text-blue-800">
                         <strong>Safety Tip:</strong> Meet in a public place on
                         campus. Never share personal financial information.
                     </p>
                 </div>
-                <button type='button' onClick={() => navigate(`/listing/edit/${listing.listing_id}`)} className="w-1/3 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2">
-                    <Pen className="w-6 h-6 text-emerald-600" />
-                    <span>Edit</span>
-                </button>
+                <div className='flex flex-row space-x-3'>
+                    {(listing.seller.id == auth.currentUser.id) && (
+                        <button type='button' onClick={() => navigate(`/listing/edit/${listing.listing_id}`)} className="w-1/3 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2">
+                            <Pen className="w-6 h-6 text-emerald-600" />
+                            <span>Edit</span>
+                        </button>
+                    )}
+                    <button type='button' onClick={() => navigate(`/report/listing/${listing.listing_id}`)} className="w-1/3 h-12 bg-red-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2">
+                        <Flag className="w-6 h-6 text-red-600" />
+                        <span>Report</span>
+                    </button>
+                </div>
             </div>
         </div>
     );

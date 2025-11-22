@@ -49,6 +49,45 @@ export async function fetchUserProfile(userId) {
     }
 }
 
+export async function fetchCurrentListings(userID) {
+    const token = localStorage.getItem('django_access_token');
+
+    if (!token) {
+        throw new Error('Unauthorized ');
+    }
+
+  const response = await fetch(`${BASE_URL}/api/users/current-listings/${userID}/`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`, // JWT or session token
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch purchase history');
+  }
+  return await response.json();
+}
+
+export async function fetchSoldListings(userID) {
+    const token = localStorage.getItem('django_access_token');
+
+    if (!token) {
+        throw new Error('Unauthorized ');
+    }
+
+  const response = await fetch(`${BASE_URL}/api/users/sold-listings/${userID}/`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`, // JWT or session token
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch purchase history');
+  }
+  return await response.json();
+}
 
 export async function fetchPurchaseHistory(userID) {
     const token = localStorage.getItem('django_access_token');
@@ -68,4 +107,28 @@ export async function fetchPurchaseHistory(userID) {
     throw new Error('Failed to fetch purchase history');
   }
   return await response.json();
+}
+
+export async function updateProfile(data) {
+    const token = localStorage.getItem('django_access_token');
+
+    if (!token) {
+        throw new Error('Unauthorized');
+    } 
+
+    const response = await fetch(`${BASE_URL}/api/users/me/update/`, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to update profile');
+    }
+
+    return await response.json();
 }

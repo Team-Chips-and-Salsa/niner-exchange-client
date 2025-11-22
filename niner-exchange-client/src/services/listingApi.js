@@ -145,3 +145,26 @@ export async function submitFullListing(formData, imageFiles) {
     await connectImagesById(data, imageFiles)
     return data;
 }
+
+export async function deleteListing(listingId) {
+    const token = localStorage.getItem('django_access_token');
+
+    if (!token) {
+        throw new Error('Unauthorized');
+    }
+
+    const response = await fetch(`${BASE_URL}/api/listings/${listingId}/delete/`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to delete listing');
+    }
+
+    // DELETE typically returns 204 No Content, so no JSON to parse
+    return true;
+}

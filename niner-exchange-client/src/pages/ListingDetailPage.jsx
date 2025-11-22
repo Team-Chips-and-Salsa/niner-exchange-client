@@ -12,23 +12,32 @@ import PriceCard from '../components/listingDetail/priceCard';
 import ListingImageGallery from '../components/listingDetail/listingImage';
 import DescriptionSection from '../components/listingDetail/descriptionSection';
 import DetailSection from '../components/listingDetail/detailSection';
-import { fetchListingById } from '../services/listingApi';
+import { fetchListingById, } from '../services/listingApi';
+import { useAuth } from '../context/AuthContext';
+import { auth } from '../firebase';
 
 const ListingDetailPage = () => {
     const [listing, setListing] = useState();
     const { id } = useParams();
 
+    const { currentUser: authUser } = useAuth();
+
+    const isOwner =
+        listing &&
+        authUser &&
+        String(authUser.id) === String(listing.seller?.id);
+
     useEffect(() => {
-        console.log("Effect running with id:", id);
+        console.log('Effect running with id:', id);
         if (id) {
             fetchListingById(id)
                 .then((data) => {
-                    console.log("Data received in component:", data);
+                    console.log('Data received in component:', data);
                     setListing(data);
                 })
-                .catch((err) => console.error("Fetch error:", err));
+                .catch((err) => console.error('Fetch error:', err));
         } else {
-            console.warn("No id found in route params!");
+            console.warn('No id found in route params!');
         }
     }, [id]);
 
@@ -36,10 +45,14 @@ const ListingDetailPage = () => {
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     useEffect(() => {
         // Normalize images to an array of URL strings.
-        const normalized = (listing?.images || []).map((item) => {
-            if (!item) return null;
-            return typeof item === 'string' ? item : item.image || item.url || null;
-        }).filter(Boolean);
+        const normalized = (listing?.images || [])
+            .map((item) => {
+                if (!item) return null;
+                return typeof item === 'string'
+                    ? item
+                    : item.image || item.url || null;
+            })
+            .filter(Boolean);
         setImages(normalized);
         setSelectedImageIndex(0);
     }, [listing]);
@@ -105,6 +118,7 @@ const ListingDetailPage = () => {
                             <PriceCard
                                 listing={listing}
                                 formatDate={formatDate}
+                                isOwner={isOwner} // Add this prop
                             />
                         </div>
 
@@ -126,6 +140,7 @@ const ListingDetailPage = () => {
                             <PriceCard
                                 listing={listing}
                                 formatDate={formatDate}
+                                isOwner={isOwner} // Add this prop
                             />
                         </div>
                     </div>

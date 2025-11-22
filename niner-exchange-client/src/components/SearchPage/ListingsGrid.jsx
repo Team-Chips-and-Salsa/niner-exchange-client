@@ -73,26 +73,29 @@ export default function ListingsGrid({ listings, viewMode, categories }) {
                                     </span>
                                 </div>
                             </div>
+                            
 
                             {/* Seller Info */}
+                            <Link to={`/profile/${listing.seller?.id}`} className="block mb-4 group/seller">
                             <div className="flex items-center gap-2 mb-3 text-sm">
-                                <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                                <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-full flex items-center justify-center text-white font-bold text-xs group-hover/seller:from-emerald-500 group-hover/seller:to-emerald-600 transition-all">
                                    {(listing.seller?.first_name?.[0] || '') + (listing.seller?.last_name?.[0] || '')}
                                 </div>
                                 <div>
-                                    <p className="font-medium text-gray-900">
+                                    <p className="font-medium text-gray-900 group-hover/seller:underline">
                                         {`${listing.seller?.first_name || ''} ${listing.seller?.last_name || ''}`}
                                     </p>
                                     <div className="flex items-center gap-1">
                                         <span className="text-amber-500">
                                             ★
                                         </span>
-                                        <span className="text-gray-600 text-xs">
+                                        <span className="text-gray-600 text-xs group-hover/seller:underline">
                                             {listing.seller?.avg_rating || '0 reviews'}
                                         </span>
                                     </div>
                                 </div>
                             </div>
+                            </Link>
 
                             {/* Meta Info */}
                             <div className="space-y-2 text-sm text-gray-600">

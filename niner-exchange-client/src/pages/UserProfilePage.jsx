@@ -12,13 +12,16 @@ import { useParams } from 'react-router-dom';
 import ProfileHeader from '../components/userProfile/profileHeader';
 import ProfilePurchaseBuyerTab from '../components/userProfile/profilePurchaseBuyerTab';
 import ListingsGrid from '../components/SearchPage/ListingsGrid';
-import { fetchUserProfile, fetchPurchaseHistory } from '../services/userApi';
-import { fetchListings } from '../services/listingApi';
+import { fetchUserProfile, fetchCurrentListings, fetchSoldListings, fetchPurchaseHistory } from '../services/userApi';
 import { set } from 'date-fns';
+import { useAuth } from '../context/AuthContext';
 
 const UserProfilePage = () => {
     const { userId } = useParams();
+    const { currentUser: authUser } = useAuth();
     const [activeTab, setActiveTab] = useState('seller');
+    const isOwner = String(authUser?.id) === String(userId);
+    
 
     const [userData, setUserData] = useState(null);
 
@@ -26,6 +29,10 @@ const UserProfilePage = () => {
         ACTIVE: 'ACTIVE',
         SOLD: 'SOLD',
         // REMOVE: "REMOVE", // Only need statuses used for filtering
+    };
+    
+    const handleProfileUpdate = (updatedUser) => {
+        setUserData(updatedUser);
     };
 
     useEffect(() => {
@@ -46,34 +53,42 @@ const UserProfilePage = () => {
 
     const [listingLimit, setListingLimit] = useState(10);
 
+    
     const [currentListings, setCurrentListings] = useState([]);
     const [archivedListings, setArchivedListings] = useState([]);
-
+    
     useEffect(() => {
         if (!userId) return; // Guard clause
 
         const loadListings = async () => {
             try {
-                const allListings = await fetchListings({ userId });
-
-                const current = allListings.filter(
-                    (listing) => listing.status === LISTING_STATUS.ACTIVE,
-                );
-
-                const archived = allListings.filter(
-                    (listing) =>
-                        listing.status === LISTING_STATUS.SOLD ||
-                        listing.status === 'REMOVE', // Assuming 'REMOVE' is also archived
-                );
+                const current = await fetchCurrentListings(userId);
 
                 setCurrentListings(current);
-                setArchivedListings(archived);
+            
             } catch (e) {
                 console.error('Failed to fetch or process listings:', e);
             }
         };
         loadListings();
     }, [userId]);
+
+    useEffect(() => {
+        if (!userId) return; // Guard clause
+
+        const loadListings = async () => {
+            try {
+                const sold = await fetchSoldListings(userId);
+
+                setArchivedListings(sold);
+            
+            } catch (e) {
+                console.error('Failed to fetch or process listings:', e);
+            }
+        };
+        loadListings();
+    }, [userId]);
+
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -214,7 +229,7 @@ const UserProfilePage = () => {
     }, [userId]);
 
     console.log('Purchase history:', history);
-    
+
     if (!userData) {
         return <div>Loading profile...</div>;
     }
@@ -227,8 +242,10 @@ const UserProfilePage = () => {
                     userData={userData}
                     formatDate={formatDate}
                     getRelativeTime={getRelativeTime}
+                    isOwner={isOwner}
+                    onProfileUpdate={handleProfileUpdate}
                 />
-
+                
                 {/* Tabs */}
                 <ProfilePurchaseBuyerTab
                     activeTab={activeTab}

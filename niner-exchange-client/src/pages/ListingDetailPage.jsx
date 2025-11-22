@@ -28,11 +28,9 @@ const ListingDetailPage = () => {
         String(authUser.id) === String(listing.seller?.id);
 
     useEffect(() => {
-        console.log('Effect running with id:', id);
         if (id) {
             fetchListingById(id)
                 .then((data) => {
-                    console.log('Data received in component:', data);
                     setListing(data);
                 })
                 .catch((err) => console.error('Fetch error:', err));
@@ -44,7 +42,6 @@ const ListingDetailPage = () => {
     const [images, setImages] = useState([]);
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     useEffect(() => {
-        // Normalize images to an array of URL strings.
         const normalized = (listing?.images || [])
             .map((item) => {
                 if (!item) return null;
@@ -57,7 +54,6 @@ const ListingDetailPage = () => {
         setSelectedImageIndex(0);
     }, [listing]);
 
-    // Loading guard: only render children when listing is loaded
     if (!listing) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -102,30 +98,24 @@ const ListingDetailPage = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Main Content */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left Column - Images */}
                     <div className="lg:col-span-2">
                         <ListingImageGallery
                             images={images}
                             selectedImage={selectedImageIndex}
                             setSelectedImage={setSelectedImageIndex}
                         />
-                        {console.log('Listing Images:', listing)}
-                        {/* Mobile Price Card - Only visible on mobile */}
                         <div className="lg:hidden mt-6">
                             <PriceCard
                                 listing={listing}
                                 formatDate={formatDate}
-                                isOwner={isOwner} // Add this prop
+                                isOwner={isOwner} 
                             />
                         </div>
 
-                        {/* Description */}
                         <DescriptionSection listing={listing} />
 
-                        {/* Details */}
                         <DetailSection
                             listing={listing}
                             formatDate={formatDate}
@@ -134,13 +124,12 @@ const ListingDetailPage = () => {
                         />
                     </div>
 
-                    {/* Right Column - Sidebar - Hidden on mobile, sticky on desktop */}
                     <div className="hidden lg:block lg:col-span-1">
                         <div>
                             <PriceCard
                                 listing={listing}
                                 formatDate={formatDate}
-                                isOwner={isOwner} // Add this prop
+                                isOwner={isOwner} 
                             />
                         </div>
                     </div>

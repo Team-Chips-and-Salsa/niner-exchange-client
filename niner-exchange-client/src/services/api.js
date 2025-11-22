@@ -1,11 +1,10 @@
 import axios from 'axios';
 
-// Create an axios instance
+// axios instance
 const apiClient = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
 });
 
-// Attach Authorization header from localStorage for each request
 apiClient.interceptors.request.use((config) => {
     const token = localStorage.getItem('django_access_token');
     if (token) {
@@ -30,7 +29,6 @@ export const createTransaction = async ({
     final_price,
 }) => {
 
-    console.log(listing, buyer, seller, meetup_location, final_price)
     const response = await apiClient.post('/api/transactions/', {
         listing,
         buyer,

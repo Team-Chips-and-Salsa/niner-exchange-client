@@ -6,7 +6,6 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
  * @returns {Promise<Object>} User profile data
  */
 export async function fetchUserProfile(userId) {
-    console.log(`[API] 1. Attempting to fetch profile for userId: ${userId}`);
     const token = localStorage.getItem('django_access_token');
 
     if (!token) {
@@ -14,9 +13,7 @@ export async function fetchUserProfile(userId) {
         throw new Error('Unauthorized');
     }
 
-    console.log('[API] 2. Token found. Continuing.');
     const url = `${BASE_URL}/api/users/${userId}/`;
-    console.log(`[API] 3. Fetching from URL: ${url}`);
 
     let response;
     try {
@@ -24,13 +21,10 @@ export async function fetchUserProfile(userId) {
             headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log(`[API] 4. Received response status: ${response.status}`);
 
-        // Read the JSON body once, whether the response is ok or not.
         const responseData = await response.json();
 
         if (!response.ok) {
-            // Check if the API returned a specific error message (e.g., from Django)
             const errorDetail = responseData.detail || response.statusText;
 
             console.error(
@@ -41,11 +35,7 @@ export async function fetchUserProfile(userId) {
             );
         }
 
-        console.log(
-            '[API] 5. SUCCESS: Successfully fetched data:',
-            responseData,
-        );
-        return responseData; // Return the successfully fetched data
+        return responseData; 
     } catch (error) {
         // This catches network errors, JSON parsing errors, or the re-thrown error above.
         // If response is defined, it means the request went out, but something went wrong
@@ -54,7 +44,7 @@ export async function fetchUserProfile(userId) {
             '[API] 6. CRITICAL ERROR: A network, JSON parse, or fetch error occurred:',
             error,
         );
-        throw error; // Re-throw the error for the component to handle
+        throw error; 
     }
 }
 
@@ -70,7 +60,7 @@ export async function fetchCurrentListings(userID) {
         {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${token}`, // JWT or session token
+                Authorization: `Bearer ${token}`, 
                 'Content-Type': 'application/json',
             },
         },
@@ -93,7 +83,7 @@ export async function fetchSoldListings(userID) {
         {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${token}`, // JWT or session token
+                Authorization: `Bearer ${token}`, 
                 'Content-Type': 'application/json',
             },
         },
@@ -116,7 +106,7 @@ export async function fetchPurchaseHistory(userID) {
         {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${token}`, // JWT or session token
+                Authorization: `Bearer ${token}`, 
                 'Content-Type': 'application/json',
             },
         },

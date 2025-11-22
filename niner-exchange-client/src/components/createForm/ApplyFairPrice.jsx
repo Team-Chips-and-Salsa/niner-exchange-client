@@ -12,7 +12,6 @@ export default function ApplyFairPrice({formData, imageFiles, onChange, onBackCl
     const navigate = useNavigate()
     
     useEffect(() => {
-        console.log("fetching price")
         const token = localStorage.getItem('django_access_token');
         if (!token) {
             throw new Error("Unauthorized");
@@ -35,7 +34,6 @@ export default function ApplyFairPrice({formData, imageFiles, onChange, onBackCl
 
             const suggested_price = await response.json();
             setSuggestedPrice(suggested_price);
-            console.log(suggested_price)
         }
         fetchPrice(token, formData)
     }, []);

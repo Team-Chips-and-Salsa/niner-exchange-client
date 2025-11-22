@@ -12,37 +12,34 @@ import {
     addDoc,
     serverTimestamp,
 } from 'firebase/firestore';
-import { useAuth } from '../../context/AuthContext.jsx';
 import { db } from '../../firebase.js';
-
 
 export default function PriceCard({ listing, formatDate }) {
     const navigate = useNavigate();
     const { currentUser } = useAuth();
 
-    const isOwner = currentUser && listing && currentUser.id === listing.seller.id;
+    const isOwner =
+        currentUser && listing && currentUser.id === listing.seller.id;
     const auth = useAuth();
 
     const priceUnitLabel = useMemo(() => {
         if (listing.listing_type === 'SERVICE') {
             if (listing.rate_type === 'HOURLY') {
-                return "/hr";
-            }
-            else if (listing.rate_type === 'PERSON') {
-                return "/person"
-            }
-            else if (listing.rate_type === 'GROUP') {
-                return "/group"
-            }
-            else if (listing.rate_type === 'UNIT') {
-                return "/unit"
+                return '/hr';
+            } else if (listing.rate_type === 'PERSON') {
+                return '/person';
+            } else if (listing.rate_type === 'GROUP') {
+                return '/group';
+            } else if (listing.rate_type === 'UNIT') {
+                return '/unit';
             }
         }
         if (listing.listing_type === 'SUBLEASE') return '/mo';
     }, [listing.listing_type]);
 
-    console.log("Creating conversation with participants:", [
-        currentUser.id, listing.seller.id
+    console.log('Creating conversation with participants:', [
+        currentUser.id,
+        listing.seller.id,
     ]);
 
     const handleSendMessage = async () => {
@@ -61,14 +58,15 @@ export default function PriceCard({ listing, formatDate }) {
 
             const q = query(
                 conversationsRef,
-                where('participants', 'array-contains', currentUser.id)
+                where('participants', 'array-contains', currentUser.id),
             );
 
             const querySnapshot = await getDocs(q);
 
-            const existingConvo = querySnapshot.docs.find(doc =>
-                doc.data().participants.includes(listing.seller.id) &&
-                doc.data().listingId === listing.listing_id
+            const existingConvo = querySnapshot.docs.find(
+                (doc) =>
+                    doc.data().participants.includes(listing.seller.id) &&
+                    doc.data().listingId === listing.listing_id,
             );
 
             // TO DO: Add an id to the convo to take u to that specific convo
@@ -121,11 +119,13 @@ export default function PriceCard({ listing, formatDate }) {
                 <div className="flex items-baseline">
                     <DollarSign className="w-6 h-6 text-emerald-600" />
                     <span className="text-4xl font-bold text-emerald-600">
-                        {listing.price}{priceUnitLabel}
+                        {listing.price}
+                        {priceUnitLabel}
                     </span>
                 </div>
                 <div className="text-sm text-gray-500 mt-1">
-                    Price new: {listing.price_new ? `$${listing.price_new}` : 'N/A'}
+                    Price new:{' '}
+                    {listing.price_new ? `$${listing.price_new}` : 'N/A'}
                 </div>
             </div>
 
@@ -141,13 +141,18 @@ export default function PriceCard({ listing, formatDate }) {
                         <p className="font-medium text-gray-900">
                             {`${listing.seller.first_name} ${listing.seller.last_name}`}
                         </p>
-                        <p className="text-sm text-gray-500">{listing.seller.email}</p>
+                        <p className="text-sm text-gray-500">
+                            {listing.seller.email}
+                        </p>
                     </div>
                 </div>
             </div>
             <div className="space-y-3">
-                {(listing.seller.id != auth.currentUser.id) && (
-                    <button className="w-full border-2 border-emerald-600 text-emerald-600 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition flex items-center justify-center space-x-2">
+                {listing.seller.id != auth.currentUser.id && (
+                    <button
+                        onClick={handleSendMessage}
+                        className="w-full border-2 border-emerald-600 text-emerald-600 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition flex items-center justify-center space-x-2"
+                    >
                         <MessageCircle className="w-5 h-5" />
                         <span>Send Message</span>
                     </button>
@@ -158,14 +163,26 @@ export default function PriceCard({ listing, formatDate }) {
                         campus. Never share personal financial information.
                     </p>
                 </div>
-                <div className='flex flex-row space-x-3'>
-                    {(listing.seller.id == auth.currentUser.id) && (
-                        <button type='button' onClick={() => navigate(`/listing/edit/${listing.listing_id}`)} className="w-1/3 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2">
+                <div className="flex flex-row space-x-3">
+                    {listing.seller.id == auth.currentUser.id && (
+                        <button
+                            type="button"
+                            onClick={() =>
+                                navigate(`/listing/edit/${listing.listing_id}`)
+                            }
+                            className="w-1/3 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2"
+                        >
                             <Pen className="w-6 h-6 text-emerald-600" />
                             <span>Edit</span>
                         </button>
                     )}
-                    <button type='button' onClick={() => navigate(`/report/listing/${listing.listing_id}`)} className="w-1/3 h-12 bg-red-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2">
+                    <button
+                        type="button"
+                        onClick={() =>
+                            navigate(`/report/listing/${listing.listing_id}`)
+                        }
+                        className="w-1/3 h-12 bg-red-100 rounded-lg flex items-center justify-center text-emerald-800 space-x-2"
+                    >
                         <Flag className="w-6 h-6 text-red-600" />
                         <span>Report</span>
                     </button>

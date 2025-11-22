@@ -46,6 +46,8 @@ export default function MessagingPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [conversations, setConversations] = useState([]);
     const [currentMessages, setCurrentMessages] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isCompleting, setIsCompleting] = useState(false);
 
     // Transaction proposal UI state
     const [isProposalOpen, setIsProposalOpen] = useState(false);
@@ -67,7 +69,6 @@ export default function MessagingPage() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // If navigated here with focusList=true, show the conversation list by clearing selection and avoid auto-select.
     useEffect(() => {
         if (location.state?.focusList) {
             setSelectedConversationId(null);
@@ -80,7 +81,7 @@ export default function MessagingPage() {
         if (!db || !currentUser) return;
         const q = query(
             collection(db, 'conversations'),
-            where('participants', 'array-contains', currentUser.uid),
+            where('participants', 'array-contains', currentUser.id),
             orderBy('lastMessageAt', 'desc'),
         );
         const unsub = onSnapshot(q, (snap) => {
@@ -112,7 +113,7 @@ export default function MessagingPage() {
     useEffect(() => {
         if (!db || !selectedConversationId || !currentUser) return;
         const convRef = doc(db, 'conversations', selectedConversationId);
-        updateDoc(convRef, { [`unreadCounts.${currentUser.uid}`]: 0 }).catch(
+        updateDoc(convRef, { [`unreadCounts.${currentUser.id}`]: 0 }).catch(
             () => {},
         );
     }, [selectedConversationId, currentUser, currentMessages.length]);
@@ -130,8 +131,59 @@ export default function MessagingPage() {
         return conversations.find((c) => c.id === selectedConversationId);
     }, [conversations, selectedConversationId]);
 
+    const activeTransaction = useMemo(() => {
+        return [...currentMessages]
+            .reverse()
+            .find(
+                (msg) =>
+                    msg.type === 'TRANSACTION_PROPOSAL' &&
+                    msg.status === 'ACCEPTED',
+            );
+    }, [currentMessages]);
+
+    const isSeller = currentUser?.id === currentConversation?.listingSellerId;
+
+    const canComplete = isSeller && activeTransaction;
+
+    const handleCompleteTransaction = async () => {
+        if (!activeTransaction || isCompleting || !otherParticipant?.uid) {
+            console.error('Cannot complete transaction: Missing data', {
+                activeTransaction,
+                isCompleting,
+                otherParticipant,
+            });
+            alert('Could not complete transaction, user data is missing.');
+            return;
+        }
+
+        setIsCompleting(true);
+        try {
+            await updateTransactionStatus(
+                activeTransaction.transactionUuid,
+                'COMPLETED',
+            );
+
+            const msgRef = doc(
+                db,
+                'conversations',
+                selectedConversationId,
+                'messages',
+                activeTransaction.id,
+            );
+            await updateDoc(msgRef, { status: 'COMPLETED' });
+
+            navigate(
+                `/review-user/${otherParticipant.uid}/${activeTransaction.transactionUuid}`,
+            );
+        } catch (err) {
+            console.error('Failed to complete transaction:', err);
+            alert('Failed to complete transaction. Please try again.');
+        } finally {
+            setIsCompleting(false);
+        }
+    };
     const otherParticipant = useMemo(() => {
-        return getOtherParticipant(currentConversation, currentUser?.uid);
+        return getOtherParticipant(currentConversation, currentUser?.id);
     }, [currentConversation, currentUser]);
 
     const handleSendMessage = async () => {
@@ -143,17 +195,15 @@ export default function MessagingPage() {
         const msgCol = collection(convRef, 'messages');
         const newMsg = {
             text,
-            senderId: currentUser.uid,
+            senderId: currentUser.id,
             createdAt: serverTimestamp(),
         };
         try {
             await addDoc(msgCol, newMsg);
-            // Update conversation preview and time
             const updates = {
                 lastMessage: text,
                 lastMessageAt: serverTimestamp(),
             };
-            // Increment unread count for the other participant
             if (otherParticipant?.uid) {
                 updates[`unreadCounts.${otherParticipant.uid}`] = increment(1);
             }
@@ -193,22 +243,28 @@ export default function MessagingPage() {
         if (!db || !currentUser || !currentConversation || !otherParticipant)
             return;
 
-        // use Firebase UIDs directly for the backend
-        const buyerUuid = currentUser.uid;
-        const sellerUuid = otherParticipant.uid; // first UUID is the other person
+        let finalBuyerId, finalSellerId;
 
-        if (!buyerUuid || !sellerUuid) {
+        if (isSeller) {
+            finalSellerId = currentUser.id;
+            finalBuyerId = otherParticipant.id || otherParticipant.uid;
+        } else {
+            finalBuyerId = currentUser.id;
+            finalSellerId = otherParticipant.id || otherParticipant.uid;
+        }
+
+        if (!finalBuyerId || !finalSellerId) {
             console.error('Missing participant IDs');
             alert('Cannot create transaction: missing participant IDs.');
             return;
         }
 
-        // Create transaction in Django
         let tx;
         try {
             tx = await createTransaction({
-                buyer: buyerUuid,
-                seller: sellerUuid,
+                listing: currentConversation.listingId,
+                buyer: finalBuyerId,
+                seller: finalSellerId,
                 meetup_location,
                 final_price: price,
             });
@@ -246,20 +302,15 @@ export default function MessagingPage() {
             exchangeLat: Number.isFinite(exchangeLat) ? exchangeLat : undefined,
             exchangeLng: Number.isFinite(exchangeLng) ? exchangeLng : undefined,
             status: 'PENDING',
-            senderId: currentUser.uid,
+            senderId: currentUser.id,
             createdAt: serverTimestamp(),
+            listingImage: currentConversation.listingImage,
+            listingTitle: currentConversation.listingTitle,
         };
-        // Include listing fields only if present to avoid undefined values
-        if (currentConversation?.listing) {
-            proposalMsg.listingTitle = currentConversation.listing;
-        }
-        if (currentConversation?.listingId != null) {
-            proposalMsg.listingId = currentConversation.listingId;
-        }
         try {
             await addDoc(msgCol, proposalMsg);
             const updates = {
-                lastMessage: `[Proposal] $${price} at ${zoneName}`,
+                lastMessage: `Proposal: $${price} at ${zoneName}`,
                 lastMessageAt: serverTimestamp(),
             };
             if (otherParticipant?.uid) {
@@ -273,12 +324,15 @@ export default function MessagingPage() {
     };
 
     const handleAcceptProposal = async (msg) => {
+        if (isSubmitting) return;
         if (!db || !selectedConversationId || !msg?.transactionUuid) return;
+        setIsSubmitting(true);
         try {
             await updateTransactionStatus(msg.transactionUuid, 'ACCEPTED');
         } catch (e) {
             console.error('Failed to accept transaction', e);
             alert('Failed to accept transaction.');
+            setIsSubmitting(false);
             return;
         }
         try {
@@ -299,15 +353,19 @@ export default function MessagingPage() {
         } catch (e) {
             console.error('Failed to update Firestore message status', e);
         }
+        setIsSubmitting(false);
     };
 
     const handleRejectProposal = async (msg) => {
+        if (isSubmitting) return;
         if (!db || !selectedConversationId || !msg?.transactionUuid) return;
+        setIsSubmitting(true);
         try {
             await updateTransactionStatus(msg.transactionUuid, 'REJECTED');
         } catch (e) {
             console.error('Failed to reject transaction', e);
             alert('Failed to reject transaction.');
+            setIsSubmitting(false);
             return;
         }
         try {
@@ -327,6 +385,7 @@ export default function MessagingPage() {
         } catch (e) {
             console.error('Failed to update Firestore message status', e);
         }
+        setIsSubmitting(false);
     };
 
     const filteredConversations = useMemo(() => {
@@ -334,7 +393,7 @@ export default function MessagingPage() {
         if (!q) return conversations;
         return conversations.filter((conv) => {
             const otherUid = (conv.participants || []).find(
-                (p) => p !== currentUser?.uid,
+                (p) => p !== currentUser?.id,
             );
             const info = conv.participantInfo?.[otherUid] || {};
             const name = info.name || 'Conversation';
@@ -364,12 +423,16 @@ export default function MessagingPage() {
                             otherParticipant={otherParticipant}
                             currentConversation={currentConversation}
                             onBack={() => setSelectedConversationId(null)}
+                            canComplete={canComplete}
+                            isCompleting={isCompleting}
+                            onCompleteTransaction={handleCompleteTransaction}
                         />
                         <MessagesList
                             messages={currentMessages}
                             currentUser={currentUser}
                             onAcceptProposal={handleAcceptProposal}
                             onRejectProposal={handleRejectProposal}
+                            isSubmitting={isSubmitting}
                         />
                         <MessageInput
                             message={message}

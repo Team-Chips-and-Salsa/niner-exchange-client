@@ -74,7 +74,7 @@ export default function LeftSide() {
             </div>
 
             {/* Carousel */}
-            <div className="relative z-10 max-w-lg mx-auto w-full flex-grow flex items-center">
+            <div className="hidden md:flex relative z-10 max-w-lg mx-auto w-full flex-grow items-center">
                 <div className="bg-white rounded-2xl shadow-lg text-center overflow-hidden w-full">
                     <div className="relative min-h-[320px] sm:min-h-[350px] flex items-center justify-center p-6 sm:p-10">
                         {features.map((feature, index) => {

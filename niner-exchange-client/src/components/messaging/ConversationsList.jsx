@@ -30,18 +30,19 @@ export default function ConversationsList({
             <div className="flex-1 overflow-y-auto">
                 {conversations.map((conv) => {
                     const otherUid = (conv.participants || []).find(
-                        (p) => p !== currentUser?.uid,
+                        (p) => p !== currentUser?.id,
                     );
+                    console.log(conv)
                     const info =
                         conv.participantInfo && otherUid
                             ? conv.participantInfo[otherUid] || {}
                             : {};
-                    const name = info.name || info.username || 'Conversation';
-                    const username = info.username || '';
-                    const avatar = getAvatarInitials(info.avatar || name || '');
+                    const name = info.name + ' - ' + conv.listingTitle  || 'Conversation';
+                    //TO DO: Add user profile pic
+                    const avatar = getAvatarInitials(name || '');
                     const last = conv.lastMessage || '';
                     const time = formatRelativeTime(conv.lastMessageAt);
-                    const unread = conv.unreadCounts?.[currentUser?.uid] || 0;
+                    const unread = conv.unreadCounts?.[currentUser?.id] || 0;
                     const listing = conv.listing || '';
                     const isSelected = selectedConversationId === conv.id;
 
@@ -63,11 +64,6 @@ export default function ConversationsList({
                                             <h3 className="font-semibold text-gray-900 text-sm">
                                                 {name}
                                             </h3>
-                                            {username && (
-                                                <p className="text-xs text-gray-500">
-                                                    {username}
-                                                </p>
-                                            )}
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <span className="text-xs text-gray-500">

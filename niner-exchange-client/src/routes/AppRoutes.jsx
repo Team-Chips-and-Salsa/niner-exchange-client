@@ -12,12 +12,14 @@ import ListingDetailPage from '../pages/ListingDetailPage.jsx';
 import EditListingPage from '../pages/EditListingPage.jsx';
 import VerifyEmailPage from '../pages/VerifyEmailPage.jsx';
 import UserProfilePage from '../pages/UserProfilePage.jsx';
+import ReviewUserPage from '../pages/ReviewUserPage.jsx';
+import ReviewsPage from '../pages/ReviewsPage.jsx';
 import AdminPage from '../pages/AdminPage.jsx';
 import CreateReportPage from '../pages/CreateReportPage.jsx';
 
 function RootRedirect() {
     const { currentUser } = useAuth();
-    const to = currentUser ? '/messages' : '/login';
+    const to = currentUser ? '/home' : '/login';
     return <Navigate to={to} replace />;
 }
 
@@ -44,6 +46,11 @@ export default function AppRoutes() {
                 <Route path="create" element={<CreateListingPage />} />
                 <Route path="profile/:userId" element={<UserProfilePage />} />
                 <Route path="messages" element={<MessagingPage />} />
+                <Route
+                    path="review-user/:revieweeId/:transactionId"
+                    element={<ReviewUserPage />}
+                />
+                <Route path="reviews/:userId" element={<ReviewsPage />} />
                 <Route path="listing/:id" element={<ListingDetailPage />} />
                 <Route path="listing/edit/:id" element={<EditListingPage />} />
                 <Route path="admin" element={<AdminPage />} />

@@ -14,19 +14,12 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-/**
- * Props:
- * - msg: Firestore message doc for proposal
- *   { id, type: 'TRANSACTION_PROPOSAL', transactionUuid, price, exchange_location, exchangeZoneName, exchangeLat?, exchangeLng?, status, senderId, createdAt, listingId?, listingTitle? }
- * - isMe: boolean current user is the sender of the proposal
- * - onAccept: () => void
- * - onReject: () => void
- */
 export default function TransactionRequestCard({
     msg,
     isMe,
     onAccept,
     onReject,
+    isSubmitting,
 }) {
     const statusLc = String(msg.status || 'PENDING').toLowerCase();
     const isPending = statusLc === 'pending';
@@ -56,12 +49,12 @@ export default function TransactionRequestCard({
         : undefined;
 
     return (
-        <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} mb-4`}>
+        <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} mb-4 z-0`}>
             <div
                 className={`max-w-md sm:max-w-lg w-full ${isMe ? 'order-2' : 'order-1'}`}
             >
                 <div
-                    className={`rounded-2xl overflow-hidden shadow-md ${isMe ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-300' : 'bg-white border-2 border-gray-200'}`}
+                    className={`relative rounded-2xl overflow-hidden shadow-md z-0 ${isMe ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-300' : 'bg-white border-2 border-gray-200'}`}
                 >
                     <div
                         className={`px-4 py-3 ${isMe ? 'bg-emerald-600' : 'bg-gray-800'} text-white`}
@@ -94,19 +87,18 @@ export default function TransactionRequestCard({
 
                     <div className="px-4 py-4 space-y-3">
                         {/* Listing block */}
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-center gap-3">
                             <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <span className="text-2xl">📦</span>
+                                <img
+                                    src={msg.listingImage || '/img/placeholder.png'}
+                                    alt="Listing Image"
+                                    className="w-full h-full object-cover rounded-lg"
+                                />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <h4 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                                <h3 className="font-semibold text-gray-900 text-lg sm:text-base truncate">
                                     {msg.listingTitle || 'Listing'}
-                                </h4>
-                                {msg.listingId && (
-                                    <p className="text-xs text-gray-500">
-                                        Listing ID: {msg.listingId}
-                                    </p>
-                                )}
+                                </h3>
                             </div>
                         </div>
 
@@ -134,7 +126,7 @@ export default function TransactionRequestCard({
                         </div>
 
                         {hasCoords && (
-                            <div className="rounded-xl overflow-hidden border border-gray-200">
+                            <div className="relative z-0 rounded-xl overflow-hidden border border-gray-200">
                                 <MapContainer
                                     center={[lat, lng]}
                                     zoom={17}
@@ -189,6 +181,7 @@ export default function TransactionRequestCard({
                         <div className="px-4 pb-4 flex gap-2">
                             <button
                                 onClick={onReject}
+                                disabled={isSubmitting}
                                 className="flex-1 px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
                             >
                                 <X className="w-4 h-4" />
@@ -199,7 +192,7 @@ export default function TransactionRequestCard({
                                 className="flex-1 px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-lg font-medium text-sm transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                             >
                                 <Check className="w-4 h-4" />
-                                Accept
+                                {isSubmitting ? 'Submitting...' : 'Accept'}
                             </button>
                         </div>
                     )}

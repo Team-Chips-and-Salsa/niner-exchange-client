@@ -14,13 +14,24 @@ import {
 } from 'lucide-react';
 import NinerExchangeLogo from '../assets/logoTestNiner.png';
 import { useAuth } from '../context/AuthContext.jsx';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebase.js';
 
-export default function PageHeader({ showListingTypes = true }) {
+export default function PageHeader({
+    showListingTypes = true,
+    notifications,
+    unreadNotifCount,
+    totalUnreadMessages,
+}) {
     const [activeListingType, setActiveListingType] = useState('ALL');
     const [mobileCatsOpen, setMobileCatsOpen] = useState(false);
+
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const [isNotifMenuOpen, setIsNotifMenuOpen] = useState(false);
     const { currentUser, logout } = useAuth();
     const profileMenuRef = useRef(null);
+    const notifMenuRef = useRef(null);
+
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
@@ -44,21 +55,45 @@ export default function PageHeader({ showListingTypes = true }) {
 
     useEffect(() => {
         function handleClickOutside(event) {
-            // If the menu is open and the click is outside the menu's ref
             if (
                 profileMenuRef.current &&
                 !profileMenuRef.current.contains(event.target)
             ) {
                 setIsProfileMenuOpen(false);
             }
+            if (
+                notifMenuRef.current &&
+                !notifMenuRef.current.contains(event.target)
+            ) {
+                setIsNotifMenuOpen(false);
+            }
         }
-        // Add event listener
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
-            // Cleanup
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [profileMenuRef]);
+    }, []);
+
+    const handleBellClick = () => {
+        setIsNotifMenuOpen((prev) => !prev);
+        if (!isNotifMenuOpen && unreadNotifCount > 0) {
+            notifications.forEach((notif) => {
+                if (!notif.is_read) {
+                    const notifRef = doc(db, 'notifications', notif.id);
+                    updateDoc(notifRef, { is_read: true });
+                }
+            });
+        }
+    };
+
+    const handleNotifClick = (notif) => {
+        if (!notif.is_read) {
+            const notifRef = doc(db, 'notifications', notif.id);
+            updateDoc(notifRef, { is_read: true });
+        }
+        setIsNotifMenuOpen(false);
+        navigate(notif.link_to);
+    };
 
     const navigateWithListingType = (type) => {
         if (String(type).toUpperCase() === 'ALL') {
@@ -153,15 +188,58 @@ export default function PageHeader({ showListingTypes = true }) {
                         >
                             Post Listing
                         </button>
+                        <div className="relative" ref={notifMenuRef}>
+                            <button
+                                onClick={handleBellClick}
+                                className="p-2 hover:bg-emerald-700 rounded-lg transition-colors relative"
+                                aria-label="Notifications"
+                            >
+                                <Bell className="w-5 h-5" />
+                                {unreadNotifCount > 0 && (
+                                    <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center font-bold">
+                                        {unreadNotifCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* Notification Dropdown */}
+                            {isNotifMenuOpen && (
+                                <div className="absolute right-0 top-12 w-80 bg-white rounded-lg shadow-xl z-50 text-gray-800 border border-gray-200">
+                                    <div className="p-3 border-b">
+                                        <h3 className="font-semibold">
+                                            Notifications
+                                        </h3>
+                                    </div>
+                                    <div className="py-1 max-h-96 overflow-y-auto">
+                                        {notifications.length > 0 ? (
+                                            notifications.map((notif) => (
+                                                <button
+                                                    key={notif.id}
+                                                    onClick={() =>
+                                                        handleNotifClick(notif)
+                                                    }
+                                                    className={`block w-full text-left px-4 py-3 hover:bg-gray-100 ${
+                                                        !notif.is_read
+                                                            ? 'font-bold'
+                                                            : 'font-normal'
+                                                    }`}
+                                                >
+                                                    <p className="text-sm">
+                                                        {notif.message}
+                                                    </p>
+                                                </button>
+                                            ))
+                                        ) : (
+                                            <p className="p-4 text-sm text-gray-500">
+                                                You have no new notifications.
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         <button
                             className="p-2 hover:bg-emerald-700 rounded-lg transition-colors relative"
-                            aria-label="Notifications"
-                        >
-                            <Bell className="w-5 h-5" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                        </button>
-                        <button
-                            className="p-2 hover:bg-emerald-700 rounded-lg transition-colors"
                             aria-label="Messages"
                             onClick={() =>
                                 navigate('/messages', {
@@ -170,6 +248,11 @@ export default function PageHeader({ showListingTypes = true }) {
                             }
                         >
                             <MessageCircle className="w-5 h-5" />
+                            {totalUnreadMessages > 0 && (
+                                <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center font-bold">
+                                    {totalUnreadMessages}
+                                </span>
+                            )}
                         </button>
                         <div className="relative" ref={profileMenuRef}>
                             {/* This is the button that opens the menu */}

@@ -50,7 +50,10 @@ export default function NinerExchangeAuth() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-950">
             <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-                <LeftSide />
+                {/* LeftSide hidden on mobile */}
+                <div className="hidden md:block">
+                    <LeftSide />
+                </div>
                 <RightSide
                     isLogin={isLogin}
                     setIsLogin={setIsLogin}

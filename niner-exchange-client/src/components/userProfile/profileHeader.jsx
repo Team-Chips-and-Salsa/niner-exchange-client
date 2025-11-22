@@ -3,7 +3,13 @@ import { Package, Calendar, Award, Edit } from 'lucide-react';
 import EditProfileModal from './editProfileModal';
 import { updateProfile } from '../../services/userApi'; // Adjust path as needed
 
-export default function ProfileHeader({ userData, formatDate, getRelativeTime, isOwner, onProfileUpdate }) {
+export default function ProfileHeader({
+    userData,
+    formatDate,
+    getRelativeTime,
+    isOwner,
+    onProfileUpdate,
+}) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const handleSaveProfile = async (formData) => {
@@ -35,44 +41,72 @@ export default function ProfileHeader({ userData, formatDate, getRelativeTime, i
 
                         <div className="flex-1">
                             <h1 className="text-3xl font-bold text-gray-900 mb-1">
-                                {(userData.first_name || "User") + " " + (userData.last_name || "")}
+                                {(userData.first_name || 'User') +
+                                    ' ' +
+                                    (userData.last_name || '')}
                             </h1>
 
-                            <p className="text-gray-600 mb-3">{userData.email}</p>
+                            <p className="text-gray-600 mb-3">
+                                {userData.email}
+                            </p>
 
                             {userData.bio && (
-                                <p className="text-gray-700 mb-4 max-w-2xl">{userData.bio}</p>
+                                <p className="text-gray-700 mb-4 max-w-2xl">
+                                    {userData.bio}
+                                </p>
                             )}
 
                             <div className="flex flex-wrap gap-6 text-sm">
                                 <div className="flex items-center gap-2">
-                                    <Award size={16} className="text-yellow-500" />
+                                    <Award
+                                        size={16}
+                                        className="text-yellow-500"
+                                    />
                                     <span className="text-gray-700">
                                         <span className="font-semibold">
-                                            {(userData.avg_rating ?? 0).toFixed(1)}
+                                            {(userData.avg_rating ?? 0).toFixed(
+                                                1,
+                                            )}
                                         </span>{' '}
-                                        rating ({userData.review_count} reviews)
+                                        rating{' '}
+                                        <a
+                                            className="underline hover:font-bold"
+                                            href={`/reviews/${userData.id}`}
+                                        >
+                                            ({userData.review_count} reviews)
+                                        </a>
                                     </span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Package size={16} className="text-emerald-500" />
+                                    <Package
+                                        size={16}
+                                        className="text-emerald-500"
+                                    />
                                     <span className="text-gray-700">
-                                        <span className="font-semibold">{userData.items_sold_count}</span> items sold
+                                        <span className="font-semibold">
+                                            {userData.items_sold_count}
+                                        </span>{' '}
+                                        items sold
                                     </span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Calendar size={16} className="text-gray-500" />
+                                    <Calendar
+                                        size={16}
+                                        className="text-gray-500"
+                                    />
                                     <span className="text-gray-700">
-                                        Joined {formatDate(userData.date_joined)}
+                                        Joined{' '}
+                                        {formatDate(userData.date_joined)}
                                     </span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
                                     <div
                                         className={`w-2 h-2 rounded-full ${
-                                            userData.status?.toUpperCase() === 'ACTIVE'
+                                            userData.status?.toUpperCase() ===
+                                            'ACTIVE'
                                                 ? 'bg-green-500'
                                                 : 'bg-gray-400'
                                         }`}
@@ -80,8 +114,10 @@ export default function ProfileHeader({ userData, formatDate, getRelativeTime, i
                                     <span className="text-gray-700">
                                         Last Active{' '}
                                         {userData.last_active
-                                            ? getRelativeTime(userData.last_active)
-                                            : "N/A"}
+                                            ? getRelativeTime(
+                                                  userData.last_active,
+                                              )
+                                            : 'N/A'}
                                     </span>
                                 </div>
                             </div>
@@ -90,7 +126,7 @@ export default function ProfileHeader({ userData, formatDate, getRelativeTime, i
 
                     {/* Only show Edit button if viewing own profile */}
                     {isOwner && (
-                        <button 
+                        <button
                             onClick={() => setIsEditModalOpen(true)}
                             className="flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
                         >

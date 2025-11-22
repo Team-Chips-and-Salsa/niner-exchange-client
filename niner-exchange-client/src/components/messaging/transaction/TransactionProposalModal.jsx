@@ -57,10 +57,10 @@ export default function TransactionProposalModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pointer-events-auto">
-            <div className="relative bg-white rounded-2xl w-full max-w-3xl shadow-2xl z-50">
-                <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                    <h2 className="text-xl font-bold text-gray-900">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-0 sm:p-4 pointer-events-auto">
+            <div className="relative bg-white w-full h-full sm:h-auto sm:rounded-2xl sm:max-w-3xl shadow-2xl z-50 flex flex-col">
+                <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900">
                         Propose Meetup
                     </h2>
                     <button
@@ -71,7 +71,7 @@ export default function TransactionProposalModal({
                     </button>
                 </div>
 
-                <div className="p-6 space-y-5">
+                <div className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto flex-1">
                     {/* Price input */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -86,7 +86,7 @@ export default function TransactionProposalModal({
                                 placeholder="0.00"
                                 step="0.01"
                                 min="0"
-                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-base"
                             />
                         </div>
                     </div>
@@ -103,7 +103,7 @@ export default function TransactionProposalModal({
                             locations={locationOptions}
                             selectedId={selectedLocationId}
                             onSelect={(id) => setSelectedLocationId(String(id))}
-                            heightClass="h-80"
+                            heightClass="h-60 sm:h-80"
                         />
                         {selectedZone ? (
                             <div className="mt-3 flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3">
@@ -119,7 +119,7 @@ export default function TransactionProposalModal({
                                     )}
                                 </div>
                                 <button
-                                    className="text-xs text-emerald-700 hover:text-emerald-800 font-medium"
+                                    className="text-xs text-emerald-700 hover:text-emerald-800 font-medium whitespace-nowrap"
                                     onClick={() => setSelectedLocationId('')}
                                 >
                                     Change
@@ -138,22 +138,22 @@ export default function TransactionProposalModal({
                             this transaction request.
                         </p>
                     </div>
+                </div>
 
-                    <div className="flex gap-3 pt-2">
-                        <button
-                            onClick={onClose}
-                            className="flex-1 px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleSubmit}
-                            disabled={!canSubmit}
-                            className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 disabled:from-gray-300 disabled:to-gray-400 text-white rounded-lg font-medium transition-all shadow-md hover:shadow-lg"
-                        >
-                            Send Request
-                        </button>
-                    </div>
+                <div className="p-4 sm:p-6 border-t border-gray-200 sm:border-t-0 flex gap-3 flex-shrink-0 bg-white sm:bg-transparent">
+                    <button
+                        onClick={onClose}
+                        className="flex-1 px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition-colors text-sm sm:text-base"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleSubmit}
+                        disabled={!canSubmit}
+                        className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 disabled:from-gray-300 disabled:to-gray-400 text-white rounded-lg font-medium transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
+                    >
+                        Send Request
+                    </button>
                 </div>
             </div>
         </div>

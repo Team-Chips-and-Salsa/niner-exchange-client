@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 
 import ProfileHeader from '../components/userProfile/profileHeader';
 import ProfilePurchaseBuyerTab from '../components/userProfile/profilePurchaseBuyerTab';
+import NoListingsCard from '../components/userProfile/NoListingsCard';
 import ListingsGrid from '../components/SearchPage/ListingsGrid';
 import {
     fetchUserProfile,
@@ -112,102 +113,6 @@ const UserProfilePage = () => {
         return formatDate(dateString);
     };
 
-    /*
-    const [currentListings, setCurrentListings] = useState([
-        {
-            listing_id: 1,
-            title: 'Calculus Textbook',
-            price: 45.0,
-            images: [{ image: null }],
-            type: 'TEXTBOOK',
-            status: 'ACTIVE',
-            created_at: '2024-11-10T10:30:00Z',
-            condition: 'Like New',
-            seller: userData,
-        },
-        {
-            listing_id: 2,
-            title: 'Blue Diamond Almonds',
-            price: 10.0,
-            images: [{ image: null }],
-            type: 'ITEM',
-            status: 'ACTIVE',
-            created_at: '2024-11-12T14:20:00Z',
-            condition: 'New',
-            seller: userData,
-        },
-        {
-            listing_id: 3,
-            title: 'Desk Lamp',
-            price: 15.0,
-            images: [{ image: null }],
-            type: 'ITEM',
-            status: 'ACTIVE',
-            created_at: '2024-11-08T09:15:00Z',
-            condition: 'Good',
-            seller: userData,
-        },
-        {
-            listing_id: 4,
-            title: 'Chemistry Lab Coat',
-            price: 20.0,
-            images: [{ image: null }],
-            type: 'ITEM',
-            status: 'ACTIVE',
-            created_at: '2024-11-13T16:45:00Z',
-            condition: 'Like New',
-            seller: userData,
-        },
-        {
-            listing_id: 5,
-            title: 'Studio Apartment',
-            price: 850.0,
-            images: [{ image: null }],
-            type: 'SUBLEASE',
-            status: 'ACTIVE',
-            created_at: '2024-11-05T11:00:00Z',
-            details: 'Near Campus',
-            seller: userData,
-        },
-        {
-            listing_id: 6,
-            title: 'Tutoring Services',
-            price: 25.0,
-            images: [{ image: null }],
-            type: 'SERVICE',
-            status: 'ACTIVE',
-            created_at: '2024-11-14T08:30:00Z',
-            details: 'Math & Science',
-            seller: userData,
-        },
-    ]);
-
-    const [archivedListings, setArchivedListings] = useState([
-        {
-            listing_id: 7,
-            title: 'Old Laptop',
-            price: 200.0,
-            images: [{ image: null }],
-            type: 'ITEM',
-            status: 'SOLD',
-            created_at: '2024-10-15T10:30:00Z',
-            condition: 'Fair',
-            seller: userData,
-        },
-        {
-            listing_id: 8,
-            title: 'Biology Book',
-            price: 30.0,
-            images: [{ image: null }],
-            type: 'TEXTBOOK',
-            status: 'SOLD',
-            created_at: '2024-10-20T14:20:00Z',
-            condition: 'Good',
-            seller: userData,
-        },
-    ]);
-    */
-
     console.log('currentListings:', currentListings);
     console.log('archivedListings:', archivedListings);
 
@@ -274,13 +179,17 @@ const UserProfilePage = () => {
                                 </select>
                             </div>
 
-                            <ListingsGrid
-                                listings={currentListings.slice(
-                                    0,
-                                    listingLimit,
-                                )}
-                                viewMode="grid"
-                            />
+                            {currentListings.length > 0 ? (
+                                <ListingsGrid
+                                    listings={currentListings.slice(
+                                        0,
+                                        listingLimit,
+                                    )}
+                                    viewMode="grid"
+                                />
+                            ) : (
+                                <NoListingsCard message="No active listings to display." />
+                            )}
                         </div>
 
                         {/* Archived Listings */}
@@ -302,13 +211,17 @@ const UserProfilePage = () => {
                                 </select>
                             </div>
 
-                            <ListingsGrid
-                                listings={archivedListings.slice(
-                                    0,
-                                    listingLimit,
-                                )}
-                                viewMode="grid"
-                            />
+                            {archivedListings.length > 0 ? (
+                                <ListingsGrid
+                                    listings={archivedListings.slice(
+                                        0,
+                                        listingLimit,
+                                    )}
+                                    viewMode="grid"
+                                />
+                            ) : (
+                                <NoListingsCard message="No sold listings to display." />
+                            )}
                         </div>
                     </div>
                 )}
@@ -333,10 +246,14 @@ const UserProfilePage = () => {
                             </select>
                         </div>
 
-                        <ListingsGrid
-                            listings={history.slice(0, listingLimit)}
-                            viewMode="grid"
-                        />
+                        {history.length > 0 ? (
+                            <ListingsGrid
+                                listings={history.slice(0, listingLimit)}
+                                viewMode="grid"
+                            />
+                        ) : (
+                            <NoListingsCard message="No purchase history found." />
+                        )}
                     </div>
                 )}
             </div>

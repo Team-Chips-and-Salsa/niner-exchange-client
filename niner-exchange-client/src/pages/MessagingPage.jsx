@@ -30,11 +30,13 @@ import MessageInput from '../components/messaging/MessageInput.jsx';
 import EmptyState from '../components/messaging/EmptyState.jsx';
 import { getOtherParticipant } from '../helpers/messaging.js';
 import TransactionProposalModal from '../components/messaging/transaction/TransactionProposalModal.jsx';
+import ConfirmationModal from '../components/common/ConfirmationModal.jsx';
 import {
     getMeetupLocations,
     createTransaction,
     updateTransactionStatus,
 } from '../services/api.js';
+import { fetchListingById } from '../services/listingApi.js';
 
 export default function MessagingPage() {
     const { currentUser } = useAuth();
@@ -48,6 +50,8 @@ export default function MessagingPage() {
     const [currentMessages, setCurrentMessages] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isCompleting, setIsCompleting] = useState(false);
+    const [isListingSold, setIsListingSold] = useState(false);
+    const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
 
     // Transaction proposal UI state
     const [isProposalOpen, setIsProposalOpen] = useState(false);
@@ -137,13 +141,41 @@ export default function MessagingPage() {
             .find(
                 (msg) =>
                     msg.type === 'TRANSACTION_PROPOSAL' &&
-                    msg.status === 'ACCEPTED',
+                    (msg.status === 'ACCEPTED' || msg.status === 'COMPLETED'),
             );
     }, [currentMessages]);
 
+    useEffect(() => {
+        if (!currentConversation?.listingId) return;
+        fetchListingById(currentConversation.listingId)
+            .then((data) => {
+                // Check if listing is sold (status is 'SOLD' or is_sold is true)
+                const sold =
+                    data.status === 'SOLD' ||
+                    data.is_sold === true ||
+                    data.listing_status === 'SOLD';
+                setIsListingSold(!!sold);
+            })
+            .catch((err) =>
+                console.error('Failed to fetch listing status', err),
+            );
+    }, [currentConversation?.listingId]);
+
     const isSeller = currentUser?.id === currentConversation?.listingSellerId;
 
-    const canComplete = isSeller && activeTransaction;
+    const isTransactionCompleted = activeTransaction?.status === 'COMPLETED';
+    const canComplete =
+        isSeller && activeTransaction && !isTransactionCompleted;
+    const isMessagingDisabled = isTransactionCompleted && isListingSold;
+
+    const handleOpenCompletionModal = () => {
+        setIsCompletionModalOpen(true);
+    };
+
+    const handleConfirmCompletion = async () => {
+        setIsCompletionModalOpen(false);
+        await handleCompleteTransaction();
+    };
 
     const handleCompleteTransaction = async () => {
         if (!activeTransaction || isCompleting || !otherParticipant?.uid) {
@@ -187,7 +219,13 @@ export default function MessagingPage() {
     }, [currentConversation, currentUser]);
 
     const handleSendMessage = async () => {
-        if (!message.trim() || !selectedConversationId || !db || !currentUser)
+        if (
+            !message.trim() ||
+            !selectedConversationId ||
+            !db ||
+            !currentUser ||
+            isMessagingDisabled
+        )
             return;
         const text = message.trim();
         setMessage('');
@@ -407,44 +445,71 @@ export default function MessagingPage() {
 
     return (
         <div className="flex-1 bg-gray-50 flex flex-col min-h-0">
-            <div className="flex-1 flex overflow-hidden w-full">
-                <ConversationsList
-                    conversations={filteredConversations}
-                    currentUser={currentUser}
-                    selectedConversationId={selectedConversationId}
-                    onSelect={setSelectedConversationId}
-                    searchQuery={searchQuery}
-                    onSearchChange={setSearchQuery}
-                />
+            <div className="flex-1 flex overflow-hidden w-full relative">
+                {/* 
+                    Mobile behavior: 
+                    - If no conversation selected: Show List, Hide Chat
+                    - If conversation selected: Hide List, Show Chat
+                    
+                    Desktop behavior:
+                    - Always show List
+                    - Always show Chat (or EmptyState)
+                 */}
+                <div
+                    className={`${
+                        !isDesktop && selectedConversationId
+                            ? 'hidden'
+                            : 'flex w-full md:w-auto'
+                    }`}
+                >
+                    <ConversationsList
+                        conversations={filteredConversations}
+                        currentUser={currentUser}
+                        selectedConversationId={selectedConversationId}
+                        onSelect={setSelectedConversationId}
+                        searchQuery={searchQuery}
+                        onSearchChange={setSearchQuery}
+                    />
+                </div>
 
-                {selectedConversationId ? (
-                    <div className="flex-1 flex flex-col bg-white">
-                        <ChatHeader
-                            otherParticipant={otherParticipant}
-                            currentConversation={currentConversation}
-                            onBack={() => setSelectedConversationId(null)}
-                            canComplete={canComplete}
-                            isCompleting={isCompleting}
-                            onCompleteTransaction={handleCompleteTransaction}
-                        />
-                        <MessagesList
-                            messages={currentMessages}
-                            currentUser={currentUser}
-                            onAcceptProposal={handleAcceptProposal}
-                            onRejectProposal={handleRejectProposal}
-                            isSubmitting={isSubmitting}
-                        />
-                        <MessageInput
-                            message={message}
-                            setMessage={setMessage}
-                            onSend={handleSendMessage}
-                            disabled={!db}
-                            onOpenProposal={openProposal}
-                        />
-                    </div>
-                ) : (
-                    <EmptyState />
-                )}
+                <div
+                    className={`${
+                        !isDesktop && !selectedConversationId
+                            ? 'hidden'
+                            : 'flex flex-1'
+                    }`}
+                >
+                    {selectedConversationId ? (
+                        <div className="flex-1 flex flex-col bg-white w-full">
+                            <ChatHeader
+                                otherParticipant={otherParticipant}
+                                currentConversation={currentConversation}
+                                onBack={() => setSelectedConversationId(null)}
+                                canComplete={canComplete}
+                                isCompleting={isCompleting}
+                                onCompleteTransaction={
+                                    handleOpenCompletionModal
+                                }
+                            />
+                            <MessagesList
+                                messages={currentMessages}
+                                currentUser={currentUser}
+                                onAcceptProposal={handleAcceptProposal}
+                                onRejectProposal={handleRejectProposal}
+                                isSubmitting={isSubmitting}
+                            />
+                            <MessageInput
+                                message={message}
+                                setMessage={setMessage}
+                                onSend={handleSendMessage}
+                                disabled={!db || isMessagingDisabled}
+                                onOpenProposal={openProposal}
+                            />
+                        </div>
+                    ) : (
+                        <EmptyState />
+                    )}
+                </div>
             </div>
             {!db && (
                 <div className="p-2 text-center text-sm text-red-600 bg-red-50 border-t border-red-200">
@@ -458,6 +523,16 @@ export default function MessagingPage() {
                 onClose={() => setIsProposalOpen(false)}
                 onSubmit={handleSubmitProposal}
                 locations={meetupLocations}
+            />
+            <ConfirmationModal
+                isOpen={isCompletionModalOpen}
+                onClose={() => setIsCompletionModalOpen(false)}
+                onConfirm={handleConfirmCompletion}
+                title="Complete Transaction?"
+                message="Are you sure you want to mark this transaction as completed? This will mark your item as SOLD and disable further messaging for this conversation."
+                confirmText="Yes, Complete Transaction"
+                isSubmitting={isCompleting}
+                type="warning"
             />
         </div>
     );

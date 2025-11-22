@@ -8,6 +8,7 @@ export default function MessagesList({
     currentUser,
     onAcceptProposal,
     onRejectProposal,
+    isSubmitting,
 }) {
     const bottomRef = useRef(null);
 
@@ -19,7 +20,7 @@ export default function MessagesList({
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-gradient-to-b from-gray-50 to-white">
             <div className="w-full space-y-4">
                 {messages.map((msg) => {
-                    const isMe = msg.senderId === currentUser?.uid;
+                    const isMe = msg.senderId === currentUser?.id;
 
                     if (msg.type === 'TRANSACTION_PROPOSAL') {
                         return (
@@ -29,6 +30,7 @@ export default function MessagesList({
                                 isMe={isMe}
                                 onAccept={() => onAcceptProposal?.(msg)}
                                 onReject={() => onRejectProposal?.(msg)}
+                                isSubmitting={isSubmitting}
                             />
                         );
                     }

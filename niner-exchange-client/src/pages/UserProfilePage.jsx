@@ -12,7 +12,12 @@ import { useParams } from 'react-router-dom';
 import ProfileHeader from '../components/userProfile/profileHeader';
 import ProfilePurchaseBuyerTab from '../components/userProfile/profilePurchaseBuyerTab';
 import ListingsGrid from '../components/SearchPage/ListingsGrid';
-import { fetchUserProfile, fetchCurrentListings, fetchSoldListings, fetchPurchaseHistory } from '../services/userApi';
+import {
+    fetchUserProfile,
+    fetchCurrentListings,
+    fetchSoldListings,
+    fetchPurchaseHistory,
+} from '../services/userApi';
 import { set } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 
@@ -21,7 +26,6 @@ const UserProfilePage = () => {
     const { currentUser: authUser } = useAuth();
     const [activeTab, setActiveTab] = useState('seller');
     const isOwner = String(authUser?.id) === String(userId);
-    
 
     const [userData, setUserData] = useState(null);
 
@@ -30,7 +34,7 @@ const UserProfilePage = () => {
         SOLD: 'SOLD',
         // REMOVE: "REMOVE", // Only need statuses used for filtering
     };
-    
+
     const handleProfileUpdate = (updatedUser) => {
         setUserData(updatedUser);
     };
@@ -53,10 +57,9 @@ const UserProfilePage = () => {
 
     const [listingLimit, setListingLimit] = useState(10);
 
-    
     const [currentListings, setCurrentListings] = useState([]);
     const [archivedListings, setArchivedListings] = useState([]);
-    
+
     useEffect(() => {
         if (!userId) return; // Guard clause
 
@@ -65,7 +68,6 @@ const UserProfilePage = () => {
                 const current = await fetchCurrentListings(userId);
 
                 setCurrentListings(current);
-            
             } catch (e) {
                 console.error('Failed to fetch or process listings:', e);
             }
@@ -81,14 +83,12 @@ const UserProfilePage = () => {
                 const sold = await fetchSoldListings(userId);
 
                 setArchivedListings(sold);
-            
             } catch (e) {
                 console.error('Failed to fetch or process listings:', e);
             }
         };
         loadListings();
     }, [userId]);
-
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -245,7 +245,7 @@ const UserProfilePage = () => {
                     isOwner={isOwner}
                     onProfileUpdate={handleProfileUpdate}
                 />
-                
+
                 {/* Tabs */}
                 <ProfilePurchaseBuyerTab
                     activeTab={activeTab}

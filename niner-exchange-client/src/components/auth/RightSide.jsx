@@ -1,6 +1,7 @@
 import React from 'react';
 import LoginForm from './LoginForm.jsx';
 import RegisterForm from './RegisterForm.jsx';
+import MobileHeader from './MobileHeader.jsx';
 
 export default function RightSide({
     isLogin,
@@ -16,7 +17,9 @@ export default function RightSide({
             <div className="absolute bottom-0 left-0 w-72 h-72 bg-emerald-600 rounded-full opacity-10 translate-y-36 -translate-x-36"></div>
 
             <div className="relative z-10 max-w-md mx-auto w-full">
-                <div className="text-center mb-8 sm:mb-10">
+                {/* Mobile Header (Logo + Light Background) */}
+                <MobileHeader />
+                <div className="text-center mb-8 sm:mb-10 md:mt-0">
                     <h2 className="text-3xl sm:text-4xl font-bold text-white mb-2">
                         {isLogin ? 'Welcome Back' : 'Join Us'}
                     </h2>

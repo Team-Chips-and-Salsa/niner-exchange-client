@@ -1,10 +1,13 @@
 import React from 'react';
-import { Phone, Video, Info, MoreVertical, ArrowLeft } from 'lucide-react';
+import { Phone, Video, Info, MoreVertical, ArrowLeft, CheckCircle } from 'lucide-react';
 
 export default function ChatHeader({
     otherParticipant,
     currentConversation,
     onBack,
+    canComplete,
+    isCompleting,
+    onCompleteTransaction,
 }) {
     return (
         <div className="px-4 sm:px-6 py-4 border-b border-gray-200 bg-white">
@@ -23,41 +26,35 @@ export default function ChatHeader({
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <div className="relative">
-                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-full flex items-center justify-center text-white font-bold">
-                            {otherParticipant.avatar}
-                        </div>
+                        <img
+                            src={currentConversation.listingImage}
+                            alt={'Listing Image'}
+                            className="w-10 h-10 rounded-full object-cover"
+                        />
                     </div>
                     <div>
                         <h2 className="font-semibold text-gray-900">
-                            {otherParticipant.name}
+                            {`${otherParticipant.name} - ${currentConversation.listingTitle}`}
                         </h2>
                         <div className="flex items-center gap-2">
-                            {otherParticipant.username && (
-                                <p className="text-xs text-gray-500">
-                                    {otherParticipant.username}
+                                <p className="text-xs text-emerald-700 font-medium">
+                                    {`Asking Price: $${ currentConversation.listingPrice }`}
                                 </p>
-                            )}
-                            {currentConversation?.listing && (
-                                <>
-                                    <span className="text-gray-300">•</span>
-                                    <p className="text-xs text-emerald-700 font-medium">
-                                        {currentConversation?.listing}
-                                    </p>
-                                </>
-                            )}
                         </div>
                     </div>
                 </div>
+
                 <div className="flex items-center gap-2">
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors hidden sm:block">
-                        <Phone className="w-5 h-5 text-gray-600" />
-                    </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors hidden sm:block">
-                        <Video className="w-5 h-5 text-gray-600" />
-                    </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                        <Info className="w-5 h-5 text-gray-600" />
-                    </button>
+                    {canComplete && (
+                        <button
+                            onClick={onCompleteTransaction}
+                            disabled={isCompleting}
+                            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 disabled:bg-gray-400 transition-colors"
+                        >
+                            <CheckCircle className="w-5 h-5" />
+                            {isCompleting ? 'Completing...' : 'Complete Transaction'}
+                        </button>
+                    )}
                     <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                         <MoreVertical className="w-5 h-5 text-gray-600" />
                     </button>

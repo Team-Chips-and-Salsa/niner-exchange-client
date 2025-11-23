@@ -15,7 +15,15 @@ import {
 export default function MainLayout() {
     const location = useLocation();
     const isMessagingPage = location.pathname.startsWith('/messages');
-    const hideFooter = isMessagingPage;
+    let hideFooter = false;
+    if (
+        isMessagingPage ||
+        location.pathname.startsWith('/review-user') ||
+        location.pathname.startsWith('/create') ||
+        location.pathname.startsWith('/listing/edit')
+    ) {
+        hideFooter = true;
+    }
 
     const { currentUser } = useAuth();
     const [notifications, setNotifications] = useState([]);

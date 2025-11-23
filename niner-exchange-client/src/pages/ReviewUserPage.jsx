@@ -4,7 +4,6 @@
  * */
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Star, Send, AlertCircle } from 'lucide-react';
 import { createReviews } from '../services/reviewsApi.js';
 import { fetchTransaction } from '../services/transactionsApi.js';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -16,6 +15,9 @@ import {
     deleteDoc,
 } from 'firebase/firestore';
 import { db } from '../firebase.js';
+import TransactionInfo from '../components/reviews/TransactionInfo';
+import ReviewForm from '../components/reviews/ReviewForm';
+import ReviewGuidelines from '../components/reviews/ReviewGuidelines';
 
 export default function SubmitReviewPage() {
     const { revieweeId, transactionId } = useParams();
@@ -79,6 +81,11 @@ export default function SubmitReviewPage() {
             return;
         }
 
+        if (!comment.trim()) {
+            setError('Please share your experience');
+            return;
+        }
+
         setLoading(true);
         setError('');
 
@@ -114,28 +121,6 @@ export default function SubmitReviewPage() {
         } finally {
             setLoading(false);
         }
-    };
-
-    const renderStar = (index) => {
-        const filled = index <= (hoveredRating || rating);
-        return (
-            <button
-                type="button"
-                key={index}
-                onClick={() => setRating(index)}
-                onMouseEnter={() => setHoveredRating(index)}
-                onMouseLeave={() => setHoveredRating(0)}
-                className="transition-transform hover:scale-110 focus:outline-none"
-            >
-                <Star
-                    className={`w-12 h-12 transition-colors ${
-                        filled
-                            ? 'fill-amber-400 text-amber-400'
-                            : 'text-gray-300 hover:text-amber-200'
-                    }`}
-                />
-            </button>
-        );
     };
 
     if (error) {
@@ -174,125 +159,28 @@ export default function SubmitReviewPage() {
 
             <section className="py-12 sm:py-16">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6">
-                    <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-                        <h2 className="text-xl font-bold text-gray-900 mb-4">
-                            Your Transaction with {reviewee.first_name}
-                        </h2>
-                        <div className="flex items-start gap-4">
-                            <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center text-emerald-700 font-bold text-xl flex-shrink-0">
-                                {reviewee.first_name[0]}
-                                {reviewee.last_name[0]}
-                            </div>
-                            <div className="flex-1">
-                                <h3 className="font-bold text-gray-900 text-lg">
-                                    {reviewee.first_name} {reviewee.last_name}
-                                </h3>
-                                <p className="text-gray-600 text-sm mb-2">
-                                    {reviewee.email}
-                                </p>
-                                <div className="bg-gray-50 rounded-lg p-3 mt-3">
-                                    <p className="text-sm text-gray-600 mb-1">
-                                        Item
-                                    </p>
-                                    <p className="font-semibold text-gray-900">
-                                        {transaction.listing.title}
-                                    </p>
-                                    <p className="text-emerald-600 font-bold mt-1">
-                                        ${transaction.final_price}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {/* Transaction Info Card */}
+                    <TransactionInfo
+                        reviewee={reviewee}
+                        transaction={transaction}
+                    />
 
-                    <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
-                        {error && (
-                            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-                                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                                <p className="text-red-700 text-sm">{error}</p>
-                            </div>
-                        )}
+                    {/* Review Form */}
+                    <ReviewForm
+                        rating={rating}
+                        setRating={setRating}
+                        hoveredRating={hoveredRating}
+                        setHoveredRating={setHoveredRating}
+                        comment={comment}
+                        setComment={setComment}
+                        loading={loading}
+                        error={error}
+                        handleSubmit={handleSubmit}
+                        navigate={navigate}
+                    />
 
-                        <div className="mb-8">
-                            <label className="block text-lg font-bold text-gray-900 mb-4">
-                                How would you rate your experience?
-                                <span className="text-red-500 ml-1">*</span>
-                            </label>
-                            <div className="flex gap-2 justify-center sm:justify-start">
-                                {[1, 2, 3, 4, 5].map((index) =>
-                                    renderStar(index),
-                                )}
-                            </div>
-                            {rating > 0 && (
-                                <p className="mt-3 text-gray-600 text-center sm:text-left">
-                                    {rating === 1 && 'Poor'}
-                                    {rating === 2 && 'Fair'}
-                                    {rating === 3 && 'Good'}
-                                    {rating === 4 && 'Very Good'}
-                                    {rating === 5 && 'Excellent'}
-                                </p>
-                            )}
-                        </div>
-
-                        <div className="mb-8">
-                            <label className="block text-lg font-bold text-gray-900 mb-3">
-                                Share your experience
-                            </label>
-                            <span className="text-red-500 ml-1">*</span>
-                            <textarea
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                                placeholder="Tell us about your transaction with this user. What went well? What could be improved?"
-                                rows="6"
-                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:outline-none transition-colors resize-none text-gray-900 placeholder-gray-400"
-                                maxLength="1000"
-                            />
-                            <p className="text-sm text-gray-500 mt-2 text-right">
-                                {comment.length}/1000 characters
-                            </p>
-                        </div>
-
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <button
-                                type="button"
-                                onClick={handleSubmit}
-                                disabled={loading || rating === 0}
-                                className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-emerald-700 hover:to-emerald-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-                            >
-                                {loading ? (
-                                    <>
-                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                        Submitting...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Send className="w-5 h-5" />
-                                        Submit Review
-                                    </>
-                                )}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => navigate(-1)}
-                                className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-bold text-lg hover:border-gray-400 hover:bg-gray-50 transition-all"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="mt-8 bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-                        <h3 className="font-bold text-emerald-900 mb-3 flex items-center gap-2">
-                            <AlertCircle className="w-5 h-5" />
-                            Review Guidelines
-                        </h3>
-                        <ul className="space-y-2 text-sm text-emerald-800">
-                            <li>• Be honest and fair in your assessment</li>
-                            <li>• Focus on your transaction experience</li>
-                            <li>• Avoid offensive or inappropriate language</li>
-                            <li>• Reviews cannot be edited once submitted</li>
-                        </ul>
-                    </div>
+                    {/* Guidelines */}
+                    <ReviewGuidelines />
                 </div>
             </section>
         </div>

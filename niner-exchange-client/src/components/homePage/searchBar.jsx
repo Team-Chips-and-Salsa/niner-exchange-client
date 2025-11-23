@@ -28,7 +28,7 @@ export default function SearchBar() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <button
-                    className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-8 py-4 rounded-xl font-bold hover:from-emerald-700 hover:to-emerald-800 transition-all"
+                    className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl font-bold hover:from-emerald-700 hover:to-emerald-800 transition-all"
                     onClick={handleSearch}
                 >
                     <span className="hidden md:inline">Search</span>

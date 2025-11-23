@@ -79,9 +79,9 @@ export default function AdminPage() {
             case "listing":
                 return report.content_object.title
             case "customuser":
-                return report.content_object.username
+                return report.content_object.first_name
             case "review":
-                return report.content_object.title
+                return report.content_object.comment
             default:
                 return "UNKOWN REPORT TYPE"
         }

@@ -38,9 +38,7 @@ export default function CreateReportPage() {
                 });
                 break
             case "review":
-                fetchUserProfile(id).then((data) => {
-                    setFormData(data)
-                })
+                setFormData({ review_id: id })
                 break;
             case "customuser":
                 fetchUserProfile(id).then((data) => {
@@ -57,10 +55,10 @@ export default function CreateReportPage() {
                 navigate(`/listing/${formData.listing_id}`)
                 break;
             case "customuser":
-                navigate(`/profile/${formData.id}`)
+                navigate(`/profile/${formData.review_id}`)
                 break;
             case "review":
-                navigate(`/profile/${formData.id}`)
+                navigate(`/home`)
                 break;
             default:
         }

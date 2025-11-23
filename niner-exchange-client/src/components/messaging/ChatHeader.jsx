@@ -95,7 +95,7 @@ export default function ChatHeader({
                     )}
                     <div className="relative" ref={menuRef}>
                         <button
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            //onClick={() => setIsMenuOpen(!isMenuOpen)}
                             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                         >
                             <MoreVertical className="w-5 h-5 text-gray-600" />
@@ -103,13 +103,13 @@ export default function ChatHeader({
 
                         {isMenuOpen && (
                             <div className="absolute right-0 top-12 w-48 bg-white rounded-lg shadow-xl z-50 border border-gray-200 py-1">
-                                <button
+                                {/*<button
                                     onClick={handleReportUser}
                                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 flex items-center gap-2"
                                 >
                                     <Flag className="w-4 h-4" />
                                     Report User
-                                </button>
+                                </button>*/}
                                 {/* <button
                                     onClick={() => {
                                         setIsMenuOpen(false);

@@ -77,6 +77,10 @@ export default function ProfileHeader({
                                         size={16}
                                         className="text-yellow-500"
                                     />
+                                    <a
+                                            className="underline"
+                                            href={`/reviews/${userData.id}`}
+                                        >
                                     <span className="text-gray-700">
                                         <span className="font-semibold">
                                             {(userData.avg_rating ?? 0).toFixed(
@@ -84,13 +88,9 @@ export default function ProfileHeader({
                                             )}
                                         </span>{' '}
                                         rating{' '}
-                                        <a
-                                            className="underline hover:font-bold"
-                                            href={`/reviews/${userData.id}`}
-                                        >
                                             ({userData.review_count} reviews)
-                                        </a>
                                     </span>
+                                    </a>
                                 </div>
 
                                 <div className="flex items-center gap-2">

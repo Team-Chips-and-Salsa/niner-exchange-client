@@ -17,7 +17,7 @@ function getPriceUnitLabel(listing) {
 export default function ListingCard({ listing }) {
     const reviewCount = listing.seller?.avg_rating || 0;
     const reviewText =
-        reviewCount === 0 ? 'No reviews' : `${reviewCount} reviews`;
+        reviewCount === 0 ? 'No reviews' : `${reviewCount} rating`;
 
     return (
         <Link

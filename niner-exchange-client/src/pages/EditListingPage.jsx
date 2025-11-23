@@ -59,6 +59,8 @@ export default function EditListingPage() {
         }
     }, [formData]);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     if (formData == null) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -78,9 +80,18 @@ export default function EditListingPage() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        const updatedListing = await submitFullListing(formData, imageFiles);
-        navigate(`/listing/${updatedListing}`);
+        setIsSubmitting(true);
+        try {
+            const updatedListing = await submitFullListing(
+                formData,
+                imageFiles,
+            );
+            navigate(`/listing/${updatedListing}`);
+        } catch (error) {
+            console.error('Failed to update listing:', error);
+            setIsSubmitting(false);
+            alert('Failed to update listing. Please try again.');
+        }
     };
 
     // https://reacthustle.com/blog/react-preview-images-before-uploading
@@ -211,9 +222,14 @@ export default function EditListingPage() {
                     {categoryForm}
                     <button
                         type="submit"
-                        className="my-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                        disabled={isSubmitting}
+                        className={`my-3 px-4 py-2 text-white rounded transition-colors ${
+                            isSubmitting
+                                ? 'bg-green-400 cursor-not-allowed'
+                                : 'bg-green-600 hover:bg-green-700'
+                        }`}
                     >
-                        Update
+                        {isSubmitting ? 'Updating...' : 'Update'}
                     </button>
                 </form>
             </main>

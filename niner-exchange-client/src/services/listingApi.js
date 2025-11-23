@@ -80,7 +80,9 @@ export async function submitFullListing(formData, imageFiles) {
     } else {
         data = await createListing(cleanFormData, endpoint);
     }
-    await connectImagesById(data, imageFiles);
+    if (imageFiles.length > 0) {
+        await connectImagesById(data, imageFiles);
+    }
     return data;
 }
 

@@ -17,7 +17,7 @@ function getPriceUnitLabel(listing) {
 export default function ListingCard({ listing }) {
     const reviewCount = listing.seller?.avg_rating || 0;
     const reviewText =
-        reviewCount === 0 ? 'No reviews' : `${reviewCount} reviews`;
+        reviewCount === 0 ? 'No reviews' : `${reviewCount} rating`;
 
     return (
         <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden block group relative">
@@ -58,28 +58,39 @@ export default function ListingCard({ listing }) {
                     </span>
                 </div>
 
+
                 {/* Seller Info */}
                 <div className="mb-4 relative z-10">
                     <Link
-                        to={`/profile/${listing.seller?.id}`}
-                        className="block group/seller"
-                    >
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="w-9 h-9 rounded-full bg-emerald-600 flex items-center justify-center text-white text-sm font-medium group-hover/seller:bg-emerald-500">
-                                {(listing.seller?.first_name?.[0] || '') +
-                                    (listing.seller?.last_name?.[0] || '')}
-                            </div>
-                            <div>
-                                <p className="text-sm font-medium text-gray-900 group-hover/seller:underline">
-                                    {`${listing.seller?.first_name || ''} ${listing.seller?.last_name || ''}`}
+                    to={`/profile/${listing.seller?.id}`}
+                    className="block mb-4 group"
+                >
+                    {console.log(listing.seller.profile_image_url)}
+                    <div className="flex items-center space-x-3 mb-3 group/seller">
+                        <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center group-hover/seller:bg-emerald-200">
+                            {listing.seller.profile_image_url ? (
+                                <img
+                                    src={listing.seller.profile_image_url}
+                                    alt="Profile"
+                                    className="w-full h-full rounded-full object-cover group-hover/seller:brightness-90"
+                                />
+                            ) : (
+                                <p className="text-1xl font-bold text-emerald-600">
+                                    {`${listing.seller.first_name?.[0] || ''}${listing.seller.last_name?.[0] || ''}`.toUpperCase()}
                                 </p>
-                                <div className="flex items-center gap-1 text-xs text-gray-500 group-hover/seller:underline">
-                                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                                    <span>{reviewText}</span>
-                                </div>
+                            )}
+                        </div>
+                        <div>
+                            <p className="font-medium text-gray-900 group-hover/seller:underline">
+                                {`${listing.seller.first_name} ${listing.seller.last_name}`}
+                            </p>
+                            <div className="flex items-center gap-1 text-xs text-gray-500 group-hover/seller:underline">
+                                <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                <span>{reviewText}</span>
                             </div>
                         </div>
-                    </Link>
+                    </div>
+                </Link>
                 </div>
 
                 {/* Time Posted */}

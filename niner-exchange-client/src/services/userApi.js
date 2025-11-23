@@ -139,3 +139,25 @@ export async function updateProfile(data) {
 
     return await response.json();
 }
+export async function uploadProfileImage(imageFile) {
+    const token = localStorage.getItem('django_access_token');
+    if (!token) throw new Error('No access token found');
+
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const response = await fetch(`${BASE_URL}/api/users/me/image/`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to upload image');
+    }
+
+    return await response.json();
+}

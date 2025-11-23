@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Package, Calendar, Award, Edit } from 'lucide-react';
+import { Package, Calendar, Award, Edit, Flag } from 'lucide-react';
 import EditProfileModal from './editProfileModal';
-import { updateProfile } from '../../services/userApi'; 
+import { updateProfile } from '../../services/userApi';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProfileHeader({
     userData,
@@ -11,7 +12,7 @@ export default function ProfileHeader({
     onProfileUpdate,
 }) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
+    const navigate = useNavigate();
     const handleSaveProfile = async (formData) => {
         const updatedUser = await updateProfile(formData);
 
@@ -77,20 +78,20 @@ export default function ProfileHeader({
                                         size={16}
                                         className="text-yellow-500"
                                     />
-                                    <span className="text-gray-700">
-                                        <span className="font-semibold">
-                                            {(userData.avg_rating ?? 0).toFixed(
-                                                1,
-                                            )}
-                                        </span>{' '}
-                                        rating{' '}
-                                        <a
-                                            className="underline hover:font-bold"
-                                            href={`/reviews/${userData.id}`}
-                                        >
+                                    <a
+                                        className="underline"
+                                        href={`/reviews/${userData.id}`}
+                                    >
+                                        <span className="text-gray-700">
+                                            <span className="font-semibold">
+                                                {(userData.avg_rating ?? 0).toFixed(
+                                                    1,
+                                                )}
+                                            </span>{' '}
+                                            rating{' '}
                                             ({userData.review_count} reviews)
-                                        </a>
-                                    </span>
+                                        </span>
+                                    </a>
                                 </div>
 
                                 <div className="flex items-center gap-2">
@@ -119,22 +120,35 @@ export default function ProfileHeader({
 
                                 <div className="flex items-center gap-2">
                                     <div
-                                        className={`w-2 h-2 rounded-full ${
-                                            userData.status?.toUpperCase() ===
+                                        className={`w-2 h-2 rounded-full ${userData.status?.toUpperCase() ===
                                             'ACTIVE'
-                                                ? 'bg-green-500'
-                                                : 'bg-gray-400'
-                                        }`}
+                                            ? 'bg-green-500'
+                                            : 'bg-gray-400'
+                                            }`}
                                     ></div>
                                     <span className="text-gray-700">
                                         Last Active{' '}
                                         {userData.last_active
                                             ? getRelativeTime(
-                                                  userData.last_active,
-                                              )
+                                                userData.last_active,
+                                            )
                                             : 'N/A'}
                                     </span>
                                 </div>
+                                {!isOwner && (
+                                    <button
+                                        className={"flex items-center gap-2"}
+                                        type="button"
+                                        onClick={() =>
+                                            navigate(
+                                                `/report/customuser/${userData.id}`,
+                                            )
+                                        }
+                                    >
+                                        <Flag className="w-5 h-5 text-red-600" />
+                                        <span>Report</span>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

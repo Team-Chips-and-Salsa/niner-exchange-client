@@ -15,6 +15,7 @@ import UserProfilePage from '../pages/UserProfilePage.jsx';
 import ReviewUserPage from '../pages/ReviewUserPage.jsx';
 import ReviewsPage from '../pages/ReviewsPage.jsx';
 import AdminPage from '../pages/AdminPage.jsx';
+import ManageUsersPage from '../pages/ManageUsersPage.jsx';
 import CreateReportPage from '../pages/CreateReportPage.jsx';
 
 function RootRedirect() {
@@ -53,6 +54,7 @@ export default function AppRoutes() {
                 <Route path="listing/:id" element={<ListingDetailPage />} />
                 <Route path="listing/edit/:id" element={<EditListingPage />} />
                 <Route path="admin" element={<AdminPage />} />
+                <Route path="admin/users" element={<ManageUsersPage />} />
                 <Route path='report/:type/:id' element={<CreateReportPage />} />
             </Route>
 

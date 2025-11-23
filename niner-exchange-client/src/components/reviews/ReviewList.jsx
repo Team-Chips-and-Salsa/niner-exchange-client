@@ -7,7 +7,7 @@ export default function ReviewList({ reviews, renderStars, formatDate }) {
 
     const handleReport = (reviewerId) => {
         if (reviewerId) {
-            navigate(`/report/user/${reviewerId}`);
+            navigate(`/report/review/${reviewerId}`);
         }
     };
 
@@ -33,7 +33,8 @@ export default function ReviewList({ reviews, renderStars, formatDate }) {
                     className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow relative"
                 >
                     <button
-                        onClick={() => handleReport(review.reviewer.id)}
+                        type='button'
+                        onClick={() => handleReport(review.review_id)}
                         className="absolute top-6 right-6 p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all"
                         title="Report User"
                     >

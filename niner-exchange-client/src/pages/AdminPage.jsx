@@ -113,12 +113,12 @@ export default function AdminPage() {
 
     function getReportLabel(report) {
         switch (contentTypeMapReversed[report.content_type]) {
-            case 'listing':
-                return report.content_object.title;
-            case 'user':
-                return report.content_object.username;
-            case 'review':
-                return report.content_object.title;
+            case "listing":
+                return report.content_object.title
+            case "customuser":
+                return report.content_object.first_name
+            case "review":
+                return report.content_object.comment
             default:
                 return 'UNKOWN REPORT TYPE';
         }
@@ -126,12 +126,12 @@ export default function AdminPage() {
 
     function getObjectPath(report) {
         switch (contentTypeMapReversed[report.content_type]) {
-            case 'listing':
-                return '/listing/';
-            case 'user':
-                return '/profile/';
-            case 'review':
-                return '/profile/';
+            case "listing":
+                return "/listing/"
+            case "customuser":
+                return "/profile/"
+            case "review":
+                return "/profile/"
             default:
                 return 'UNKNOWN REPORT TYPE';
         }
@@ -147,17 +147,14 @@ export default function AdminPage() {
         setSelectedReport(null);
     }
 
-    function getReportDescription(report) {
+    function getItemDescription(report) {
         switch (contentTypeMapReversed[report.content_type]) {
-            case 'listing':
-                return (
-                    report.content_object.description ||
-                    'No description available'
-                );
-            case 'user':
-                return report.content_object.bio || 'No bio available';
-            case 'review':
-                return report.content_object.comment || 'No comment available';
+            case "listing":
+                return report.content_object.description || "No description available"
+            case "customuser":
+                return report.content_object.bio || "No bio available"
+            case "review":
+                return report.content_object.comment || "No comment available"
             default:
                 return 'No description available';
         }
@@ -224,7 +221,7 @@ export default function AdminPage() {
                     selectedReport={selectedReport}
                     closeModal={closeModal}
                     getReportLabel={getReportLabel}
-                    getReportDescription={getReportDescription}
+                    getItemDescription={getItemDescription}
                     handleApproval={handleApproval}
                     handleDenial={handleDenial}
                 />

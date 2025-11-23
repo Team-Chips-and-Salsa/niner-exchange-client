@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { X } from 'lucide-react';
 import { fetchListingById } from '../services/listingApi.js';
+import { fetchUserProfile } from "../services/userApi.js";
 import { fetchContentTypes } from "../services/adminApi.js";
 import { createReport } from "../services/adminApi.js";
 
 export default function CreateReportPage() {
-    // We don't want to show the ID for a user though use username
     const { id, type } = useParams();
     const [formData, setFormData] = useState(null)
     const navigate = useNavigate()
@@ -38,12 +38,31 @@ export default function CreateReportPage() {
                 });
                 break
             case "review":
-                break
-            case "user":
+                setFormData({ review_id: id })
+                break;
+            case "customuser":
+                fetchUserProfile(id).then((data) => {
+                    setFormData(data)
+                })
                 break
             default:
         }
     }, [id, type]);
+
+    function navigateToObject() {
+        switch (type) {
+            case "listing":
+                navigate(`/listing/${formData.listing_id}`)
+                break;
+            case "customuser":
+                navigate(`/profile/${formData.review_id}`)
+                break;
+            case "review":
+                navigate(`/home`)
+                break;
+            default:
+        }
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -54,8 +73,7 @@ export default function CreateReportPage() {
         } catch (error) {
             console.error("Report failed to create:", error)
         }
-        // add switch, only works for listings
-        navigate(`/${type}/${formData.listing_id}`)
+        navigateToObject()
     }
 
 
@@ -66,7 +84,7 @@ export default function CreateReportPage() {
                 <form method='POST' onSubmit={handleSubmit} className='shadow rounded-lg max-w-lg w-full *:my-3 p-6 bg-zinc-300 text-gray-600 text-sm'>
                     <div className='flex justify-between'>
                         <h2>Make a Report</h2>
-                        <button type='button' onClick={() => navigate(`/${type}/${formData.listing_id}`)} className='border rounded-full bg-amber-500 p-1'>
+                        <button type='button' onClick={() => navigateToObject()} className='border rounded-full bg-amber-500 p-1'>
                             <X></X>
                         </button>
                     </div>

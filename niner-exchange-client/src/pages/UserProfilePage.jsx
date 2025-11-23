@@ -24,7 +24,7 @@ import { useAuth } from '../context/AuthContext';
 
 const UserProfilePage = () => {
     const { userId } = useParams();
-    const { currentUser: authUser } = useAuth();
+    const { currentUser: authUser, refreshUser } = useAuth();
     const [activeTab, setActiveTab] = useState('seller');
     const isOwner = String(authUser?.id) === String(userId);
 
@@ -36,8 +36,9 @@ const UserProfilePage = () => {
         // REMOVE: "REMOVE", // Only need statuses used for filtering
     };
 
-    const handleProfileUpdate = (updatedUser) => {
+    const handleProfileUpdate = async (updatedUser) => {
         setUserData(updatedUser);
+        await refreshUser();
     };
 
     useEffect(() => {
@@ -60,7 +61,7 @@ const UserProfilePage = () => {
     const [archivedListings, setArchivedListings] = useState([]);
 
     useEffect(() => {
-        if (!userId) return; 
+        if (!userId) return;
 
         const loadListings = async () => {
             try {
@@ -75,7 +76,7 @@ const UserProfilePage = () => {
     }, [userId]);
 
     useEffect(() => {
-        if (!userId) return; 
+        if (!userId) return;
 
         const loadListings = async () => {
             try {

@@ -116,7 +116,7 @@ export default function PageHeader({
                                     Niner Exchange
                                 </h1>
                                 <p className="text-[10px] sm:text-xs text-emerald-100 truncate">
-                                    UNCC Community Platform
+                                    UNC Charlotte Community Platform
                                 </p>
                             </div>
                         </div>

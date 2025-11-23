@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { fetchContentTypes, fetchReports, fetchExchangeZones, approveReport, denyReport } from "../services/adminApi"
-import { Flag, X, Check, ExternalLink } from 'lucide-react'
 import { useNavigate } from "react-router-dom";
-
-// We used AI to style based on the figma design
+import { useAuth } from "../context/AuthContext";
+import AccessDenied from "../components/admin/AccessDenied";
+import AdminFilters from "../components/admin/AdminFilters";
+import ReportsList from "../components/admin/ReportsList";
+import ReportDetailsModal from "../components/admin/ReportDetailsModal";
+import ExchangeZonesModal from "../components/admin/ExchangeZonesModal";
 
 export default function AdminPage() {
     const [contentTypes, setContentTypes] = useState([])
@@ -16,8 +19,14 @@ export default function AdminPage() {
     const [selectedReason, setSelectedReason] = useState("SPAM")
     const [selectedReport, setSelectedReport] = useState(null)
     const [showModal, setShowModal] = useState(false)
+    const [showZonesModal, setShowZonesModal] = useState(false)
+    const [selectedZoneId, setSelectedZoneId] = useState('')
     const navigate = useNavigate()
+    const { currentUser } = useAuth();
 
+    if (!currentUser || currentUser.role !== 'admin') {
+        return <AccessDenied />;
+    }
 
     useEffect(() => {
         fetchContentTypes().then((data) => {
@@ -38,16 +47,19 @@ export default function AdminPage() {
             setContentTypeMapReversed(newMapReversed)
         });
 
+        console.log("Fetching reports")
         fetchReports(contentTypeMap, selectedType, selectedReason, selectedStatus).then((data) => {
             setReports(data);
         });
 
+        console.log("Fetching exchange zones")
         fetchExchangeZones().then((data) => {
             setZones(data);
         });
     }, [selectedType, selectedReason, selectedStatus])
 
     const handleApproval = async (report) => {
+        console.log("Report Approved")
         await approveReport(report)
         setReports(reports.filter((r) => r.object_id != report.object_id))
         setShowModal(false)
@@ -55,6 +67,7 @@ export default function AdminPage() {
     }
 
     const handleDenial = async (report) => {
+        console.log("Report Denied")
         await denyReport(report)
         setReports(reports.filter((r) => r.id != report.id))
         setShowModal(false)
@@ -110,223 +123,67 @@ export default function AdminPage() {
         }
     }
 
+    function openZonesModal() {
+        setShowZonesModal(true)
+    }
+
+    function closeZonesModal() {
+        setShowZonesModal(false)
+        setSelectedZoneId('')
+    }
+
+    function handleSaveZones() {
+        console.log("Saving zones changes")
+        closeZonesModal()
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
             <main className="max-w-7xl mx-auto px-6 py-10">
-
                 <div className="mb-8">
                     <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Portal</h1>
                     <p className="text-gray-600">Manage reports and content moderation</p>
                 </div>
-                
-                <div className="bg-white shadow-lg rounded-xl p-6 mb-6 border border-gray-200">
-                    <div className="flex flex-wrap gap-4">
-                        <div className="flex flex-col">
-                            <label className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Content Type</label>
-                            <select 
-                                name="selectedType" 
-                                id="selectedType" 
-                                onChange={(e) => setSelectedType(e.target.value)}
-                                className="px-4 py-2.5 bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer hover:shadow-md"
-                            >
-                                <option value="ALL">All Types</option>
-                                <option value="LISTING">Listing</option>
-                                <option value="REVIEW">Review</option>
-                                <option value="USER">User</option>
-                                <option value="ZONES">Exchange Zones</option>
-                            </select>
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Report Reason</label>
-                            <select 
-                                name="selectedReason" 
-                                id="selectedReason" 
-                                onChange={(e) => setSelectedReason(e.target.value)}
-                                className="px-4 py-2.5 bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer hover:shadow-md"
-                            >
-                                <option value="SPAM">Spam</option>
-                                <option value="INNAPROPRIATE">Inappropriate</option>
-                                <option value="HARASSMENT">Harassment</option>
-                                <option value="SCAM">Scam</option>
-                                <option value="OTHER">Other</option>
-                            </select>
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Status</label>
-                            <select 
-                                name="selectedStatus" 
-                                id="selectedStatus" 
-                                onChange={(e) => setSelectedStatus(e.target.value)}
-                                className="px-4 py-2.5 bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer hover:shadow-md"
-                            >
-                                <option value="PENDING">Pending</option>
-                                <option value="APPROVED">Approved</option>
-                                <option value="DENIED">Denied</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
 
-                <div className="bg-white shadow-xl rounded-xl overflow-hidden border border-gray-200">
+                <AdminFilters
+                    selectedType={selectedType}
+                    setSelectedType={setSelectedType}
+                    selectedReason={selectedReason}
+                    setSelectedReason={setSelectedReason}
+                    selectedStatus={selectedStatus}
+                    setSelectedStatus={setSelectedStatus}
+                    openZonesModal={openZonesModal}
+                />
 
-                    <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-4 grid grid-cols-[auto_2fr_1fr_1fr_1.5fr] gap-6 items-center">
-                        <div className="w-6"></div>
-                        <div className="text-sm font-bold text-white uppercase tracking-wider">Content</div>
-                        <div className="text-sm font-bold text-white uppercase tracking-wider">Reason</div>
-                        <div className="text-sm font-bold text-white uppercase tracking-wider">Status</div>
-                        <div className="text-sm font-bold text-white uppercase tracking-wider">Created</div>
-                    </div>
-
-                    {selectedType === "ZONES" ? (
-                        <div className="p-12 text-center">
-                            <div className="text-gray-400 text-lg">Zone display coming soon</div>
-                        </div>
-                    ) : (
-                        <div className="divide-y divide-gray-100">
-                            {reports.length === 0 ? (
-                                <div className="p-12 text-center">
-                                    <Flag className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                                    <div className="text-gray-500 text-lg">No reports found</div>
-                                    <div className="text-gray-400 text-sm mt-1">Try adjusting your filters</div>
-                                </div>
-                            ) : (
-                                reports.map((report) => {
-                                    return (
-                                        <div 
-                                            key={report.id} 
-                                            onClick={() => openReportModal(report)}
-                                            className="px-6 py-4 grid grid-cols-[auto_2fr_1fr_1fr_1.5fr] gap-6 items-center hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200 group cursor-pointer"
-                                        >
-                                            <div className="w-6">
-                                                <Flag className="w-5 h-5 text-red-500 group-hover:scale-110 transition-transform" />
-                                            </div>
-                                            
-                                            <div className="flex items-center gap-3">
-                                                <button 
-                                                    type="button" 
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        navigate(`${getObjectPath(report)}${report.object_id}`)
-                                                    }} 
-                                                    className="p-2 hover:bg-indigo-100 rounded-lg transition-all hover:scale-110"
-                                                >
-                                                    <ExternalLink className="w-4 h-4 text-indigo-600" />
-                                                </button>
-                                                <span className="font-medium text-gray-900 truncate">{getReportLabel(report)}</span>
-                                            </div>
-                                            
-                                            <div>
-                                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-800">
-                                                    {report.reason}
-                                                </span>
-                                            </div>
-                                            
-                                            <div>
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                                                    report.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                                                    report.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
-                                                    'bg-red-100 text-red-800'
-                                                }`}>
-                                                    {report.status}
-                                                </span>
-                                            </div>
-                                            
-                                            <div className="text-sm text-gray-600 font-mono">
-                                                {report.created_at}
-                                            </div>
-                                        </div>
-                                    )
-                                })
-                            )}
-                        </div>
-                    )}
-                </div>
+                <ReportsList
+                    reports={reports}
+                    selectedType={selectedType}
+                    openReportModal={openReportModal}
+                    getObjectPath={getObjectPath}
+                    getReportLabel={getReportLabel}
+                    navigate={navigate}
+                />
             </main>
 
             {showModal && selectedReport && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={closeModal}>
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                <ReportDetailsModal
+                    selectedReport={selectedReport}
+                    closeModal={closeModal}
+                    getReportLabel={getReportLabel}
+                    getReportDescription={getReportDescription}
+                    handleApproval={handleApproval}
+                    handleDenial={handleDenial}
+                />
+            )}
 
-                        <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-4 flex justify-between items-center rounded-t-2xl">
-                            <h2 className="text-xl font-bold text-white">Report Details</h2>
-                            <button 
-                                onClick={closeModal}
-                                className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
-
-                        <div className="p-6 space-y-6">
-
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Content Title</label>
-                                    <p className="text-lg font-semibold text-gray-900 mt-1">{getReportLabel(selectedReport)}</p>
-                                </div>
-
-                                <div>
-                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Description</label>
-                                    <p className="text-gray-700 mt-1 bg-gray-50 p-4 rounded-lg border border-gray-200">{getReportDescription(selectedReport)}</p>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Reason</label>
-                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-orange-100 text-orange-800 mt-1">
-                                            {selectedReport.reason}
-                                        </span>
-                                    </div>
-
-                                    <div>
-                                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</label>
-                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold mt-1 ${
-                                            selectedReport.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                                            selectedReport.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
-                                            'bg-red-100 text-red-800'
-                                        }`}>
-                                            {selectedReport.status}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Created At</label>
-                                    <p className="text-gray-700 mt-1 font-mono">{selectedReport.created_at}</p>
-                                </div>
-
-                                <div>
-                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Reporter</label>
-                                    <p className="text-gray-700 mt-1">
-                                        {selectedReport.reporter?.first_name} {selectedReport.reporter?.last_name}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {selectedReport.status === "PENDING" && (
-                                <div className="flex gap-4 pt-4 border-t border-gray-200">
-                                    <button 
-                                        type='button' 
-                                        onClick={() => handleApproval(selectedReport)} 
-                                        className='flex-1 py-3 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-lg transition-all shadow-md hover:shadow-lg hover:scale-105 transform text-white font-semibold flex items-center justify-center gap-2'
-                                    >
-                                        <Check className="w-5 h-5" />
-                                        Approve Report
-                                    </button>
-                                    <button 
-                                        type="button" 
-                                        onClick={() => handleDenial(selectedReport)} 
-                                        className="flex-1 py-3 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-lg transition-all shadow-md hover:shadow-lg hover:scale-105 transform text-white font-semibold flex items-center justify-center gap-2"
-                                    >
-                                        <X className="w-5 h-5" />
-                                        Deny Report
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+            {showZonesModal && (
+                <ExchangeZonesModal
+                    zones={zones}
+                    selectedZoneId={selectedZoneId}
+                    setSelectedZoneId={setSelectedZoneId}
+                    closeZonesModal={closeZonesModal}
+                    handleSaveZones={handleSaveZones}
+                />
             )}
         </div>
     )

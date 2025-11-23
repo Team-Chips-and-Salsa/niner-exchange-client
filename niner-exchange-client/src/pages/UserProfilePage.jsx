@@ -6,6 +6,7 @@ import {
     Edit,
     Package,
     ShoppingBag,
+    Loader2,
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
@@ -130,7 +131,12 @@ const UserProfilePage = () => {
     }, [userId]);
 
     if (!userData) {
-        return <div>Loading profile...</div>;
+        return (
+            <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+                <Loader2 className="w-12 h-12 text-emerald-600 animate-spin mb-4" />
+                <p className="text-gray-500 font-medium">Loading profile...</p>
+            </div>
+        );
     }
 
     return (

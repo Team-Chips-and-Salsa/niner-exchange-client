@@ -143,21 +143,33 @@ export default function PriceCard({ listing, formatDate }) {
                     <h3 className="text-sm font-semibold text-gray-900 mb-3">
                         Seller Information
                     </h3>
-                    <Link to={`/profile/${listing.seller?.id}`} className="block mb-4 group">
-                    {console.log(listing.seller.profile_image_url)}
-                    <div className="flex items-center space-x-3 mb-3">
-                        <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center group-hover:bg-emerald-200">
-                            {listing.seller.profile_image_url ? (
-                                <img
-                                    src={listing.seller.profile_image_url}
-                                    alt="Profile"
-                                    className="w-full h-full rounded-full object-cover"
-                                />
-                            ) : (
-                                <p className="text-1xl font-bold text-emerald-600">
-                                    {`${listing.seller.first_name?.[0] || ''}${listing.seller.last_name?.[0] || ''}`.toUpperCase()}
+                    <Link
+                        to={`/profile/${listing.seller?.id}`}
+                        className="block mb-4 group"
+                    >
+                        {console.log(listing.seller.profile_image_url)}
+                        <div className="flex items-center space-x-3 mb-3">
+                            <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center group-hover:bg-emerald-200">
+                                {listing.seller.profile_image_url ? (
+                                    <img
+                                        src={listing.seller.profile_image_url}
+                                        alt="Profile"
+                                        className="w-full h-full rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <p className="text-1xl font-bold text-emerald-600">
+                                        {`${listing.seller.first_name?.[0] || ''}${listing.seller.last_name?.[0] || ''}`.toUpperCase()}
+                                    </p>
+                                )}
+                            </div>
+                            <div>
+                                <p className="font-medium text-gray-900 group-hover:underline">
+                                    {`${listing.seller.first_name} ${listing.seller.last_name}`}
                                 </p>
-                            )}
+                                <p className="text-sm text-gray-500 group-hover:underline">
+                                    {listing.seller.email}
+                                </p>
+                            </div>
                         </div>
                     </Link>
                 </div>

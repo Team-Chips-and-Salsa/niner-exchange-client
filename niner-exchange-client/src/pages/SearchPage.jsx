@@ -9,6 +9,7 @@ import ListingsGrid from '../components/SearchPage/ListingsGrid.jsx';
 import ResultHeader from '../components/SearchPage/ResultHeader.jsx';
 import FilterSidebar from '../components/SearchPage/filterSidebar/FilterSidebar.jsx';
 import { fetchListings } from '../services/listingApi.js';
+import NoListingsCard from '../components/userProfile/NoListingsCard.jsx';
 
 export default function NinerListingsBrowser() {
     const { search } = useLocation();
@@ -385,12 +386,16 @@ export default function NinerListingsBrowser() {
                             listingTypes={listingTypes}
                             listings={listings}
                         />
-                        <ListingsGrid
-                            listings={currentListings}
-                            viewMode={viewMode}
-                            setViewMode={setViewMode}
-                            listingTypes={listingTypes}
-                        />
+                        {listings.length > 0 ? (
+                            <ListingsGrid
+                                listings={currentListings}
+                                viewMode={viewMode}
+                                setViewMode={setViewMode}
+                                listingTypes={listingTypes}
+                            />
+                        ) : (
+                            <NoListingsCard message="No listings found matching your criteria." />
+                        )}
 
                         {/* Pagination Controls */}
                         {totalPages > 1 && (

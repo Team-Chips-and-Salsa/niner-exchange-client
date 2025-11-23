@@ -2,6 +2,7 @@ import { ChevronRight } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ListingCard from './ListingCard';
+import NoListingsCard from '../userProfile/NoListingsCard';
 
 export default function ListingsSection({ listings, title, viewAllLink }) {
     return (
@@ -26,12 +27,18 @@ export default function ListingsSection({ listings, title, viewAllLink }) {
                 </div>
 
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {listings.map((listing) => (
-                        <ListingCard
-                            key={listing.listing_id}
-                            listing={listing}
-                        />
-                    ))}
+                    {listings.length > 0 ? (
+                        listings.map((listing) => (
+                            <ListingCard
+                                key={listing.listing_id}
+                                listing={listing}
+                            />
+                        ))
+                    ) : (
+                        <div className="col-span-full">
+                            <NoListingsCard message="No listings available in this section yet." />
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

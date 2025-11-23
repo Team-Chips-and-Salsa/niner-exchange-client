@@ -278,6 +278,7 @@ export default function PageHeader({
                                     {/* Menu Header */}
                                     <div className="px-4 py-2 border-b border-gray-100">
                                         <p className="text-sm font-semibold truncate">
+                                            {console.log('currentUser firstname:', currentUser.first_name)}
                                             {currentUser?.first_name}{' '}
                                             {currentUser?.last_name}
                                         </p>

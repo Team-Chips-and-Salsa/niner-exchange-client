@@ -30,23 +30,18 @@ export default function CreateReportPage() {
         });
     }, [])
 
-    // Add fetch for review and user
     useEffect(() => {
         switch (type) {
             case "listing":
-                console.log("fetching listing")
                 fetchListingById(id).then((data) => {
                     setFormData(data);
                 });
                 break
             case "review":
-                console.log("fetching reviews by id")
                 break
             case "user":
-                console.log("fetching reviews by username")
                 break
             default:
-                console.log("Incorrect type")
         }
     }, [id, type]);
 
@@ -71,7 +66,6 @@ export default function CreateReportPage() {
                 <form method='POST' onSubmit={handleSubmit} className='shadow rounded-lg max-w-lg w-full *:my-3 p-6 bg-zinc-300 text-gray-600 text-sm'>
                     <div className='flex justify-between'>
                         <h2>Make a Report</h2>
-                        {/* add switch or method for the id in the url*/}
                         <button type='button' onClick={() => navigate(`/${type}/${formData.listing_id}`)} className='border rounded-full bg-amber-500 p-1'>
                             <X></X>
                         </button>

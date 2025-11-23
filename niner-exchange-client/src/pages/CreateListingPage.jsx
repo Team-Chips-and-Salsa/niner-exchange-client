@@ -105,7 +105,6 @@ export default function CreateListingPage() {
         } else {
             setIsLoading(true)
             const newListing = await submitFullListing(formData, imageFiles);
-            console.log('Listing ID: ' + newListing);
             navigate(`/listing/${newListing}`);
         }
     };
@@ -123,8 +122,7 @@ export default function CreateListingPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-            {/* Remove header and footer */}
-            {/* Header */}
+            
             <main className="flex-1 flex items-center justify-center px-20 py-5">
                 {viewMode === 'form' ? (
                     <form

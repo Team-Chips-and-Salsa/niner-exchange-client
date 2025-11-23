@@ -34,15 +34,14 @@ export default function EditProfileModal({ isOpen, onClose, userData, onSave }) 
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-            {/* Backdrop */}
+
             <div 
                 className="absolute inset-0 bg-black/50" 
                 onClick={onClose}
             />
 
-            {/* Modal */}
             <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
-                {/* Header */}
+
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-gray-900">Edit Profile</h2>
                     <button
@@ -53,17 +52,15 @@ export default function EditProfileModal({ isOpen, onClose, userData, onSave }) 
                     </button>
                 </div>
 
-                {/* Error Message */}
                 {error && (
                     <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
                         {error}
                     </div>
                 )}
 
-                {/* Form */}
                 <form onSubmit={handleSubmit}>
                     <div className="space-y-4">
-                        {/* First Name */}
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 First Name
@@ -78,7 +75,6 @@ export default function EditProfileModal({ isOpen, onClose, userData, onSave }) 
                             />
                         </div>
 
-                        {/* Last Name */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Last Name
@@ -93,7 +89,6 @@ export default function EditProfileModal({ isOpen, onClose, userData, onSave }) 
                             />
                         </div>
 
-                        {/* Bio */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Bio
@@ -109,7 +104,6 @@ export default function EditProfileModal({ isOpen, onClose, userData, onSave }) 
                         </div>
                     </div>
 
-                    {/* Buttons */}
                     <div className="flex gap-3 mt-6">
                         <button
                             type="button"

@@ -12,7 +12,6 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-// Smooth flying animation
 function FlyToSelection({ center, zoom }) {
     const map = useMap();
     useEffect(() => {
@@ -32,7 +31,6 @@ export default function MapLocationPicker({
                                               className = '',
                                               heightClass = 'h-72',
                                           }) {
-    // Prepare the default marker icon
     const defaultIcon = useMemo(
         () =>
             new L.Icon({
@@ -47,7 +45,6 @@ export default function MapLocationPicker({
         []
     );
 
-    // Parse locations safely
     const parsed = useMemo(() => {
         return (locations || [])
             .map((l) => ({
@@ -66,7 +63,7 @@ export default function MapLocationPicker({
 
     const defaultCenter = useMemo(() => {
         if (parsed.length > 0) return [parsed[0].lat, parsed[0].lng];
-        return [35.3075, -80.734]; // UNCC fallback
+        return [35.3075, -80.734];
     }, [parsed]);
 
     const selectedLoc = useMemo(
@@ -85,7 +82,7 @@ export default function MapLocationPicker({
             className={`relative z-0 w-full overflow-hidden rounded-xl border border-gray-200 ${heightClass} ${className}`}
         >
             <MapContainer
-                key={mapKey}          // ← the fix
+                key={mapKey}       
                 center={defaultCenter}
                 zoom={15}
                 scrollWheelZoom={false}

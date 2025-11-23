@@ -16,7 +16,6 @@ export default function EditListingPage() {
     const urls = imageFiles.map((file) => URL.createObjectURL(file));
 
     useEffect(() => {
-        console.log('fetching listing');
         fetchListingById(id).then((data) => {
             setFormData(data);
         });
@@ -96,8 +95,7 @@ export default function EditListingPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-            {/* Remove header and footer */}
-            {/* Header */}
+
             <main className="flex-1 flex items-center justify-center px-20 py-5">
                 <form
                     method="POST"

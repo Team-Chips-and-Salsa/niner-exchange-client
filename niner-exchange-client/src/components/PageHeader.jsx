@@ -110,7 +110,7 @@ export default function PageHeader({
         <header className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white sticky top-0 z-50 shadow-lg">
             <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
                 <div className="flex items-center justify-between gap-3 sm:gap-6">
-                    {/* Logo */}
+
                     <button
                         onClick={() => {
                             navigate('/home');
@@ -135,7 +135,6 @@ export default function PageHeader({
                         </div>
                     </button>
 
-                    {/* Categories Navigation - Center (desktop only) */}
                     {showListingTypes && (
                         <nav className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 justify-center">
                             {listingTypes.map((listingType) => {
@@ -169,7 +168,6 @@ export default function PageHeader({
                         </nav>
                     )}
 
-                    {/* Right Side Actions */}
                     <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
                         {showListingTypes && (
                             <button
@@ -205,7 +203,6 @@ export default function PageHeader({
                                 )}
                             </button>
 
-                            {/* Notification Dropdown */}
                             {isNotifMenuOpen && (
                                 <div className="fixed left-4 right-4 top-16 sm:absolute sm:right-0 sm:top-12 sm:w-80 sm:left-auto bg-white rounded-lg shadow-xl z-50 text-gray-800 border border-gray-200">
                                     <div className="p-3 border-b">
@@ -258,7 +255,7 @@ export default function PageHeader({
                             )}
                         </button>
                         <div className="relative" ref={profileMenuRef}>
-                            {/* This is the button that opens the menu */}
+
                             <button
                                 onClick={() =>
                                     setIsProfileMenuOpen((prev) => !prev)
@@ -279,9 +276,10 @@ export default function PageHeader({
 
                             {isProfileMenuOpen && (
                                 <div className="absolute right-0 top-12 w-56 bg-white rounded-lg shadow-xl py-2 z-50 text-gray-800 border border-gray-200">
-                                    {/* Menu Header */}
+
                                     <div className="px-4 py-2 border-b border-gray-100">
                                         <p className="text-sm font-semibold truncate">
+                                            {console.log('currentUser firstname:', currentUser.first_name)}
                                             {currentUser?.first_name}{' '}
                                             {currentUser?.last_name}
                                         </p>
@@ -290,12 +288,7 @@ export default function PageHeader({
                                         </p>
                                     </div>
 
-                                    {/* Menu Links */}
                                     <div className="py-1">
-                                        {console.log(
-                                            'currentUser:',
-                                            currentUser,
-                                        )}
                                         <Link
                                             to={`/profile/${currentUser?.id}`}
                                             onClick={() =>
@@ -324,7 +317,6 @@ export default function PageHeader({
                     </div>
                 </div>
 
-                {/* Mobile Categories (collapsible) */}
                 {showListingTypes && (
                     <div
                         id="mobile-categories"

@@ -355,7 +355,6 @@ export default function NinerListingsBrowser() {
             />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
                 <div className="flex flex-col lg:flex-row gap-6">
-                    {/* Filter Sidebar */}
                     <FilterSidebar
                         listingType={listingType}
                         isOpen={isFilterOpen}
@@ -366,7 +365,6 @@ export default function NinerListingsBrowser() {
                         onClearFilters={handleClearFilters}
                     />
 
-                    {/* Main Content - Listings */}
                     <main className="flex-1">
                         <ResultHeader
                             selectedListingType={listingType}

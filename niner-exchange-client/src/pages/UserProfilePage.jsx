@@ -41,11 +41,9 @@ const UserProfilePage = () => {
     };
 
     useEffect(() => {
-        // It will not run if userId is undefined
         if (userId) {
             const loadProfile = async () => {
                 try {
-                    // Use your imported, authenticated function
                     const profileData = await fetchUserProfile(userId);
                     setUserData(profileData);
                 } catch (e) {
@@ -62,7 +60,7 @@ const UserProfilePage = () => {
     const [archivedListings, setArchivedListings] = useState([]);
 
     useEffect(() => {
-        if (!userId) return; // Guard clause
+        if (!userId) return; 
 
         const loadListings = async () => {
             try {
@@ -77,7 +75,7 @@ const UserProfilePage = () => {
     }, [userId]);
 
     useEffect(() => {
-        if (!userId) return; // Guard clause
+        if (!userId) return; 
 
         const loadListings = async () => {
             try {
@@ -133,7 +131,6 @@ const UserProfilePage = () => {
         loadListings();
     }, [userId]);
 
-    console.log('Purchase history:', history);
 
     if (!userData) {
         return <div>Loading profile...</div>;
@@ -151,16 +148,13 @@ const UserProfilePage = () => {
                     onProfileUpdate={handleProfileUpdate}
                 />
 
-                {/* Tabs */}
                 <ProfilePurchaseBuyerTab
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
                 />
 
-                {/* Seller Tab Content */}
                 {activeTab === 'seller' && (
                     <div>
-                        {/* Current Listings */}
                         <div className="mb-10">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                                 <h2 className="text-2xl font-bold text-gray-900">
@@ -192,7 +186,6 @@ const UserProfilePage = () => {
                             )}
                         </div>
 
-                        {/* Archived Listings */}
                         <div>
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                                 <h2 className="text-2xl font-bold text-gray-900">
@@ -226,7 +219,6 @@ const UserProfilePage = () => {
                     </div>
                 )}
 
-                {/* Buyer Tab Content */}
                 {activeTab === 'buyer' && (
                     <div className="mb-10">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">

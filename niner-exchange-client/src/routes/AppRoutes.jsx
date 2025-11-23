@@ -33,7 +33,6 @@ export default function AppRoutes() {
                 element={<VerifyEmailPage />}
             />
 
-            {/* Protected app with shared layout */}
             <Route
                 element={
                     <ProtectedRoute>
@@ -57,7 +56,6 @@ export default function AppRoutes() {
                 <Route path='report/:type/:id' element={<CreateReportPage />} />
             </Route>
 
-            {/* Catch-all */}
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );

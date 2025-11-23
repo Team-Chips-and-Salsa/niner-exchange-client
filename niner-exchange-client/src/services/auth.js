@@ -2,7 +2,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 let refreshPromise = null;
 
-// Logs in to Django, gets Django + Firebase tokens
+// gets Django + Firebase tokens
 export async function apiLogin(email, password) {
     const response = await fetch(`${BASE_URL}/api/auth/login/`, {
         method: 'POST',
@@ -16,7 +16,7 @@ export async function apiLogin(email, password) {
     return await response.json();
 }
 
-//Registers with Django, returns a success message
+// registers with Django, returns a success message
 export async function apiRegister(name, email, password) {
     const nameParts = name.split(' ');
     const first_name = nameParts[0];
@@ -29,7 +29,7 @@ export async function apiRegister(name, email, password) {
     });
     if (!response.ok) {
         const err = await response.json();
-        let errorMsg = 'Registration failed. Please try again.'; // Default
+        let errorMsg = 'Registration failed. Please try again.';
 
         if (typeof err === 'object' && err !== null && !Array.isArray(err)) {
             const errorKey = Object.keys(err)[0];
@@ -79,7 +79,7 @@ export async function apiRefreshToken() {
     return refreshPromise;
 }
 
-//Smartly fetches the full Django user profile
+// fetches the full Django user profile
 export async function fetchWithAuth(url, options = {}) {
     let accessToken = localStorage.getItem('django_access_token');
 
@@ -94,7 +94,6 @@ export async function fetchWithAuth(url, options = {}) {
 
     // If it's a 401 (Unauthorized), try to refresh
     if (response.status === 401) {
-        console.log('Access token expired, attempting refresh...');
         try {
             const newAccessToken = await apiRefreshToken();
 
@@ -126,7 +125,7 @@ export async function apiGetMe() {
     });
 }
 
-//Blacklists the Django refresh token
+// blacklists the Django refresh token
 export async function apiLogout(accessToken, refreshToken) {
     if (!accessToken || !refreshToken) return;
     try {

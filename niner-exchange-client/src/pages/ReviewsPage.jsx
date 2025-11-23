@@ -101,16 +101,13 @@ export default function ReviewsPage() {
                 renderStars={renderStars}
             />
 
-            {/* Reviews Section */}
             <section className="py-12 sm:py-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6">
                     <div className="grid lg:grid-cols-3 gap-8">
-                        {/* Rating Breakdown */}
                         <div className="lg:col-span-1">
                             <RatingBreakdown stats={stats} />
                         </div>
 
-                        {/* Reviews List */}
                         <div className="lg:col-span-2 space-y-6">
                             <ReviewList
                                 reviews={reviews}

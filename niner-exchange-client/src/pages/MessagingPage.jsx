@@ -58,7 +58,6 @@ export default function MessagingPage() {
     const [meetupLocations, setMeetupLocations] = useState([]);
     const [loadingLocations, setLoadingLocations] = useState(false);
 
-    // Track viewport to decide desktop vs mobile behavior (Tailwind md breakpoint ~768px)
     const [isDesktop, setIsDesktop] = useState(() => {
         if (typeof window === 'undefined') return true;
         return window.innerWidth >= 768;
@@ -124,7 +123,6 @@ export default function MessagingPage() {
 
     // Auto-select the first conversation only on desktop when list loads.
     useEffect(() => {
-        // If the navigation requested to focus the list, skip auto-select.
         if (location.state?.focusList) return;
         if (isDesktop && !selectedConversationId && conversations.length > 0) {
             setSelectedConversationId(conversations[0].id);
@@ -252,7 +250,6 @@ export default function MessagingPage() {
         }
     };
 
-    // Proposal: open modal and fetch locations if needed
     const openProposal = async () => {
         if (!selectedConversationId || !currentConversation) return;
         if (meetupLocations.length === 0 && !loadingLocations) {
@@ -328,7 +325,6 @@ export default function MessagingPage() {
             return;
         }
 
-        // Post special proposal message to Firestore
         const convRef = doc(db, 'conversations', selectedConversationId);
         const msgCol = collection(convRef, 'messages');
         const proposalMsg = {
@@ -382,7 +378,6 @@ export default function MessagingPage() {
                 msg.id,
             );
             await updateDoc(msgRef, { status: 'ACCEPTED' });
-            // Update conversation preview
             const convRef = doc(db, 'conversations', selectedConversationId);
             await updateDoc(convRef, {
                 lastMessage: 'Meetup Accepted',

@@ -47,7 +47,6 @@ export default function SubmitReviewPage() {
                 const data = await fetchTransaction(transactionId);
                 setTransaction(data);
 
-                console.log(data);
                 if (
                     data.buyer.id === revieweeId &&
                     data.seller.id === currentUser.id
@@ -142,7 +141,6 @@ export default function SubmitReviewPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-            {/* Hero Section */}
             <section className="bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-500 text-white py-12 sm:py-16 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10">
                     <div className="absolute top-0 left-0 w-96 h-96 bg-amber-400 rounded-full -translate-x-48 -translate-y-48"></div>
@@ -159,7 +157,6 @@ export default function SubmitReviewPage() {
                 </div>
             </section>
 
-            {/* Review Form Section */}
             <section className="py-12 sm:py-16">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6">
                     {/* Transaction Info Card */}

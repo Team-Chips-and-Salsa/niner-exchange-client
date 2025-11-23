@@ -62,7 +62,6 @@ export default function HomePage() {
                 viewAllLink="/search?listing_type=SERVICE"
             />
 
-            {/* Mobile Post Button */}
             <button
                 onClick={() => {
                     navigate('/create');

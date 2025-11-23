@@ -41,28 +41,14 @@ export async function denyReport(report) {
     });
 }
 
-export async function createReport(content_type_map, content_type, reason, object_id) {
-    const token = localStorage.getItem('django_access_token');
-
-    if (!token) {
-        throw new Error("Unauthorized");
-    }
+export async function createReport(content_type_map, content_type, reason, description, object_id) {
     content_type = content_type_map[content_type]
-    const response = await fetch(`${BASE_URL}/api/reports/create/`, {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        },
+    const report = await fetchWithAuth(`${BASE_URL}/api/reports/create/`, {
         method: 'POST',
         mode: 'cors',
-        body: JSON.stringify({content_type, reason, object_id}),
+        body: JSON.stringify({content_type, reason, description, object_id}),
     })
 
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-
-    const report = await response.json();
     return report.id;
 }
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, User, ArrowRight } from 'lucide-react';
 
-export default function RegisterForm({ onSubmit }) {
+export default function RegisterForm({ onSubmit, isLoading }) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -63,10 +63,13 @@ export default function RegisterForm({ onSubmit }) {
 
             <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-amber-400 to-amber-500 text-emerald-900 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:from-amber-500 hover:to-amber-600 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-amber-400 to-amber-500 text-emerald-900 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:from-amber-500 hover:to-amber-600 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
             >
-                Create Account
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                {isLoading ? 'Creating Account...' : 'Create Account'}
+                {!isLoading && (
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                )}
             </button>
         </form>
     );

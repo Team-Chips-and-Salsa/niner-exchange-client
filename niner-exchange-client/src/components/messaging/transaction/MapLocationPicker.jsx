@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     MapContainer,
     TileLayer,
@@ -6,6 +6,7 @@ import {
     Popup,
     useMap,
     Circle,
+    useMapEvents,
 } from 'react-leaflet';
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -24,13 +25,26 @@ function FlyToSelection({ center, zoom }) {
     return null;
 }
 
+function LocationSelector({ onLocationSelect }) {
+    useMapEvents({
+        click(e) {
+            if (onLocationSelect) {
+                onLocationSelect(e.latlng.lat, e.latlng.lng);
+            }
+        },
+    });
+    return null;
+}
+
 export default function MapLocationPicker({
-                                              locations = [],
-                                              selectedId,
-                                              onSelect,
-                                              className = '',
-                                              heightClass = 'h-72',
-                                          }) {
+    locations = [],
+    selectedId,
+    onSelect,
+    onLocationSelect,
+    className = '',
+    heightClass = 'h-72',
+    readOnly = true,
+}) {
     const defaultIcon = useMemo(
         () =>
             new L.Icon({
@@ -42,7 +56,7 @@ export default function MapLocationPicker({
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41],
             }),
-        []
+        [],
     );
 
     const parsed = useMemo(() => {
@@ -68,7 +82,7 @@ export default function MapLocationPicker({
 
     const selectedLoc = useMemo(
         () => parsed.find((l) => String(l.id) === String(selectedId)),
-        [parsed, selectedId]
+        [parsed, selectedId],
     );
 
     const selectionCenter = selectedLoc
@@ -82,7 +96,7 @@ export default function MapLocationPicker({
             className={`relative z-0 w-full overflow-hidden rounded-xl border border-gray-200 ${heightClass} ${className}`}
         >
             <MapContainer
-                key={mapKey}       
+                key={mapKey}
                 center={defaultCenter}
                 zoom={15}
                 scrollWheelZoom={false}
@@ -92,6 +106,10 @@ export default function MapLocationPicker({
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+
+                {!readOnly && (
+                    <LocationSelector onLocationSelect={onLocationSelect} />
+                )}
 
                 {selectionCenter && (
                     <FlyToSelection center={selectionCenter} zoom={17} />
@@ -143,7 +161,9 @@ export default function MapLocationPicker({
             </MapContainer>
 
             <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow text-xs font-medium text-gray-700">
-                Tap a pin to choose the exchange zone
+                {readOnly
+                    ? 'Tap a pin to choose the exchange zone'
+                    : 'Click on the map to set location'}
             </div>
         </div>
     );

@@ -12,6 +12,7 @@ export default function NinerExchangeAuth() {
     const [isLogin, setIsLogin] = useState(true);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const { login, register, currentUser } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,11 +27,14 @@ export default function NinerExchangeAuth() {
     // Handle LOGIN submission
     const handleLogin = async ({ email, password }) => {
         setError('');
+        setIsLoading(true);
         try {
             await login(email, password);
         } catch (err) {
             setError('Failed to log in. Please check your credentials.');
             console.error(err);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -38,12 +42,15 @@ export default function NinerExchangeAuth() {
     const handleRegister = async ({ name, email, password }) => {
         setError('');
         setSuccessMessage('');
+        setIsLoading(true);
         try {
             const message = await register(name, email, password);
             setSuccessMessage(message);
             setIsLogin(true);
         } catch (err) {
             setError(err.message || 'Failed to create account.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -60,6 +67,7 @@ export default function NinerExchangeAuth() {
                     onRegisterSubmit={handleRegister}
                     error={error}
                     successMessage={successMessage}
+                    isLoading={isLoading}
                 />
             </div>
         </div>

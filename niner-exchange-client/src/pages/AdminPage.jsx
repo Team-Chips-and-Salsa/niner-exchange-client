@@ -1,78 +1,115 @@
-import { useEffect, useState } from "react";
-import { fetchContentTypes, fetchReports, fetchExchangeZones, approveReport, denyReport } from "../services/adminApi"
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import AccessDenied from "../components/admin/AccessDenied";
-import AdminFilters from "../components/admin/AdminFilters";
-import ReportsList from "../components/admin/ReportsList";
-import ReportDetailsModal from "../components/admin/ReportDetailsModal";
-import ExchangeZonesModal from "../components/admin/ExchangeZonesModal";
+import { useEffect, useState } from 'react';
+import {
+    fetchContentTypes,
+    fetchReports,
+    fetchExchangeZones,
+    approveReport,
+    denyReport,
+    createExchangeZone,
+    updateExchangeZone,
+    deleteExchangeZone,
+} from '../services/adminApi';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import AccessDenied from '../components/admin/AccessDenied';
+import AdminFilters from '../components/admin/AdminFilters';
+import ReportsList from '../components/admin/ReportsList';
+import ReportDetailsModal from '../components/admin/ReportDetailsModal';
+import ExchangeZonesModal from '../components/admin/ExchangeZonesModal';
 
 export default function AdminPage() {
-    const [contentTypes, setContentTypes] = useState([])
-    const [contentTypeMap, setContentTypeMap] = useState({})
-    const [contentTypeMapReversed, setContentTypeMapReversed] = useState({})
-    const [reports, setReports] = useState([])
-    const [zones, setZones] = useState([])
-    const [selectedType, setSelectedType] = useState("ALL")
-    const [selectedStatus, setSelectedStatus] = useState("PENDING")
-    const [selectedReason, setSelectedReason] = useState("SPAM")
-    const [selectedReport, setSelectedReport] = useState(null)
-    const [showModal, setShowModal] = useState(false)
-    const [showZonesModal, setShowZonesModal] = useState(false)
-    const [selectedZoneId, setSelectedZoneId] = useState('')
-    const navigate = useNavigate()
+    const [contentTypes, setContentTypes] = useState([]);
+    const [contentTypeMap, setContentTypeMap] = useState({});
+    const [contentTypeMapReversed, setContentTypeMapReversed] = useState({});
+    const [reports, setReports] = useState([]);
+    const [zones, setZones] = useState([]);
+    const [selectedType, setSelectedType] = useState('ALL');
+    const [selectedStatus, setSelectedStatus] = useState('PENDING');
+    const [selectedReason, setSelectedReason] = useState('SPAM');
+    const [selectedReport, setSelectedReport] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [showZonesModal, setShowZonesModal] = useState(false);
+    const [selectedZoneId, setSelectedZoneId] = useState('');
+    const [contentTypesLoaded, setContentTypesLoaded] = useState(false);
+    const navigate = useNavigate();
     const { currentUser } = useAuth();
+
+    useEffect(() => {
+        if (!currentUser || currentUser.role !== 'admin') return;
+
+        fetchContentTypes()
+            .then((data) => {
+                setContentTypes(data);
+
+                const newMap = {};
+                for (let i = 0; i < data.length; i++) {
+                    newMap[data[i].model] = data[i].id;
+                }
+
+                setContentTypeMap(newMap);
+
+                const newMapReversed = {};
+                for (let i = 0; i < data.length; i++) {
+                    newMapReversed[data[i].id] = data[i].model;
+                }
+
+                setContentTypeMapReversed(newMapReversed);
+            })
+            .finally(() => {
+                setContentTypesLoaded(true);
+            });
+
+        refreshZones();
+    }, [currentUser?.id]);
+
+    useEffect(() => {
+        if (!currentUser || currentUser.role !== 'admin') return;
+        if (!contentTypesLoaded) return;
+
+        console.log('Fetching reports');
+        fetchReports(
+            contentTypeMap,
+            selectedType,
+            selectedReason,
+            selectedStatus,
+        ).then((data) => {
+            setReports(data);
+        });
+    }, [
+        selectedType,
+        selectedReason,
+        selectedStatus,
+        currentUser?.id,
+        contentTypeMap,
+        contentTypesLoaded,
+    ]);
 
     if (!currentUser || currentUser.role !== 'admin') {
         return <AccessDenied />;
     }
 
-    useEffect(() => {
-        fetchContentTypes().then((data) => {
-            setContentTypes(data);
-
-            const newMap = {}
-            for (let i = 0; i < data.length; i++) {
-                newMap[data[i].model] = data[i].id
-            }
-
-            setContentTypeMap(newMap)
-
-            const newMapReversed = {}
-            for (let i = 0; i < data.length; i++) {
-                newMapReversed[data[i].id] = data[i].model
-            }
-
-            setContentTypeMapReversed(newMapReversed)
-        });
-
-        console.log("Fetching reports")
-        fetchReports(contentTypeMap, selectedType, selectedReason, selectedStatus).then((data) => {
-            setReports(data);
-        });
-
-        console.log("Fetching exchange zones")
+    const refreshZones = () => {
+        console.log('Fetching exchange zones');
         fetchExchangeZones().then((data) => {
             setZones(data);
         });
-    }, [selectedType, selectedReason, selectedStatus])
+    };
 
     const handleApproval = async (report) => {
-        console.log("Report Approved")
-        await approveReport(report)
-        setReports(reports.filter((r) => r.object_id != report.object_id))
-        setShowModal(false)
-        setSelectedReport(null)
-    }
+        console.log('Report Approved');
+        await approveReport(report);
+        setReports(reports.filter((r) => r.object_id != report.object_id));
+        setShowModal(false);
+        setSelectedReport(null);
+    };
 
     const handleDenial = async (report) => {
-        console.log("Report Denied")
-        await denyReport(report)
-        setReports(reports.filter((r) => r.id != report.id))
-        setShowModal(false)
-        setSelectedReport(null)
-    }
+        console.log('Report Denied');
+        await denyReport(report);
+        setReports(reports.filter((r) => r.id != report.id));
+        setShowModal(false);
+        setSelectedReport(null);
+    };
 
     function getReportLabel(report) {
         switch (contentTypeMapReversed[report.content_type]) {
@@ -83,7 +120,7 @@ export default function AdminPage() {
             case "review":
                 return report.content_object.comment
             default:
-                return "UNKOWN REPORT TYPE"
+                return 'UNKOWN REPORT TYPE';
         }
     }
 
@@ -96,18 +133,18 @@ export default function AdminPage() {
             case "review":
                 return "/profile/"
             default:
-                return "UNKNOWN REPORT TYPE"
+                return 'UNKNOWN REPORT TYPE';
         }
     }
 
     function openReportModal(report) {
-        setSelectedReport(report)
-        setShowModal(true)
+        setSelectedReport(report);
+        setShowModal(true);
     }
 
     function closeModal() {
-        setShowModal(false)
-        setSelectedReport(null)
+        setShowModal(false);
+        setSelectedReport(null);
     }
 
     function getItemDescription(report) {
@@ -119,30 +156,44 @@ export default function AdminPage() {
             case "review":
                 return report.content_object.comment || "No comment available"
             default:
-                return "No description available"
+                return 'No description available';
         }
     }
 
     function openZonesModal() {
-        setShowZonesModal(true)
+        setShowZonesModal(true);
     }
 
     function closeZonesModal() {
-        setShowZonesModal(false)
-        setSelectedZoneId('')
+        setShowZonesModal(false);
+        setSelectedZoneId('');
     }
 
-    function handleSaveZones() {
-        console.log("Saving zones changes")
-        closeZonesModal()
-    }
+    const handleCreateZone = async (data) => {
+        await createExchangeZone(data);
+        refreshZones();
+    };
+
+    const handleUpdateZone = async (id, data) => {
+        await updateExchangeZone(id, data);
+        refreshZones();
+    };
+
+    const handleDeleteZone = async (id) => {
+        await deleteExchangeZone(id);
+        refreshZones();
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
             <main className="max-w-7xl mx-auto px-6 py-10">
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Portal</h1>
-                    <p className="text-gray-600">Manage reports and content moderation</p>
+                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                        Admin Portal
+                    </h1>
+                    <p className="text-gray-600">
+                        Manage reports and content moderation
+                    </p>
                 </div>
 
                 <AdminFilters
@@ -182,9 +233,11 @@ export default function AdminPage() {
                     selectedZoneId={selectedZoneId}
                     setSelectedZoneId={setSelectedZoneId}
                     closeZonesModal={closeZonesModal}
-                    handleSaveZones={handleSaveZones}
+                    handleCreateZone={handleCreateZone}
+                    handleUpdateZone={handleUpdateZone}
+                    handleDeleteZone={handleDeleteZone}
                 />
             )}
         </div>
-    )
+    );
 }

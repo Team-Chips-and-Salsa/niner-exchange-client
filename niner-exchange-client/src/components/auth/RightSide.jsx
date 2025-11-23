@@ -10,6 +10,7 @@ export default function RightSide({
     onRegisterSubmit,
     error,
     successMessage,
+    isLoading,
 }) {
     return (
         <div className="bg-gradient-to-br from-emerald-700 to-emerald-900 p-6 sm:p-8 md:p-12 flex flex-col justify-center relative overflow-hidden">
@@ -31,9 +32,12 @@ export default function RightSide({
                 </div>
 
                 {isLogin ? (
-                    <LoginForm onSubmit={onLoginSubmit} />
+                    <LoginForm onSubmit={onLoginSubmit} isLoading={isLoading} />
                 ) : (
-                    <RegisterForm onSubmit={onRegisterSubmit} />
+                    <RegisterForm
+                        onSubmit={onRegisterSubmit}
+                        isLoading={isLoading}
+                    />
                 )}
 
                 {successMessage && (

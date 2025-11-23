@@ -21,9 +21,9 @@ export default function NinerListingsBrowser() {
         conditions: [],
         listingTypes: [],
         propertyTypes: [],
-        bedrooms: 3,
-        roommates: 3,
-        distanceMinutes: 15,
+        bedrooms: undefined,
+        roommates: undefined,
+        distanceMinutes: undefined,
         startDate: '',
         endDate: '',
         courseCode: '',
@@ -46,6 +46,9 @@ export default function NinerListingsBrowser() {
         { id: 'ITEM', title: 'Marketplace', icon: Package },
         { id: 'SERVICE', title: 'Services', icon: Briefcase },
     ];
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 12;
 
     useEffect(() => {
         const min = queryParams.get('min_price');
@@ -87,11 +90,9 @@ export default function NinerListingsBrowser() {
             conditions: parseCsv(conditionParam) ?? prev.conditions,
             listingTypes: parseCsv(listingTypesParam) ?? prev.listingTypes,
             propertyTypes: parseCsv(propertyTypesParam) ?? prev.propertyTypes,
-            bedrooms: bedroomsMin ? Number(bedroomsMin) : prev.bedrooms,
-            roommates: roommatesMax ? Number(roommatesMax) : prev.roommates,
-            distanceMinutes: distanceMax
-                ? Number(distanceMax)
-                : prev.distanceMinutes,
+            bedrooms: bedroomsMin ? Number(bedroomsMin) : undefined,
+            roommates: roommatesMax ? Number(roommatesMax) : undefined,
+            distanceMinutes: distanceMax ? Number(distanceMax) : undefined,
             startDate: startDate ?? prev.startDate,
             endDate: endDate ?? prev.endDate,
             courseCode: courseCode ?? prev.courseCode,
@@ -109,6 +110,7 @@ export default function NinerListingsBrowser() {
 
         setFilters((prev) => next(prev));
         setDraftFilters((prev) => next(prev));
+        setCurrentPage(1); // Reset page on filter change
     }, [search]);
 
     useEffect(() => {
@@ -341,6 +343,18 @@ export default function NinerListingsBrowser() {
         if (isFilterOpen) setDraftFilters(filters);
     }, [isFilterOpen, filters]);
 
+    // Pagination Logic
+    const totalPages = Math.ceil(listings.length / ITEMS_PER_PAGE);
+    const currentListings = listings.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE,
+    );
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo(0, 0);
+    };
+
     return (
         <div className="min-h-screen bg-gray-50">
             <SearchSection
@@ -372,16 +386,57 @@ export default function NinerListingsBrowser() {
                             listings={listings}
                         />
                         <ListingsGrid
-                            listings={listings}
+                            listings={currentListings}
                             viewMode={viewMode}
                             setViewMode={setViewMode}
                             listingTypes={listingTypes}
                         />
-                        <div className="mt-8 text-center">
-                            <button className="px-8 py-3 bg-white border-2 border-gray-200 rounded-xl font-semibold text-gray-700 hover:border-emerald-600 hover:text-emerald-600 transition-all">
-                                Load More Listings
-                            </button>
-                        </div>
+
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                            <div className="mt-8 flex justify-center items-center gap-2">
+                                <button
+                                    onClick={() =>
+                                        handlePageChange(currentPage - 1)
+                                    }
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Previous
+                                </button>
+
+                                <div className="flex gap-1">
+                                    {Array.from(
+                                        { length: totalPages },
+                                        (_, i) => i + 1,
+                                    ).map((page) => (
+                                        <button
+                                            key={page}
+                                            onClick={() =>
+                                                handlePageChange(page)
+                                            }
+                                            className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                                                currentPage === page
+                                                    ? 'bg-emerald-600 text-white font-bold'
+                                                    : 'hover:bg-gray-100 text-gray-700'
+                                            }`}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <button
+                                    onClick={() =>
+                                        handlePageChange(currentPage + 1)
+                                    }
+                                    disabled={currentPage === totalPages}
+                                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
                     </main>
                 </div>
             </div>

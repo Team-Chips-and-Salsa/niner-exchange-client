@@ -61,7 +61,7 @@ export default function FilterSidebar({
             <aside
                 className={`
                     ${isOpen ? 'block' : 'hidden'} lg:block
-                    lg:sticky lg:top-6
+                    lg:sticky lg:top-6 lg:self-start
                     w-full lg:w-80 bg-white border border-gray-200 
                     rounded-2xl shadow-sm
                 `}

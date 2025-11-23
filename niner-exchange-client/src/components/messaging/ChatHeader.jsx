@@ -7,6 +7,7 @@ import {
     ArrowLeft,
     CheckCircle,
     Flag,
+    Trash2,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,6 +18,7 @@ export default function ChatHeader({
     canComplete,
     isCompleting,
     onCompleteTransaction,
+    onDeleteConversation,
 }) {
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -40,6 +42,9 @@ export default function ChatHeader({
             navigate(`/report/user/${otherParticipant.uid}`);
         }
     };
+
+    if (!currentConversation || !otherParticipant) return null;
+
     return (
         <div className="px-4 sm:px-6 py-4 border-b border-gray-200 bg-white">
             <div className="flex items-center justify-between">
@@ -56,11 +61,11 @@ export default function ChatHeader({
                     >
                         <ArrowLeft className="w-5 h-5" />
                     </button>
-                    <div className="relative">
+                    <div className="relative flex-shrink-0">
                         <img
                             src={currentConversation.listingImage}
                             alt={'Listing Image'}
-                            className="w-10 h-10 rounded-full object-cover"
+                            className="w-10 h-10 rounded-full object-cover aspect-square"
                         />
                     </div>
                     <div>
@@ -105,6 +110,17 @@ export default function ChatHeader({
                                     <Flag className="w-4 h-4" />
                                     Report User
                                 </button>
+                                {/* <button
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        onDeleteConversation &&
+                                            onDeleteConversation();
+                                    }}
+                                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 flex items-center gap-2"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    Delete Conversation
+                                </button> */}
                             </div>
                         )}
                     </div>

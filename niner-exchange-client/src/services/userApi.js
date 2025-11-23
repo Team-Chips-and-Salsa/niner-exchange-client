@@ -21,7 +21,6 @@ export async function fetchUserProfile(userId) {
             headers: { Authorization: `Bearer ${token}` },
         });
 
-
         const responseData = await response.json();
 
         if (!response.ok) {

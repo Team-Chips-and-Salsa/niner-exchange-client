@@ -68,9 +68,9 @@ export default function PriceCard({ listing, formatDate }) {
             );
 
             if (existingConvo) {
-                navigate('/messages');
+                navigate(`/messages?conversationId=${existingConvo.id}`);
             } else {
-                await addDoc(conversationsRef, {
+                const docRef = await addDoc(conversationsRef, {
                     participants: [currentUser.id, listing.seller.id].sort(),
                     participantInfo: {
                         [currentUser.id]: {
@@ -93,7 +93,7 @@ export default function PriceCard({ listing, formatDate }) {
                     },
                 });
 
-                navigate('/messages');
+                navigate(`/messages?conversationId=${docRef.id}`);
             }
         } catch (err) {
             console.error('Error creating or finding conversation:', err);
@@ -159,15 +159,6 @@ export default function PriceCard({ listing, formatDate }) {
                                 </p>
                             )}
                         </div>
-                        <div>
-                            <p className="font-medium text-gray-900 group-hover:underline">
-                                {`${listing.seller.first_name} ${listing.seller.last_name}`}
-                            </p>
-                            <p className="text-sm text-gray-500 group-hover:underline">
-                                {listing.seller.email}
-                            </p>
-                        </div>
-                    </div>
                     </Link>
                 </div>
 

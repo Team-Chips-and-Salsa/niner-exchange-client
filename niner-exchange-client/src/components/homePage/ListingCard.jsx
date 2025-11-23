@@ -76,7 +76,7 @@ export default function ListingCard({ listing }) {
                                 <img
                                     src={listing.seller.profile_image_url}
                                     alt="Profile"
-                                    className="w-full h-full rounded-full object-cover"
+                                    className="w-full h-full rounded-full object-cover group-hover/seller:brightness-90"
                                 />
                             ) : (
                                 <p className="text-1xl font-bold text-emerald-600">

@@ -20,10 +20,7 @@ export default function ListingCard({ listing }) {
         reviewCount === 0 ? 'No reviews' : `${reviewCount} reviews`;
 
     return (
-        <Link
-            to={`/listing/${listing.listing_id}`}
-            className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden block group"
-        >
+        <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden block group relative">
             {/* Image */}
             <div className="h-52 bg-gray-100 overflow-hidden">
                 {listing.images?.[0]?.image ? (
@@ -43,7 +40,12 @@ export default function ListingCard({ listing }) {
             <div className="p-5">
                 {/* Title */}
                 <h4 className="font-bold text-gray-900 group-hover:text-emerald-600 text-lg mb-2 line-clamp-1 transition-colors">
-                    {listing.title}
+                    <Link
+                        to={`/listing/${listing.listing_id}`}
+                        className="before:absolute before:inset-0 focus:outline-none"
+                    >
+                        {listing.title}
+                    </Link>
                 </h4>
 
                 {/* Price */}
@@ -57,13 +59,7 @@ export default function ListingCard({ listing }) {
                 </div>
 
                 {/* Seller Info */}
-                <div
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }}
-                    className="mb-4"
-                >
+                <div className="mb-4 relative z-10">
                     <Link
                         to={`/profile/${listing.seller?.id}`}
                         className="block group/seller"
@@ -96,6 +92,6 @@ export default function ListingCard({ listing }) {
                     </span>
                 </div>
             </div>
-        </Link>
+        </div>
     );
 }

@@ -96,14 +96,14 @@ export default function TransactionRequestCard({
                     <div className="px-3 py-3 sm:px-4 sm:py-4 space-y-3">
                         {/* Listing block */}
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
                                 <img
                                     src={
                                         msg.listingImage ||
                                         '/img/placeholder.png'
                                     }
                                     alt="Listing Image"
-                                    className="w-full h-full object-cover rounded-lg"
+                                    className="w-full h-full object-cover rounded-full"
                                 />
                             </div>
                             <div className="flex-1 min-w-0">

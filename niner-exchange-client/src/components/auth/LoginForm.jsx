@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 
-export default function LoginForm({ onSubmit }) {
+export default function LoginForm({ onSubmit, isLoading }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -57,10 +57,13 @@ export default function LoginForm({ onSubmit }) {
 
             <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-amber-400 to-amber-500 text-emerald-900 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:from-amber-500 hover:to-amber-600 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-amber-400 to-amber-500 text-emerald-900 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:from-amber-500 hover:to-amber-600 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
             >
-                Sign In
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                {isLoading ? 'Signing In...' : 'Sign In'}
+                {!isLoading && (
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                )}
             </button>
         </form>
     );

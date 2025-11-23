@@ -23,7 +23,7 @@ export default function SearchBar() {
                 <input
                     type="text"
                     placeholder="Search for textbooks, housing, items, or services..."
-                    className="flex-1 px-4 py-4 text-gray-900 focus:outline-none text-lg"
+                    className="flex-1 min-w-0 px-4 py-4 text-gray-900 focus:outline-none text-lg"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />

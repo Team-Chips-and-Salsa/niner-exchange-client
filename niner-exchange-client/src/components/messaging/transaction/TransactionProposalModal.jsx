@@ -11,28 +11,11 @@ export default function TransactionProposalModal({
     const [price, setPrice] = useState('');
     const [selectedLocationId, setSelectedLocationId] = useState('');
 
-    const locationOptions = useMemo(() => {
-        if (!locations || locations.length === 0) {
-            // Fallback single location with proper coordinates
-            return [
-                {
-                    id: 1,
-                    name: 'UNC Charlotte Student Union',
-                    description:
-                        'Meetup spot near the main entrance of the Popp Martin Student Union.',
-                    latitude: '35.308643',
-                    longitude: '-80.733747',
-                },
-            ];
-        }
-        return locations;
-    }, [locations]);
-
     const selectedZone = useMemo(() => {
-        return locationOptions.find(
+        return locations.find(
             (z) => String(z.id) === String(selectedLocationId),
         );
-    }, [locationOptions, selectedLocationId]);
+    }, [locations, selectedLocationId]);
 
     const canSubmit = price && selectedLocationId;
 
@@ -100,7 +83,7 @@ export default function TransactionProposalModal({
                             </label>
                         </div>
                         <MapLocationPicker
-                            locations={locationOptions}
+                            locations={locations}
                             selectedId={selectedLocationId}
                             onSelect={(id) => setSelectedLocationId(String(id))}
                             heightClass="h-60 sm:h-80"
@@ -127,7 +110,9 @@ export default function TransactionProposalModal({
                             </div>
                         ) : (
                             <p className="mt-2 text-xs text-gray-500">
-                                Tap a pin on the map to choose your meetup spot.
+                                {locations.length > 0
+                                    ? 'Tap a pin on the map to choose your meetup spot.'
+                                    : 'No exchange zones available. Please contact an admin.'}
                             </p>
                         )}
                     </div>

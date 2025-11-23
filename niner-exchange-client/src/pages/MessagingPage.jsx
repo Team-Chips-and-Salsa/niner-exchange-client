@@ -9,6 +9,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
     addDoc,
     collection,
+    deleteDoc,
     doc,
     increment,
     limit,
@@ -21,7 +22,7 @@ import {
 } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext.jsx';
 import { db } from '../firebase.js';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import ConversationsList from '../components/messaging/ConversationsList.jsx';
 import ChatHeader from '../components/messaging/ChatHeader.jsx';
@@ -121,13 +122,89 @@ export default function MessagingPage() {
         );
     }, [selectedConversationId, currentUser, currentMessages.length]);
 
-    // Auto-select the first conversation only on desktop when list loads.
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // Sync selectedConversationId with URL search params
     useEffect(() => {
-        if (location.state?.focusList) return;
-        if (isDesktop && !selectedConversationId && conversations.length > 0) {
-            setSelectedConversationId(conversations[0].id);
+        if (location.state?.focusList) {
+            setSearchParams({});
+            return;
         }
-    }, [isDesktop, conversations, selectedConversationId, location.state]);
+
+        const conversationIdFromUrl = searchParams.get('conversationId');
+
+        if (conversationIdFromUrl) {
+            if (selectedConversationId !== conversationIdFromUrl) {
+                setSelectedConversationId(conversationIdFromUrl);
+            }
+        } else {
+            // URL has no ID
+            if (isDesktop) {
+                // On desktop, ensure a conversation is selected if available
+                if (conversations.length > 0) {
+                    // If nothing selected, or if we want to enforce the first one when URL is empty
+                    // We check if the currently selected ID is valid (exists in conversations)
+                    // If not, or if null, select the first one.
+                    const isValidSelection = conversations.some(
+                        (c) => c.id === selectedConversationId,
+                    );
+
+                    if (!selectedConversationId || !isValidSelection) {
+                        setSelectedConversationId(conversations[0].id);
+                        // Optional: Update URL to reflect this auto-selection?
+                        // setSearchParams({ conversationId: conversations[0].id }, { replace: true });
+                        // User asked for "conversation id should be hande always", so maybe yes.
+                        // But let's stick to just setting state for now to avoid infinite loops or aggressive URL changes on load.
+                    }
+                }
+            } else {
+                // On mobile, if no ID in URL, show list (null selection)
+                if (selectedConversationId !== null) {
+                    setSelectedConversationId(null);
+                }
+            }
+        }
+    }, [
+        isDesktop,
+        conversations,
+        selectedConversationId,
+        location.state,
+        searchParams,
+        setSearchParams,
+    ]);
+
+    const handleSelectConversation = (id) => {
+        setSearchParams({ conversationId: id });
+    };
+
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleBackToConversations = () => {
+        setSearchParams({});
+    };
+
+    const handleDeleteConversation = () => {
+        if (!selectedConversationId) return;
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!selectedConversationId || !db) return;
+
+        setIsDeleting(true);
+        try {
+            await deleteDoc(doc(db, 'conversations', selectedConversationId));
+            setSelectedConversationId(null);
+            setSearchParams({});
+            setIsDeleteModalOpen(false);
+        } catch (error) {
+            console.error('Failed to delete conversation:', error);
+            alert('Failed to delete conversation. Please try again.');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     const currentConversation = useMemo(() => {
         return conversations.find((c) => c.id === selectedConversationId);
@@ -461,7 +538,7 @@ export default function MessagingPage() {
                         conversations={filteredConversations}
                         currentUser={currentUser}
                         selectedConversationId={selectedConversationId}
-                        onSelect={setSelectedConversationId}
+                        onSelect={handleSelectConversation}
                         searchQuery={searchQuery}
                         onSearchChange={setSearchQuery}
                     />
@@ -479,12 +556,13 @@ export default function MessagingPage() {
                             <ChatHeader
                                 otherParticipant={otherParticipant}
                                 currentConversation={currentConversation}
-                                onBack={() => setSelectedConversationId(null)}
+                                onBack={handleBackToConversations}
                                 canComplete={canComplete}
                                 isCompleting={isCompleting}
                                 onCompleteTransaction={
                                     handleOpenCompletionModal
                                 }
+                                onDeleteConversation={handleDeleteConversation}
                             />
                             <MessagesList
                                 messages={currentMessages}
@@ -528,6 +606,16 @@ export default function MessagingPage() {
                 confirmText="Yes, Complete Transaction"
                 isSubmitting={isCompleting}
                 type="warning"
+            />
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+                title="Delete Conversation?"
+                message="Are you sure you want to delete this conversation? This action cannot be undone."
+                confirmText="Delete"
+                isSubmitting={isDeleting}
+                type="danger"
             />
         </div>
     );

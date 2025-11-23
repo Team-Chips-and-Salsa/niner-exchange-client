@@ -61,20 +61,22 @@ export async function apiRefreshToken() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh: refreshToken }),
-    }).then(async (response) => {
-        if (!response.ok) {
-            throw new Error('Refresh token invalid');
-        }
+    })
+        .then(async (response) => {
+            if (!response.ok) {
+                throw new Error('Refresh token invalid');
+            }
 
-        const data = await response.json();
+            const data = await response.json();
 
-        localStorage.setItem('django_access_token', data.access);
-        localStorage.setItem('django_refresh_token', data.refresh);
+            localStorage.setItem('django_access_token', data.access);
+            localStorage.setItem('django_refresh_token', data.refresh);
 
-        return data.access;
-    }).finally(() => {
-        refreshPromise = null;
-    });
+            return data.access;
+        })
+        .finally(() => {
+            refreshPromise = null;
+        });
 
     return refreshPromise;
 }
@@ -114,6 +116,10 @@ export async function fetchWithAuth(url, options = {}) {
     if (!response.ok) {
         const err = await response.json();
         throw new Error(err.detail || 'API request failed');
+    }
+
+    if (response.status === 204) {
+        return null;
     }
 
     return await response.json();

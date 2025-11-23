@@ -21,7 +21,6 @@ export async function fetchUserProfile(userId) {
             headers: { Authorization: `Bearer ${token}` },
         });
 
-
         const responseData = await response.json();
 
         if (!response.ok) {
@@ -35,7 +34,7 @@ export async function fetchUserProfile(userId) {
             );
         }
 
-        return responseData; 
+        return responseData;
     } catch (error) {
         // This catches network errors, JSON parsing errors, or the re-thrown error above.
         // If response is defined, it means the request went out, but something went wrong
@@ -44,7 +43,7 @@ export async function fetchUserProfile(userId) {
             '[API] 6. CRITICAL ERROR: A network, JSON parse, or fetch error occurred:',
             error,
         );
-        throw error; 
+        throw error;
     }
 }
 
@@ -60,7 +59,7 @@ export async function fetchCurrentListings(userID) {
         {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${token}`, 
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         },
@@ -83,7 +82,7 @@ export async function fetchSoldListings(userID) {
         {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${token}`, 
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         },
@@ -106,7 +105,7 @@ export async function fetchPurchaseHistory(userID) {
         {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${token}`, 
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         },

@@ -36,7 +36,8 @@ export default function ConversationsList({
                         conv.participantInfo && otherUid
                             ? conv.participantInfo[otherUid] || {}
                             : {};
-                    const name = info.name + ' - ' + conv.listingTitle  || 'Conversation';
+                    const name =
+                        info.name + ' - ' + conv.listingTitle || 'Conversation';
                     //TO DO: Add user profile pic
                     const avatar = getAvatarInitials(name || '');
                     const last = conv.lastMessage || '';
@@ -53,9 +54,17 @@ export default function ConversationsList({
                         >
                             <div className="flex gap-3">
                                 <div className="relative flex-shrink-0">
-                                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-full flex items-center justify-center text-white font-bold">
-                                        {avatar}
-                                    </div>
+                                    {conv.listingImage ? (
+                                        <img
+                                            src={conv.listingImage}
+                                            alt={conv.listingTitle || 'Listing'}
+                                            className="w-12 h-12 rounded-full object-cover bg-gray-200"
+                                        />
+                                    ) : (
+                                        <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-full flex items-center justify-center text-white font-bold">
+                                            {avatar}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-start justify-between mb-1">

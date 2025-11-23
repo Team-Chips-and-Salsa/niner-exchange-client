@@ -98,30 +98,17 @@ export default function PageHeader({
         navigate(notif.link_to);
     };
 
-    const navigateWithListingType = (type) => {
-        if (String(type).toUpperCase() === 'ALL') {
-            navigate('/search');
-        } else {
-            navigate(`/search?listing_type=${encodeURIComponent(type)}`);
-        }
-    };
-
     return (
         <header className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white sticky top-0 z-50 shadow-lg">
             <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
                 <div className="flex items-center justify-between gap-3 sm:gap-6">
-
-                    <button
-                        onClick={() => {
-                            navigate('/home');
-                        }}
-                    >
+                    <Link to="/home" className="block">
                         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 min-w-0">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-800 rounded-xl flex items-center justify-center">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-800 rounded-xl flex items-center justify-center overflow-hidden">
                                 <img
                                     src={NinerExchangeLogo}
                                     alt="Niner Exchange Logo"
-                                    className="w-20 h-20 sm:w-14 md:h-14 object-contain"
+                                    className="w-full h-full object-cover"
                                 />
                             </div>
                             <div className="hidden sm:block truncate">
@@ -133,7 +120,7 @@ export default function PageHeader({
                                 </p>
                             </div>
                         </div>
-                    </button>
+                    </Link>
 
                     {showListingTypes && (
                         <nav className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 justify-center">
@@ -141,14 +128,16 @@ export default function PageHeader({
                                 const Icon = listingType.icon;
                                 const isActive =
                                     activeListingType === listingType.id;
+                                const linkTo =
+                                    listingType.id === 'ALL'
+                                        ? '/search'
+                                        : `/search?listing_type=${encodeURIComponent(listingType.id)}`;
                                 return (
-                                    <button
+                                    <Link
                                         key={listingType.id}
+                                        to={linkTo}
                                         onClick={() => {
                                             setActiveListingType(
-                                                listingType.id,
-                                            );
-                                            navigateWithListingType(
                                                 listingType.id,
                                             );
                                         }}
@@ -162,7 +151,7 @@ export default function PageHeader({
                                         <span className="text-[10px] xl:text-xs font-medium whitespace-nowrap">
                                             {listingType.title}
                                         </span>
-                                    </button>
+                                    </Link>
                                 );
                             })}
                         </nav>
@@ -181,14 +170,12 @@ export default function PageHeader({
                                 <List className="w-5 h-5" />
                             </button>
                         )}
-                        <button
-                            onClick={() => {
-                                navigate('/create');
-                            }}
+                        <Link
+                            to="/create"
                             className="hidden md:inline-flex items-center gap-2 bg-amber-400 text-emerald-900 px-3 sm:px-4 py-2 rounded-lg font-bold hover:bg-amber-500 transition-all shadow-lg whitespace-nowrap"
                         >
                             Post Listing
-                        </button>
+                        </Link>
                         <div className="relative" ref={notifMenuRef}>
                             <button
                                 onClick={handleBellClick}
@@ -238,14 +225,11 @@ export default function PageHeader({
                                 </div>
                             )}
                         </div>
-                        <button
-                            className="p-2 hover:bg-emerald-700 rounded-lg transition-colors relative"
+                        <Link
+                            to="/messages"
+                            state={{ focusList: true }}
+                            className="p-2 hover:bg-emerald-700 rounded-lg transition-colors relative block"
                             aria-label="Messages"
-                            onClick={() =>
-                                navigate('/messages', {
-                                    state: { focusList: true },
-                                })
-                            }
                         >
                             <MessageCircle className="w-5 h-5" />
                             {totalUnreadMessages > 0 && (
@@ -253,9 +237,8 @@ export default function PageHeader({
                                     {totalUnreadMessages}
                                 </span>
                             )}
-                        </button>
+                        </Link>
                         <div className="relative" ref={profileMenuRef}>
-
                             <button
                                 onClick={() =>
                                     setIsProfileMenuOpen((prev) => !prev)
@@ -276,10 +259,8 @@ export default function PageHeader({
 
                             {isProfileMenuOpen && (
                                 <div className="absolute right-0 top-12 w-56 bg-white rounded-lg shadow-xl py-2 z-50 text-gray-800 border border-gray-200">
-
                                     <div className="px-4 py-2 border-b border-gray-100">
                                         <p className="text-sm font-semibold truncate">
-                                            {console.log('currentUser firstname:', currentUser.first_name)}
                                             {currentUser?.first_name}{' '}
                                             {currentUser?.last_name}
                                         </p>
@@ -299,6 +280,19 @@ export default function PageHeader({
                                             <User className="w-4 h-4 text-gray-600" />
                                             <span>My Profile</span>
                                         </Link>
+
+                                        {currentUser?.role === 'admin' && (
+                                            <Link
+                                                to="/admin"
+                                                onClick={() =>
+                                                    setIsProfileMenuOpen(false)
+                                                }
+                                                className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100 transition-colors"
+                                            >
+                                                <Briefcase className="w-4 h-4 text-gray-600" />
+                                                <span>Dashboard</span>
+                                            </Link>
+                                        )}
 
                                         <button
                                             onClick={() => {
@@ -327,17 +321,19 @@ export default function PageHeader({
                                 const Icon = listingType.icon;
                                 const isActive =
                                     activeListingType === listingType.id;
+                                const linkTo =
+                                    listingType.id === 'ALL'
+                                        ? '/search'
+                                        : `/search?listing_type=${encodeURIComponent(listingType.id)}`;
                                 return (
-                                    <button
+                                    <Link
                                         key={listingType.id}
+                                        to={linkTo}
                                         onClick={() => {
                                             setActiveListingType(
                                                 listingType.id,
                                             );
                                             setMobileCatsOpen(false);
-                                            navigateWithListingType(
-                                                listingType.id,
-                                            );
                                         }}
                                         className={`flex flex-col items-center gap-0.5 pb-1 px-2 border-b-2 transition-all flex-shrink-0 ${
                                             isActive
@@ -349,7 +345,7 @@ export default function PageHeader({
                                         <span className="text-[10px] font-medium whitespace-nowrap">
                                             {listingType.title}
                                         </span>
-                                    </button>
+                                    </Link>
                                 );
                             })}
                         </div>

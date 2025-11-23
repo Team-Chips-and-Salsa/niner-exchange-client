@@ -79,18 +79,18 @@ export default function ProfileHeader({
                                         className="text-yellow-500"
                                     />
                                     <a
-                                            className="underline"
-                                            href={`/reviews/${userData.id}`}
-                                        >
-                                    <span className="text-gray-700">
-                                        <span className="font-semibold">
-                                            {(userData.avg_rating ?? 0).toFixed(
-                                                1,
-                                            )}
-                                        </span>{' '}
-                                        rating{' '}
+                                        className="underline"
+                                        href={`/reviews/${userData.id}`}
+                                    >
+                                        <span className="text-gray-700">
+                                            <span className="font-semibold">
+                                                {(userData.avg_rating ?? 0).toFixed(
+                                                    1,
+                                                )}
+                                            </span>{' '}
+                                            rating{' '}
                                             ({userData.review_count} reviews)
-                                    </span>
+                                        </span>
                                     </a>
                                 </div>
 
@@ -141,7 +141,7 @@ export default function ProfileHeader({
                                         type="button"
                                         onClick={() =>
                                             navigate(
-                                                `/report/listing/${listing.listing_id}`,
+                                                `/report/customuser/${userData.id}`,
                                             )
                                         }
                                     >

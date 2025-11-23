@@ -7,7 +7,7 @@ export default function TransactionInfo({ reviewee, transaction }) {
 
     const handleReport = () => {
         if (reviewee?.id) {
-            navigate(`/report/user/${reviewee.id}`);
+            navigate(`/report/customuser/${reviewee.id}`);
         }
     };
 

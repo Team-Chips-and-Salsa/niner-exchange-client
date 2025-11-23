@@ -2,44 +2,41 @@ import { Clock, DollarSign, Heart, MapPin } from 'lucide-react';
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
+import ListingCard from '../homePage/ListingCard';
 
 export default function ListingsGrid({ listings, viewMode, categories }) {
+    // For grid view, use the reusable ListingCard component
+    if (viewMode === 'grid') {
+        return (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {listings.map((listing) => (
+                    <ListingCard key={listing.listing_id} listing={listing} />
+                ))}
+            </div>
+        );
+    }
+
+    // For list view, use a custom layout
     return (
-        <div
-            className={
-                viewMode === 'grid'
-                    ? 'grid sm:grid-cols-2 lg:grid-cols-3 gap-5'
-                    : 'space-y-4'
-            }
-        >
+        <div className="space-y-4">
             {listings.map((listing) => {
                 const datePosted = new Date(listing.created_at);
                 const timeAgo = formatDistanceToNow(datePosted, {
                     addSuffix: true,
                 });
+                const reviewCount = listing.seller?.avg_rating || 0;
+                const reviewText =
+                    reviewCount === 0 ? 'No reviews' : `${reviewCount}`;
 
                 return (
-                    <div
+                    <Link
                         key={listing.listing_id}
-                        className={`bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-xl transition-all cursor-pointer group overflow-hidden ${
-                            viewMode === 'list' ? 'flex' : ''
-                        }`}
+                        to={`/listing/${listing.listing_id}`}
+                        className="bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-xl transition-all group overflow-hidden flex"
                     >
                         {/* Image Section */}
-                        <div
-                            className={`relative overflow-hidden ${
-                                viewMode === 'list'
-                                    ? 'w-32 sm:w-40 md:w-48 flex-shrink-0'
-                                    : 'w-full'
-                            }`}
-                        >
-                            <div
-                                className={`relative w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg ${
-                                    viewMode === 'list'
-                                        ? 'aspect-square'
-                                        : 'aspect-[4/3] sm:aspect-video'
-                                }`}
-                            >
+                        <div className="w-32 sm:w-40 md:w-48 flex-shrink-0 relative overflow-hidden">
+                            <div className="relative w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg aspect-square">
                                 {listing.images?.[0]?.image ? (
                                     <img
                                         src={listing.images[0].image}
@@ -73,29 +70,42 @@ export default function ListingsGrid({ listings, viewMode, categories }) {
                                     </span>
                                 </div>
                             </div>
-                            
 
                             {/* Seller Info */}
-                            <Link to={`/profile/${listing.seller?.id}`} className="block mb-4 group/seller">
-                            <div className="flex items-center gap-2 mb-3 text-sm">
-                                <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-full flex items-center justify-center text-white font-bold text-xs group-hover/seller:from-emerald-500 group-hover/seller:to-emerald-600 transition-all">
-                                   {(listing.seller?.first_name?.[0] || '') + (listing.seller?.last_name?.[0] || '')}
-                                </div>
-                                <div>
-                                    <p className="font-medium text-gray-900 group-hover/seller:underline">
-                                        {`${listing.seller?.first_name || ''} ${listing.seller?.last_name || ''}`}
-                                    </p>
-                                    <div className="flex items-center gap-1">
-                                        <span className="text-amber-500">
-                                            ★
-                                        </span>
-                                        <span className="text-gray-600 text-xs group-hover/seller:underline">
-                                            {listing.seller?.avg_rating || '0 reviews'}
-                                        </span>
+                            <div
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                }}
+                                className="mb-4"
+                            >
+                                <Link
+                                    to={`/profile/${listing.seller?.id}`}
+                                    className="block group/seller"
+                                >
+                                    <div className="flex items-center gap-2 mb-3 text-sm">
+                                        <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-full flex items-center justify-center text-white font-bold text-xs group-hover/seller:from-emerald-500 group-hover/seller:to-emerald-600 transition-all">
+                                            {(listing.seller?.first_name?.[0] ||
+                                                '') +
+                                                (listing.seller
+                                                    ?.last_name?.[0] || '')}
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-gray-900 group-hover/seller:underline">
+                                                {`${listing.seller?.first_name || ''} ${listing.seller?.last_name || ''}`}
+                                            </p>
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-amber-500">
+                                                    ★
+                                                </span>
+                                                <span className="text-gray-600 text-xs group-hover/seller:underline">
+                                                    {reviewText}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                </Link>
                             </div>
-                            </Link>
 
                             {/* Meta Info */}
                             <div className="space-y-2 text-sm text-gray-600">
@@ -113,18 +123,8 @@ export default function ListingsGrid({ listings, viewMode, categories }) {
                                     </div>
                                 )}
                             </div>
-
-                            {/* Footer */}
-                            <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                                <Link
-                                    to={`/listing/${listing.listing_id}`}
-                                    className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors text-sm inline-block text-center"
-                                >
-                                    View
-                                </Link>
-                            </div>
                         </div>
-                    </div>
+                    </Link>
                 );
             })}
         </div>

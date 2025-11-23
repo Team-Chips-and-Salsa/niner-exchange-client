@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation, useSearchParams, Link } from 'react-router-dom';
+import {
+    useNavigate,
+    useLocation,
+    useSearchParams,
+    Link,
+} from 'react-router-dom';
 import {
     Bell,
     MessageCircle,
@@ -30,19 +35,18 @@ export default function PageHeader({
     const { currentUser, logout } = useAuth();
     const profileMenuRef = useRef(null);
     const notifMenuRef = useRef(null);
-
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
 
     useEffect(() => {
-        const qp = searchParams.get('listing_type');
-        if (qp) {
-            setActiveListingType(qp);
+        if (location.pathname === '/search') {
+            const qp = searchParams.get('listing_type');
+            setActiveListingType(qp || 'ALL');
         } else {
-            setActiveListingType((prev) => prev || 'ALL');
+            setActiveListingType(null);
         }
-    }, [location.search, searchParams]);
+    }, [location.pathname, location.search, searchParams]);
 
     const listingTypes = [
         { id: 'ALL', title: 'All', icon: Package },
@@ -203,7 +207,7 @@ export default function PageHeader({
 
                             {/* Notification Dropdown */}
                             {isNotifMenuOpen && (
-                                <div className="absolute right-0 top-12 w-80 bg-white rounded-lg shadow-xl z-50 text-gray-800 border border-gray-200">
+                                <div className="fixed left-4 right-4 top-16 sm:absolute sm:right-0 sm:top-12 sm:w-80 sm:left-auto bg-white rounded-lg shadow-xl z-50 text-gray-800 border border-gray-200">
                                     <div className="p-3 border-b">
                                         <h3 className="font-semibold">
                                             Notifications
@@ -288,7 +292,10 @@ export default function PageHeader({
 
                                     {/* Menu Links */}
                                     <div className="py-1">
-                                        {console.log('currentUser:', currentUser)}
+                                        {console.log(
+                                            'currentUser:',
+                                            currentUser,
+                                        )}
                                         <Link
                                             to={`/profile/${currentUser?.id}`}
                                             onClick={() =>

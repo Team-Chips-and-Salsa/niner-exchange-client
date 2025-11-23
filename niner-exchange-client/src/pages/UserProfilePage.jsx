@@ -141,7 +141,7 @@ const UserProfilePage = () => {
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="max-w-7xl mx-auto py-8 px-6">
+            <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6">
                 {/* Profile Header Section */}
                 <ProfileHeader
                     userData={userData}
@@ -162,7 +162,7 @@ const UserProfilePage = () => {
                     <div>
                         {/* Current Listings */}
                         <div className="mb-10">
-                            <div className="flex items-center justify-between mb-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                                 <h2 className="text-2xl font-bold text-gray-900">
                                     Current Listings
                                 </h2>
@@ -171,7 +171,7 @@ const UserProfilePage = () => {
                                     onChange={(e) =>
                                         setListingLimit(Number(e.target.value))
                                     }
-                                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium bg-white hover:border-gray-400 transition-colors"
+                                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium bg-white hover:border-gray-400 transition-colors w-full sm:w-auto"
                                 >
                                     <option value={10}>Show 10</option>
                                     <option value={20}>Show 20</option>
@@ -194,7 +194,7 @@ const UserProfilePage = () => {
 
                         {/* Archived Listings */}
                         <div>
-                            <div className="flex items-center justify-between mb-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                                 <h2 className="text-2xl font-bold text-gray-900">
                                     Sold Listings
                                 </h2>
@@ -203,7 +203,7 @@ const UserProfilePage = () => {
                                     onChange={(e) =>
                                         setListingLimit(Number(e.target.value))
                                     }
-                                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium bg-white hover:border-gray-400 transition-colors"
+                                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium bg-white hover:border-gray-400 transition-colors w-full sm:w-auto"
                                 >
                                     <option value={10}>Show 10</option>
                                     <option value={20}>Show 20</option>
@@ -229,7 +229,7 @@ const UserProfilePage = () => {
                 {/* Buyer Tab Content */}
                 {activeTab === 'buyer' && (
                     <div className="mb-10">
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                             <h2 className="text-2xl font-bold text-gray-900">
                                 Purchase History
                             </h2>
@@ -238,7 +238,7 @@ const UserProfilePage = () => {
                                 onChange={(e) =>
                                     setListingLimit(Number(e.target.value))
                                 }
-                                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium bg-white hover:border-gray-400 transition-colors"
+                                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium bg-white hover:border-gray-400 transition-colors w-full sm:w-auto"
                             >
                                 <option value={10}>Show 10</option>
                                 <option value={20}>Show 20</option>

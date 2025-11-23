@@ -19,7 +19,48 @@ export default function HomePage() {
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
             <HeroSection />
 
-            <ListingsSection listings={listings} />
+            {/* All Listings */}
+            <ListingsSection
+                title="All Listings"
+                listings={listings.slice(0, 4)}
+                viewAllLink="/search"
+            />
+
+            {/* Textbooks */}
+            <ListingsSection
+                title="Textbooks"
+                listings={listings
+                    .filter((l) => l.listing_type === 'TEXTBOOK')
+                    .slice(0, 4)}
+                viewAllLink="/search?listing_type=TEXTBOOK"
+            />
+
+            {/* Housing */}
+            <ListingsSection
+                title="Housing"
+                listings={listings
+                    .filter((l) => l.listing_type === 'SUBLEASE')
+                    .slice(0, 4)}
+                viewAllLink="/search?listing_type=SUBLEASE"
+            />
+
+            {/* Marketplace */}
+            <ListingsSection
+                title="Marketplace"
+                listings={listings
+                    .filter((l) => l.listing_type === 'ITEM')
+                    .slice(0, 4)}
+                viewAllLink="/search?listing_type=ITEM"
+            />
+
+            {/* Services */}
+            <ListingsSection
+                title="Services"
+                listings={listings
+                    .filter((l) => l.listing_type === 'SERVICE')
+                    .slice(0, 4)}
+                viewAllLink="/search?listing_type=SERVICE"
+            />
 
             {/* Mobile Post Button */}
             <button

@@ -22,10 +22,10 @@ export default function ProfileHeader({
 
     return (
         <>
-            <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6 shadow-sm">
-                <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-6">
-                        <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center border-2 border-emerald-200">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 sm:p-8 mb-6 shadow-sm">
+                <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+                    <div className="flex flex-col md:flex-row items-center md:items-start gap-6 w-full">
+                        <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center border-2 border-emerald-200 flex-shrink-0">
                             {userData.profile_image_url ? (
                                 <img
                                     src={userData.profile_image_url}
@@ -39,24 +39,39 @@ export default function ProfileHeader({
                             )}
                         </div>
 
-                        <div className="flex-1">
-                            <h1 className="text-3xl font-bold text-gray-900 mb-1">
-                                {(userData.first_name || 'User') +
-                                    ' ' +
-                                    (userData.last_name || '')}
-                            </h1>
-
-                            <p className="text-gray-600 mb-3">
-                                {userData.email}
-                            </p>
+                        <div className="flex-1 text-center md:text-left w-full">
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+                                <div>
+                                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+                                        {(userData.first_name || 'User') +
+                                            ' ' +
+                                            (userData.last_name || '')}
+                                    </h1>
+                                    <p className="text-gray-600">
+                                        {userData.email}
+                                    </p>
+                                </div>
+                                {/* Only show Edit button if viewing own profile */}
+                                {isOwner && (
+                                    <button
+                                        onClick={() => setIsEditModalOpen(true)}
+                                        className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors w-full md:w-auto"
+                                    >
+                                        <Edit size={16} />
+                                        <span className="font-medium">
+                                            Edit Profile
+                                        </span>
+                                    </button>
+                                )}
+                            </div>
 
                             {userData.bio && (
-                                <p className="text-gray-700 mb-4 max-w-2xl">
+                                <p className="text-gray-700 mb-4 max-w-2xl mx-auto md:mx-0">
                                     {userData.bio}
                                 </p>
                             )}
 
-                            <div className="flex flex-wrap gap-6 text-sm">
+                            <div className="flex flex-wrap justify-center md:justify-start gap-4 sm:gap-6 text-sm">
                                 <div className="flex items-center gap-2">
                                     <Award
                                         size={16}
@@ -123,17 +138,6 @@ export default function ProfileHeader({
                             </div>
                         </div>
                     </div>
-
-                    {/* Only show Edit button if viewing own profile */}
-                    {isOwner && (
-                        <button
-                            onClick={() => setIsEditModalOpen(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors"
-                        >
-                            <Edit size={16} />
-                            <span className="font-medium">Edit Profile</span>
-                        </button>
-                    )}
                 </div>
             </div>
 

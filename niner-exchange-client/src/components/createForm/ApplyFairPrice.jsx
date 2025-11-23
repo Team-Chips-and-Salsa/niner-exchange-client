@@ -7,16 +7,17 @@ import { useNavigate } from 'react-router-dom';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 
-export default function ApplyFairPrice({formData, imageFiles, onChange, onBackClick}) {
+export default function ApplyFairPrice({ formData, imageFiles, onChange, onBackClick }) {
     const [suggested_price, setSuggestedPrice] = useState(null);
     const navigate = useNavigate()
-    
+    const [isLoading, setIsLoading] = useState(false)
+
     useEffect(() => {
         const token = localStorage.getItem('django_access_token');
         if (!token) {
             throw new Error("Unauthorized");
         }
-        
+
         const fetchPrice = async (token, formData) => {
             const response = await fetch(`${BASE_URL}/api/pricing/suggest/`, {
                 headers: {
@@ -37,24 +38,24 @@ export default function ApplyFairPrice({formData, imageFiles, onChange, onBackCl
         }
         fetchPrice(token, formData)
     }, []);
-    
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        
+
         const payload = {
             ...formData,
             price_new: suggested_price['median_price_new']
         };
-
+        setIsLoading(true)
         const newListing = await submitFullListing(payload, imageFiles)
         navigate(`/listing/${newListing}`)
     }
-    
+
 
     return (
         <div className='shadow rounded-lg max-w-lg w-full p-6 bg-zinc-300'>
             <button type='button' onClick={() => onBackClick('form')} className='shadow rounded-md p-1 bg-zinc-400'>
-                <ChevronLeft/>
+                <ChevronLeft />
             </button>
             <h1>Fair Price Calculation</h1>
             {/* Fair Price Suggestion */}
@@ -78,9 +79,16 @@ export default function ApplyFairPrice({formData, imageFiles, onChange, onBackCl
             </div>
             <div className='flex flex-col gap-1'>
                 <label htmlFor="price">Price: </label>
-                <input type="number" name="price" id="price" placeholder={'$'} required value={formData.price} onChange={onChange}/>
+                <input type="number" name="price" id="price" placeholder={'$'} required value={formData.price} onChange={onChange} />
             </div>
-            <button type='submit' onClick={handleSubmit} className='my-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700'>Post</button>
+            <button
+                type="submit"
+                onSubmit={handleSubmit}
+                disabled={isLoading}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                {isLoading ? 'Posting...' : 'Post'}
+            </button>
         </div>
     )
 }

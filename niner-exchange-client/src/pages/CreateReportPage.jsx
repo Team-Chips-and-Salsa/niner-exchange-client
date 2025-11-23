@@ -1,64 +1,63 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { fetchListingById } from '../services/listingApi.js';
-import { fetchUserProfile } from "../services/userApi.js";
-import { fetchContentTypes } from "../services/adminApi.js";
-import { createReport } from "../services/adminApi.js";
+import { fetchUserProfile } from '../services/userApi.js';
+import { fetchContentTypes } from '../services/adminApi.js';
+import { createReport } from '../services/adminApi.js';
 
 export default function CreateReportPage() {
     const { id, type } = useParams();
-    const [formData, setFormData] = useState(null)
-    const navigate = useNavigate()
-    const [selectedReason, setSelectedReason] = useState("SPAM")
-    const [contentTypes, setContentTypes] = useState([])
-    const [contentTypeMap, setContentTypeMap] = useState({})
-    const [isLoading, setIsLoading] = useState(false)
-    const [description, setDescription] = useState("")
-
+    const [formData, setFormData] = useState(null);
+    const navigate = useNavigate();
+    const [selectedReason, setSelectedReason] = useState('SPAM');
+    const [contentTypes, setContentTypes] = useState([]);
+    const [contentTypeMap, setContentTypeMap] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [description, setDescription] = useState('');
 
     useEffect(() => {
         fetchContentTypes().then((data) => {
             setContentTypes(data);
 
-            const newMap = {}
+            const newMap = {};
             for (let i = 0; i < data.length; i++) {
-                newMap[data[i].model] = data[i].id
+                newMap[data[i].model] = data[i].id;
             }
 
-            setContentTypeMap(newMap)
+            setContentTypeMap(newMap);
         });
-    }, [])
+    }, []);
 
     useEffect(() => {
         switch (type) {
-            case "listing":
+            case 'listing':
                 fetchListingById(id).then((data) => {
                     setFormData(data);
                 });
-                break
-            case "review":
-                setFormData({ review_id: id })
                 break;
-            case "customuser":
+            case 'review':
+                setFormData({ review_id: id });
+                break;
+            case 'customuser':
                 fetchUserProfile(id).then((data) => {
-                    setFormData(data)
-                })
-                break
+                    setFormData(data);
+                });
+                break;
             default:
         }
     }, [id, type]);
 
     function navigateToObject() {
         switch (type) {
-            case "listing":
-                navigate(`/listing/${formData.listing_id}`)
+            case 'listing':
+                navigate(`/listing/${formData.listing_id}`);
                 break;
-            case "customuser":
-                navigate(`/profile/${formData.id}`)
+            case 'customuser':
+                navigate(`/profile/${formData.id}`);
                 break;
-            case "review":
-                navigate(`/home`)
+            case 'review':
+                navigate(`/home`);
                 break;
             default:
         }
@@ -66,30 +65,52 @@ export default function CreateReportPage() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setIsLoading(true)
-        console.log("Report Created")
+        setIsLoading(true);
         try {
-            await createReport(contentTypeMap, type, selectedReason, description, id)
+            await createReport(
+                contentTypeMap,
+                type,
+                selectedReason,
+                description,
+                id,
+            );
         } catch (error) {
-            console.error("Report failed to create:", error)
+            console.error('Report failed to create:', error);
         }
-        navigateToObject()
-    }
-
-
+        navigateToObject();
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-            <main className='flex-1 flex items-center justify-center px-20 py-5'>
-                <form method='POST' onSubmit={handleSubmit} className='shadow rounded-lg max-w-lg w-full *:my-3 p-6 bg-zinc-300 text-gray-600 text-sm'>
-                    <div className='flex justify-between'>
+            <main className="flex-1 flex items-center justify-center px-20 py-5">
+                <form
+                    method="POST"
+                    onSubmit={handleSubmit}
+                    className="shadow rounded-lg max-w-lg w-full *:my-3 p-6 bg-zinc-300 text-gray-600 text-sm"
+                >
+                    <div className="flex justify-between">
                         <h2>Make a Report</h2>
-                        <button type='button' onClick={() => navigateToObject()} className='border rounded-full bg-amber-500 p-1'>
+                        <button
+                            type="button"
+                            onClick={() => navigateToObject()}
+                            className="border rounded-full bg-amber-500 p-1"
+                        >
                             <X></X>
                         </button>
                     </div>
                     <div>
-                        <select name="selectedReason" id="selectedReason" onChange={(e) => setSelectedReason(e.target.value)}>
+                        <label
+                            htmlFor="selectedReason"
+                            className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                            Reason
+                        </label>
+                        <select
+                            name="selectedReason"
+                            id="selectedReason"
+                            onChange={(e) => setSelectedReason(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                        >
                             <option value="SPAM">Spam</option>
                             <option value="INNAPROPRIATE">Innapropriate</option>
                             <option value="HARASSMENT">Harassment</option>
@@ -98,12 +119,18 @@ export default function CreateReportPage() {
                         </select>
                     </div>
                     <div>
+                        <label
+                            htmlFor="description"
+                            className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                            Description
+                        </label>
                         <textarea
                             name="description"
                             id="description"
-                            rows={10}
-                            cols={20}
-                            placeholder="Optional Description"
+                            rows={5}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                            placeholder="Please provide more details about your report..."
                             onChange={(e) => setDescription(e.target.value)}
                         ></textarea>
                     </div>
@@ -118,5 +145,5 @@ export default function CreateReportPage() {
                 </form>
             </main>
         </div>
-    )
+    );
 }

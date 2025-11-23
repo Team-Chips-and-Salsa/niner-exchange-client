@@ -85,13 +85,20 @@ export async function apiRefreshToken() {
 export async function fetchWithAuth(url, options = {}) {
     let accessToken = localStorage.getItem('django_access_token');
 
+    const headers = { ...options.headers };
+
+    // Set Content-Type to application/json only if it's not already set and body is not FormData
+    if (!headers['Content-Type'] && !(options.body instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+    }
+
+    if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
     let response = await fetch(url, {
         ...options,
-        headers: {
-            ...options.headers,
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-        },
+        headers,
     });
 
     // If it's a 401 (Unauthorized), try to refresh
@@ -99,16 +106,16 @@ export async function fetchWithAuth(url, options = {}) {
         try {
             const newAccessToken = await apiRefreshToken();
 
+            headers['Authorization'] = `Bearer ${newAccessToken}`;
+
             response = await fetch(url, {
                 ...options,
-                headers: {
-                    ...options.headers,
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${newAccessToken}`,
-                },
+                headers,
             });
         } catch (refreshError) {
             console.error('Refresh failed:', refreshError);
+            // If refresh fails, we throw the error so the caller knows auth failed.
+            // The AuthContext or caller should handle the logout/redirect if needed.
             throw refreshError;
         }
     }

@@ -1,13 +1,9 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 import { connectImagesById } from './imagesApi';
 
+import { fetchWithAuth } from './auth';
+
 export async function fetchListings(params = {}) {
-    const token = localStorage.getItem('django_access_token');
-
-    if (!token) {
-        throw new Error('Unauthorized ');
-    }
-
     const filteredParams = {};
     for (const key in params) {
         if (params[key]) {
@@ -26,84 +22,29 @@ export async function fetchListings(params = {}) {
 
     const url = `${BASE_URL}/api/listings/${queryString ? `?${queryString}` : ''}`;
 
-    const response = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-
-    return await response.json();
+    return await fetchWithAuth(url);
 }
 
 export async function fetchListingById(listingId) {
-    const token = localStorage.getItem('django_access_token');
-
-    if (!token) {
-        throw new Error('Unauthorized');
-    }
-
-    const response = await fetch(`${BASE_URL}/api/listings/${listingId}/`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-
-    const data = await response.json();
-    return data;
+    return await fetchWithAuth(`${BASE_URL}/api/listings/${listingId}/`);
 }
 
 export async function createListing(formData, endpoint) {
-    const token = localStorage.getItem('django_access_token');
-
-    if (!token) {
-        throw new Error('Unauthorized');
-    }
-
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-        },
+    const listing = await fetchWithAuth(`${BASE_URL}${endpoint}`, {
         method: 'POST',
         mode: 'cors',
         body: JSON.stringify(formData),
     });
-
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-
-    const listing = await response.json();
     return listing.listing_id;
 }
 
 export async function updateListing(formData) {
-    const token = localStorage.getItem('django_access_token');
-
-    if (!token) {
-        throw new Error('Unauthorized');
-    }
-
     const endpoint = 'api/listings/' + formData.listing_id + '/edit/';
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-        },
+    const listing = await fetchWithAuth(`${BASE_URL}${endpoint}`, {
         method: 'PATCH',
         mode: 'cors',
         body: JSON.stringify(formData),
     });
-
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-
-    const listing = await response.json();
     return listing.listing_id;
 }
 
@@ -144,27 +85,8 @@ export async function submitFullListing(formData, imageFiles) {
 }
 
 export async function deleteListing(listingId) {
-    const token = localStorage.getItem('django_access_token');
-
-    if (!token) {
-        throw new Error('Unauthorized');
-    }
-
-    const response = await fetch(
-        `${BASE_URL}/api/listings/${listingId}/delete/`,
-        {
-            method: 'DELETE',
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        },
-    );
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to delete listing');
-    }
-
-    // DELETE typically returns 204 No Content, so no JSON to parse
+    await fetchWithAuth(`${BASE_URL}/api/listings/${listingId}/delete/`, {
+        method: 'DELETE',
+    });
     return true;
 }

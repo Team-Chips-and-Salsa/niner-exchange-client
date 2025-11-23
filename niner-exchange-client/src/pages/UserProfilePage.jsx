@@ -112,9 +112,6 @@ const UserProfilePage = () => {
         return formatDate(dateString);
     };
 
-    console.log('currentListings:', currentListings);
-    console.log('archivedListings:', archivedListings);
-
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
@@ -131,7 +128,6 @@ const UserProfilePage = () => {
         };
         loadListings();
     }, [userId]);
-
 
     if (!userData) {
         return <div>Loading profile...</div>;

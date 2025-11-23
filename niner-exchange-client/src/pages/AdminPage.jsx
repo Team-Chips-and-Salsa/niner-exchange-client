@@ -24,8 +24,8 @@ export default function AdminPage() {
     const [reports, setReports] = useState([]);
     const [zones, setZones] = useState([]);
     const [selectedType, setSelectedType] = useState('ALL');
-    const [selectedStatus, setSelectedStatus] = useState('PENDING');
-    const [selectedReason, setSelectedReason] = useState('SPAM');
+    const [selectedStatus, setSelectedStatus] = useState('ALL');
+    const [selectedReason, setSelectedReason] = useState('ALL');
     const [selectedReport, setSelectedReport] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showZonesModal, setShowZonesModal] = useState(false);
@@ -60,13 +60,12 @@ export default function AdminPage() {
             });
 
         refreshZones();
-    }, [currentUser?.id]);
+    }, [currentUser, currentUser?.id]);
 
     useEffect(() => {
         if (!currentUser || currentUser.role !== 'admin') return;
         if (!contentTypesLoaded) return;
 
-        console.log('Fetching reports');
         fetchReports(
             contentTypeMap,
             selectedType,
@@ -79,6 +78,7 @@ export default function AdminPage() {
         selectedType,
         selectedReason,
         selectedStatus,
+        currentUser,
         currentUser?.id,
         contentTypeMap,
         contentTypesLoaded,
@@ -89,14 +89,12 @@ export default function AdminPage() {
     }
 
     const refreshZones = () => {
-        console.log('Fetching exchange zones');
         fetchExchangeZones().then((data) => {
             setZones(data);
         });
     };
 
     const handleApproval = async (report) => {
-        console.log('Report Approved');
         await approveReport(report);
         setReports(reports.filter((r) => r.object_id != report.object_id));
         setShowModal(false);
@@ -104,34 +102,37 @@ export default function AdminPage() {
     };
 
     const handleDenial = async (report) => {
-        console.log('Report Denied');
         await denyReport(report);
         setReports(reports.filter((r) => r.id != report.id));
         setShowModal(false);
         setSelectedReport(null);
     };
 
+    // TODO: Fix user not showing up
     function getReportLabel(report) {
+        if (!report.content_object) {
+            return 'Content Deleted';
+        }
         switch (contentTypeMapReversed[report.content_type]) {
-            case "listing":
-                return report.content_object.title
-            case "customuser":
-                return report.content_object.first_name
-            case "review":
-                return report.content_object.comment
+            case 'listing':
+                return report.content_object.title;
+            case 'customuser':
+                return report.content_object.first_name;
+            case 'review':
+                return report.content_object.comment;
             default:
-                return 'UNKOWN REPORT TYPE';
+                return 'UNKNOWN REPORT TYPE';
         }
     }
 
     function getObjectPath(report) {
         switch (contentTypeMapReversed[report.content_type]) {
-            case "listing":
-                return "/listing/"
-            case "customuser":
-                return "/profile/"
-            case "review":
-                return "/profile/"
+            case 'listing':
+                return '/listing/';
+            case 'customuser':
+                return '/profile/';
+            case 'review':
+                return '/profile/';
             default:
                 return 'UNKNOWN REPORT TYPE';
         }
@@ -148,13 +149,19 @@ export default function AdminPage() {
     }
 
     function getItemDescription(report) {
+        if (!report.content_object) {
+            return 'Content has been deleted';
+        }
         switch (contentTypeMapReversed[report.content_type]) {
-            case "listing":
-                return report.content_object.description || "No description available"
-            case "customuser":
-                return report.content_object.bio || "No bio available"
-            case "review":
-                return report.content_object.comment || "No comment available"
+            case 'listing':
+                return (
+                    report.content_object.description ||
+                    'No description available'
+                );
+            case 'customuser':
+                return report.content_object.bio || 'No bio available';
+            case 'review':
+                return report.content_object.comment || 'No comment available';
             default:
                 return 'No description available';
         }

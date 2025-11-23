@@ -147,7 +147,6 @@ export default function PriceCard({ listing, formatDate }) {
                         to={`/profile/${listing.seller?.id}`}
                         className="block mb-4 group"
                     >
-                        {console.log(listing.seller.profile_image_url)}
                         <div className="flex items-center space-x-3 mb-3">
                             <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center group-hover:bg-emerald-200">
                                 {listing.seller.profile_image_url ? (

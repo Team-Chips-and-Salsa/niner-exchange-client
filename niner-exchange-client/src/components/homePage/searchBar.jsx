@@ -26,6 +26,11 @@ export default function SearchBar() {
                     className="flex-1 min-w-0 px-4 py-4 text-gray-900 focus:outline-none text-lg"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handleSearch();
+                        }
+                    }}
                 />
                 <button
                     className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-xl font-bold hover:from-emerald-700 hover:to-emerald-800 transition-all"

@@ -1,5 +1,6 @@
 import { ChevronLeft } from 'lucide-react';
 import { submitFullListing } from '../../services/listingApi';
+import { fetchWithAuth } from '../../services/auth';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -15,30 +16,22 @@ export default function ApplyFairPrice({
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem('django_access_token');
-        if (!token) {
-            throw new Error('Unauthorized');
-        }
-
-        const fetchPrice = async (token, formData) => {
-            const response = await fetch(`${BASE_URL}/api/pricing/suggest/`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                method: 'POST',
-                mode: 'cors',
-                body: JSON.stringify(formData),
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        const fetchPrice = async (formData) => {
+            try {
+                const suggested_price = await fetchWithAuth(
+                    `${BASE_URL}/api/pricing/suggest/`,
+                    {
+                        method: 'POST',
+                        mode: 'cors',
+                        body: JSON.stringify(formData),
+                    },
+                );
+                setSuggestedPrice(suggested_price);
+            } catch (error) {
+                console.error('Failed to fetch price suggestion:', error);
             }
-
-            const suggested_price = await response.json();
-            setSuggestedPrice(suggested_price);
         };
-        fetchPrice(token, formData);
+        fetchPrice(formData);
     }, []);
 
     const handleSubmit = async (event) => {

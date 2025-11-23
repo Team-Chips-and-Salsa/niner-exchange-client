@@ -1,5 +1,5 @@
-import { MapPin, Users } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { MapPin, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminFilters({
     selectedType,
@@ -8,14 +8,16 @@ export default function AdminFilters({
     setSelectedReason,
     selectedStatus,
     setSelectedStatus,
-    openZonesModal
+    openZonesModal,
 }) {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     return (
         <div className="bg-white shadow-lg rounded-xl p-6 mb-6 border border-gray-200">
             <div className="flex flex-wrap gap-4 items-center">
                 <div className="flex flex-col">
-                    <label className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Content Type</label>
+                    <label className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                        Content Type
+                    </label>
                     <select
                         name="selectedType"
                         id="selectedType"
@@ -30,7 +32,9 @@ export default function AdminFilters({
                     </select>
                 </div>
                 <div className="flex flex-col">
-                    <label className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Report Reason</label>
+                    <label className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                        Report Reason
+                    </label>
                     <select
                         name="selectedReason"
                         id="selectedReason"
@@ -38,6 +42,7 @@ export default function AdminFilters({
                         onChange={(e) => setSelectedReason(e.target.value)}
                         className="px-4 py-2.5 bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer hover:shadow-md"
                     >
+                        <option value="ALL">All Reasons</option>
                         <option value="SPAM">Spam</option>
                         <option value="INNAPROPRIATE">Inappropriate</option>
                         <option value="HARASSMENT">Harassment</option>
@@ -46,7 +51,9 @@ export default function AdminFilters({
                     </select>
                 </div>
                 <div className="flex flex-col">
-                    <label className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Status</label>
+                    <label className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                        Status
+                    </label>
                     <select
                         name="selectedStatus"
                         id="selectedStatus"
@@ -54,6 +61,7 @@ export default function AdminFilters({
                         onChange={(e) => setSelectedStatus(e.target.value)}
                         className="px-4 py-2.5 bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer hover:shadow-md"
                     >
+                        <option value="ALL">All Statuses</option>
                         <option value="PENDING">Pending</option>
                         <option value="APPROVED">Approved</option>
                         <option value="DENIED">Denied</option>
@@ -77,5 +85,5 @@ export default function AdminFilters({
                 </div>
             </div>
         </div>
-    )
+    );
 }

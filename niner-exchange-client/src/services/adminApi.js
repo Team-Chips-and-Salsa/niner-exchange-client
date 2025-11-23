@@ -15,13 +15,24 @@ export async function fetchReports(
     reportReason,
     reportStatus,
 ) {
-    let endpoint = '';
+    const params = new URLSearchParams();
+
     reportType = reportType.toLowerCase();
-    if (reportType != 'all') {
-        endpoint = `?content_type=${reportTypeMap[reportType]}&status=${reportStatus}&reason=${reportReason}`;
-    } else {
-        endpoint = `?status=${reportStatus}&reason=${reportReason}`;
+    if (reportType !== 'all') {
+        params.append('content_type', reportTypeMap[reportType]);
     }
+
+    if (reportStatus !== 'ALL') {
+        params.append('status', reportStatus);
+    }
+
+    if (reportReason !== 'ALL') {
+        params.append('reason', reportReason);
+    }
+
+    const queryString = params.toString();
+    const endpoint = queryString ? `?${queryString}` : '';
+
     // Gemini introduced me to the fetchWithAuth for this specific use case
     return await fetchWithAuth(`${BASE_URL}/api/admin/reports/${endpoint}`, {
         method: 'GET',
@@ -33,7 +44,7 @@ export async function approveReport(report) {
     await fetchWithAuth(`${BASE_URL}/api/admin/reports/${report.id}/status/`, {
         method: 'PATCH',
         mode: 'cors',
-        body: JSON.stringify({ "status": "APPROVED" }),
+        body: JSON.stringify({ status: 'APPROVED' }),
     });
 }
 
@@ -41,7 +52,7 @@ export async function denyReport(report) {
     await fetchWithAuth(`${BASE_URL}/api/admin/reports/${report.id}/status/`, {
         method: 'PATCH',
         mode: 'cors',
-        body: JSON.stringify({ "status": "DENIED" }),
+        body: JSON.stringify({ status: 'DENIED' }),
     });
 }
 
@@ -57,7 +68,7 @@ export async function createReport(
         method: 'POST',
         mode: 'cors',
         body: JSON.stringify({ content_type, reason, description, object_id }),
-    })
+    });
 
     return report.id;
 }

@@ -45,7 +45,6 @@ export default function SubmitReviewPage() {
                 const data = await fetchTransaction(transactionId);
                 setTransaction(data);
 
-                console.log(data);
                 if (
                     data.buyer.id === revieweeId &&
                     data.seller.id === currentUser.id
@@ -157,7 +156,6 @@ export default function SubmitReviewPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-            {/* Hero Section */}
             <section className="bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-500 text-white py-12 sm:py-16 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10">
                     <div className="absolute top-0 left-0 w-96 h-96 bg-amber-400 rounded-full -translate-x-48 -translate-y-48"></div>
@@ -174,10 +172,8 @@ export default function SubmitReviewPage() {
                 </div>
             </section>
 
-            {/* Review Form Section */}
             <section className="py-12 sm:py-16">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6">
-                    {/* Transaction Info Card */}
                     <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
                         <h2 className="text-xl font-bold text-gray-900 mb-4">
                             Your Transaction with {reviewee.first_name}
@@ -209,9 +205,7 @@ export default function SubmitReviewPage() {
                         </div>
                     </div>
 
-                    {/* Review Form */}
                     <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
-                        {/* Error Message */}
                         {error && (
                             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
                                 <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -219,7 +213,6 @@ export default function SubmitReviewPage() {
                             </div>
                         )}
 
-                        {/* Rating Selection */}
                         <div className="mb-8">
                             <label className="block text-lg font-bold text-gray-900 mb-4">
                                 How would you rate your experience?
@@ -241,7 +234,6 @@ export default function SubmitReviewPage() {
                             )}
                         </div>
 
-                        {/* Comment Box */}
                         <div className="mb-8">
                             <label className="block text-lg font-bold text-gray-900 mb-3">
                                 Share your experience
@@ -260,7 +252,6 @@ export default function SubmitReviewPage() {
                             </p>
                         </div>
 
-                        {/* Submit Button */}
                         <div className="flex flex-col sm:flex-row gap-4">
                             <button
                                 type="button"
@@ -290,7 +281,6 @@ export default function SubmitReviewPage() {
                         </div>
                     </div>
 
-                    {/* Guidelines */}
                     <div className="mt-8 bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
                         <h3 className="font-bold text-emerald-900 mb-3 flex items-center gap-2">
                             <AlertCircle className="w-5 h-5" />

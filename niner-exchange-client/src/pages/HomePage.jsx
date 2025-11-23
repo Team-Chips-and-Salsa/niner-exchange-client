@@ -21,7 +21,6 @@ export default function HomePage() {
 
             <ListingsSection listings={listings} />
 
-            {/* Mobile Post Button */}
             <button
                 onClick={() => {
                     navigate('/create');

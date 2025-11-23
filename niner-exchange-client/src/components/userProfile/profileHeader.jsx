@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Package, Calendar, Award, Edit } from 'lucide-react';
 import EditProfileModal from './editProfileModal';
-import { updateProfile } from '../../services/userApi'; // Adjust path as needed
+import { updateProfile } from '../../services/userApi'; 
 
 export default function ProfileHeader({ userData, formatDate, getRelativeTime, isOwner, onProfileUpdate }) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const handleSaveProfile = async (formData) => {
         const updatedUser = await updateProfile(formData);
-        // Call parent callback to update the userData state
+
         if (onProfileUpdate) {
             onProfileUpdate(updatedUser);
         }
@@ -88,7 +88,6 @@ export default function ProfileHeader({ userData, formatDate, getRelativeTime, i
                         </div>
                     </div>
 
-                    {/* Only show Edit button if viewing own profile */}
                     {isOwner && (
                         <button 
                             onClick={() => setIsEditModalOpen(true)}
@@ -101,7 +100,6 @@ export default function ProfileHeader({ userData, formatDate, getRelativeTime, i
                 </div>
             </div>
 
-            {/* Edit Profile Modal */}
             <EditProfileModal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}

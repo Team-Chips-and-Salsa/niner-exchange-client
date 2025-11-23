@@ -17,7 +17,6 @@ import {
     apiGetMe,
 } from '../services/auth.js';
 
-// Context
 export const AuthContext = createContext();
 
 export function useAuth() {
@@ -75,7 +74,7 @@ export function AuthProvider({ children }) {
                     setCurrentUser(djangoUser);
                 } catch (e) {
                     console.error('Session invalid, logging out:', e);
-                    await logout(); // Logout the user
+                    await logout();
                 }
             } else {
                 setCurrentUser(null);

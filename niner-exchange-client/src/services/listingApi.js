@@ -38,7 +38,6 @@ export async function fetchListings(params = {}) {
 }
 
 export async function fetchListingById(listingId) {
-    console.log('Fetching listing with ID:', listingId);
     const token = localStorage.getItem('django_access_token');
 
     if (!token) {
@@ -54,7 +53,6 @@ export async function fetchListingById(listingId) {
     }
 
     const data = await response.json();
-    console.log('Fetched listing data:', data);
     return data;
 }
 

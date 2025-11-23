@@ -14,7 +14,6 @@ export default function ResultHeader({
 
     const activeListingType = queryParams.get('listing_type') || '';
 
-    console.log(activeListingType, listingTypes, selectedListingType);
     return (
         <div className="flex items-center justify-between mb-6">
             <div>

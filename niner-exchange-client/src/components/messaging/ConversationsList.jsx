@@ -32,7 +32,6 @@ export default function ConversationsList({
                     const otherUid = (conv.participants || []).find(
                         (p) => p !== currentUser?.id,
                     );
-                    console.log(conv)
                     const info =
                         conv.participantInfo && otherUid
                             ? conv.participantInfo[otherUid] || {}

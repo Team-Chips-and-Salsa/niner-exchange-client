@@ -4,7 +4,7 @@ export default function ReportDetailsModal({
     selectedReport,
     closeModal,
     getReportLabel,
-    getReportDescription,
+    getItemDescription,
     handleApproval,
     handleDenial
 }) {
@@ -31,8 +31,13 @@ export default function ReportDetailsModal({
                         </div>
 
                         <div>
-                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Description</label>
-                            <p className="text-gray-700 mt-1 bg-gray-50 p-4 rounded-lg border border-gray-200">{getReportDescription(selectedReport)}</p>
+                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Item Description</label>
+                            <p className="text-gray-700 mt-1 bg-gray-50 p-4 rounded-lg border border-gray-200">{getItemDescription(selectedReport)}</p>
+                        </div>
+
+                        <div>
+                            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Report Description</label>
+                            <p className="text-gray-700 mt-1 bg-gray-50 p-4 rounded-lg border border-gray-200">{selectedReport.description}</p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -46,8 +51,8 @@ export default function ReportDetailsModal({
                             <div>
                                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</label>
                                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold mt-1 ${selectedReport.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                                        selectedReport.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
-                                            'bg-red-100 text-red-800'
+                                    selectedReport.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                                        'bg-red-100 text-red-800'
                                     }`}>
                                     {selectedReport.status}
                                 </span>

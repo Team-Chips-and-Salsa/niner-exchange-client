@@ -55,7 +55,7 @@ export default function CreateReportPage() {
                 navigate(`/listing/${formData.listing_id}`)
                 break;
             case "customuser":
-                navigate(`/profile/${formData.review_id}`)
+                navigate(`/profile/${formData.id}`)
                 break;
             case "review":
                 navigate(`/home`)

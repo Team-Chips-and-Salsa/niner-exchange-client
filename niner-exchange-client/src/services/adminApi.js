@@ -29,7 +29,7 @@ export async function approveReport(report) {
     await fetchWithAuth(`${BASE_URL}/api/admin/reports/${report.id}/status/`, {
         method: 'PATCH',
         mode: 'cors',
-        body: JSON.stringify({"status": "APPROVED"}),
+        body: JSON.stringify({ "status": "APPROVED" }),
     });
 }
 
@@ -37,7 +37,7 @@ export async function denyReport(report) {
     await fetchWithAuth(`${BASE_URL}/api/admin/reports/${report.id}/status/`, {
         method: 'PATCH',
         mode: 'cors',
-        body: JSON.stringify({"status": "DENIED"}),
+        body: JSON.stringify({ "status": "DENIED" }),
     });
 }
 
@@ -46,7 +46,7 @@ export async function createReport(content_type_map, content_type, reason, descr
     const report = await fetchWithAuth(`${BASE_URL}/api/reports/create/`, {
         method: 'POST',
         mode: 'cors',
-        body: JSON.stringify({content_type, reason, description, object_id}),
+        body: JSON.stringify({ content_type, reason, description, object_id }),
     })
 
     return report.id;
@@ -55,6 +55,13 @@ export async function createReport(content_type_map, content_type, reason, descr
 
 export async function fetchExchangeZones() {
     return await fetchWithAuth(`${BASE_URL}/api/admin/exchange-zones/`, {
+        method: 'GET',
+        mode: 'cors',
+    });
+}
+
+export async function fetchAllUsers() {
+    return await fetchWithAuth(`${BASE_URL}/api/admin/users/`, {
         method: 'GET',
         mode: 'cors',
     });

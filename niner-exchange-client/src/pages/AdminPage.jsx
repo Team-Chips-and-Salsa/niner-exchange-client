@@ -78,7 +78,7 @@ export default function AdminPage() {
         switch (contentTypeMapReversed[report.content_type]) {
             case "listing":
                 return report.content_object.title
-            case "user":
+            case "customuser":
                 return report.content_object.username
             case "review":
                 return report.content_object.title
@@ -91,7 +91,7 @@ export default function AdminPage() {
         switch (contentTypeMapReversed[report.content_type]) {
             case "listing":
                 return "/listing/"
-            case "user":
+            case "customuser":
                 return "/profile/"
             case "review":
                 return "/profile/"
@@ -110,11 +110,11 @@ export default function AdminPage() {
         setSelectedReport(null)
     }
 
-    function getReportDescription(report) {
+    function getItemDescription(report) {
         switch (contentTypeMapReversed[report.content_type]) {
             case "listing":
                 return report.content_object.description || "No description available"
-            case "user":
+            case "customuser":
                 return report.content_object.bio || "No bio available"
             case "review":
                 return report.content_object.comment || "No comment available"
@@ -170,7 +170,7 @@ export default function AdminPage() {
                     selectedReport={selectedReport}
                     closeModal={closeModal}
                     getReportLabel={getReportLabel}
-                    getReportDescription={getReportDescription}
+                    getItemDescription={getItemDescription}
                     handleApproval={handleApproval}
                     handleDenial={handleDenial}
                 />

@@ -22,10 +22,9 @@ export default function AdminFilters({
                         className="px-4 py-2.5 bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer hover:shadow-md"
                     >
                         <option value="ALL">All Types</option>
-                        <option value="LISTING">Listing</option>
-                        <option value="REVIEW">Review</option>
-                        <option value="USER">User</option>
-                        <option value="ZONES">Exchange Zones</option>
+                        <option value="listing">Listing</option>
+                        <option value="review">Review</option>
+                        <option value="customuser">User</option>
                     </select>
                 </div>
                 <div className="flex flex-col">

@@ -39,7 +39,7 @@ export async function createListing(formData, endpoint) {
 }
 
 export async function updateListing(formData) {
-    const endpoint = 'api/listings/' + formData.listing_id + '/edit/';
+    const endpoint = '/api/listings/' + formData.listing_id + '/edit/';
     const listing = await fetchWithAuth(`${BASE_URL}${endpoint}`, {
         method: 'PATCH',
         mode: 'cors',

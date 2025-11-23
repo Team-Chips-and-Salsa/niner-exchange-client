@@ -95,7 +95,6 @@ export default function EditListingPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-
             <main className="flex-1 flex items-center justify-center px-20 py-5">
                 <form
                     method="POST"
@@ -182,7 +181,6 @@ export default function EditListingPage() {
                             multiple
                             accept=".png, .jpg"
                             className="opacity-0 absolute"
-                            required
                             onChange={handleImageUpload}
                         />
                         <small className="text-yellow-700">
@@ -191,14 +189,23 @@ export default function EditListingPage() {
                         </small>
                         <div className="flex flex-row justify-around gap-1">
                             {/* https://reacthustle.com/blog/react-preview-images-before-uploading */}
-                            {urls.map((url, i) => (
-                                <img
-                                    key={i}
-                                    src={url}
-                                    alt={imageFiles[i].name}
-                                    className="w-1/3 h-auto rounded"
-                                />
-                            ))}
+                            {urls.length > 0
+                                ? urls.map((url, i) => (
+                                      <img
+                                          key={i}
+                                          src={url}
+                                          alt={imageFiles[i].name}
+                                          className="w-1/3 h-auto rounded"
+                                      />
+                                  ))
+                                : formData.images?.map((image, i) => (
+                                      <img
+                                          key={image.id || i}
+                                          src={image.image}
+                                          alt={`Existing listing image ${i + 1}`}
+                                          className="w-1/3 h-auto rounded object-cover"
+                                      />
+                                  ))}
                         </div>
                     </div>
                     {categoryForm}

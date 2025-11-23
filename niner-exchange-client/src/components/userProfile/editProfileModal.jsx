@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { X, Camera, User } from 'lucide-react';
+import { uploadProfileImage } from '../../services/userApi';
 
 export default function EditProfileModal({ isOpen, onClose, userData, onSave }) {
     const [formData, setFormData] = useState({
@@ -9,12 +10,34 @@ export default function EditProfileModal({ isOpen, onClose, userData, onSave }) 
     });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const fileInputRef = useRef(null);
 
     if (!isOpen) return null;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleImageClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const result = await uploadProfileImage(file);
+            setFormData((prev) => ({ ...prev, profile_image_url: result.profile_image_url }));
+        } catch (err) {
+            setError(err.message || 'Failed to upload image');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -35,8 +58,8 @@ export default function EditProfileModal({ isOpen, onClose, userData, onSave }) 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
 
-            <div 
-                className="absolute inset-0 bg-black/50" 
+            <div
+                className="absolute inset-0 bg-black/50"
                 onClick={onClose}
             />
 
@@ -59,6 +82,35 @@ export default function EditProfileModal({ isOpen, onClose, userData, onSave }) 
                 )}
 
                 <form onSubmit={handleSubmit}>
+                    <div className="flex flex-col items-center mb-6">
+                        <div className="relative cursor-pointer group" onClick={handleImageClick}>
+                            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-emerald-100 group-hover:border-emerald-200 transition-colors">
+                                {formData.profile_image_url ? (
+                                    <img
+                                        src={formData.profile_image_url}
+                                        alt="Profile"
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-emerald-50 flex items-center justify-center text-emerald-300">
+                                        <User size={48} />
+                                    </div>
+                                )}
+                            </div>
+                            <div className="absolute inset-0 bg-black/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Camera className="text-white" size={24} />
+                            </div>
+                        </div>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            className="hidden"
+                            accept="image/*"
+                        />
+                        <p className="text-xs text-gray-500 mt-2">Click to change profile picture</p>
+                    </div>
+
                     <div className="space-y-4">
 
                         <div>

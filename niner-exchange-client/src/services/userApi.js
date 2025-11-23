@@ -35,7 +35,7 @@ export async function fetchUserProfile(userId) {
             );
         }
 
-        return responseData; 
+        return responseData;
     } catch (error) {
         // This catches network errors, JSON parsing errors, or the re-thrown error above.
         // If response is defined, it means the request went out, but something went wrong
@@ -44,7 +44,7 @@ export async function fetchUserProfile(userId) {
             '[API] 6. CRITICAL ERROR: A network, JSON parse, or fetch error occurred:',
             error,
         );
-        throw error; 
+        throw error;
     }
 }
 
@@ -60,7 +60,7 @@ export async function fetchCurrentListings(userID) {
         {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${token}`, 
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         },
@@ -83,7 +83,7 @@ export async function fetchSoldListings(userID) {
         {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${token}`, 
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         },
@@ -106,7 +106,7 @@ export async function fetchPurchaseHistory(userID) {
         {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${token}`, 
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         },
@@ -136,6 +136,28 @@ export async function updateProfile(data) {
     if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Failed to update profile');
+    }
+
+    return await response.json();
+}
+export async function uploadProfileImage(imageFile) {
+    const token = localStorage.getItem('django_access_token');
+    if (!token) throw new Error('No access token found');
+
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const response = await fetch(`${BASE_URL}/api/users/me/image/`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to upload image');
     }
 
     return await response.json();

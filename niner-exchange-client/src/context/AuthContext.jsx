@@ -81,7 +81,17 @@ export function AuthProvider({ children }) {
             }
             setLoading(false);
         });
+        return () => unsubscribe();
     }, []);
+
+    const refreshUser = async () => {
+        try {
+            const djangoUser = await apiGetMe();
+            setCurrentUser(djangoUser);
+        } catch (e) {
+            console.error('Failed to refresh user:', e);
+        }
+    };
 
     const value = {
         currentUser,
@@ -89,6 +99,7 @@ export function AuthProvider({ children }) {
         login,
         register,
         logout,
+        refreshUser,
     };
 
     return (

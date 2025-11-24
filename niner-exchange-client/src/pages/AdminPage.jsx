@@ -117,7 +117,7 @@ export default function AdminPage() {
             case 'listing':
                 return report.content_object.title;
             case 'customuser':
-                return report.content_object.first_name;
+                return report.content_object.first_name + " " + report.content_object.last_name;
             case 'review':
                 return report.content_object.comment;
             default:

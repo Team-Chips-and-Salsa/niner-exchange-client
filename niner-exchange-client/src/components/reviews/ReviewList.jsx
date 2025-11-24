@@ -45,8 +45,11 @@ export default function ReviewList({ reviews, renderStars, formatDate }) {
                     <div className="flex items-start justify-between mb-4 pr-12">
                         <div className="flex items-center gap-3">
                             <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center text-emerald-700 font-bold">
-                                {review.reviewer.first_name[0]}
-                                {review.reviewer.last_name[0]}
+                                <img
+                                    src={review.reviewer.profile_image_url}
+                                    alt="Profile"
+                                    className="w-full h-full rounded-full object-cover group-hover/seller:brightness-90"
+                                />
                             </div>
                             <div>
                                 <h4 className="font-bold text-gray-900">

@@ -27,7 +27,7 @@ export default function ListingCard({ listing }) {
                     <img
                         src={listing.images[0].image}
                         alt={listing.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-300">

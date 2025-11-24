@@ -1,7 +1,12 @@
 import React from 'react';
 
-export default function ListingImageGallery({ images = [], selectedImage = 0, setSelectedImage = () => {} }) {
-    const placeholderStyle = 'aspect-video bg-gray-100 flex items-center justify-center text-gray-400 text-sm';
+export default function ListingImageGallery({
+    images = [],
+    selectedImage = 0,
+    setSelectedImage = () => {},
+}) {
+    const placeholderStyle =
+        'aspect-video bg-gray-100 flex items-center justify-center text-gray-400 text-sm';
 
     if (!images || images.length === 0) {
         return (
@@ -20,7 +25,7 @@ export default function ListingImageGallery({ images = [], selectedImage = 0, se
                 <img
                     src={mainSrc}
                     alt={`Listing image ${selectedImage + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                 />
             </div>
 
@@ -32,10 +37,16 @@ export default function ListingImageGallery({ images = [], selectedImage = 0, se
                             key={src || idx}
                             onClick={() => setSelectedImage(idx)}
                             className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                                selectedImage === idx ? 'border-emerald-600' : 'border-gray-200'
+                                selectedImage === idx
+                                    ? 'border-emerald-600'
+                                    : 'border-gray-200'
                             }`}
                         >
-                            <img src={src} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                            <img
+                                src={src}
+                                alt={`Thumbnail ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                            />
                         </button>
                     ))}
                 </div>

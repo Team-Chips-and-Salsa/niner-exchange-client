@@ -45,7 +45,7 @@ export default function NinerExchangeAuth() {
         setIsLoading(true);
         try {
             const message = await register(name, email, password);
-            setSuccessMessage(message);
+            setSuccessMessage(message + ' Please check your spam folder.');
             setIsLogin(true);
         } catch (err) {
             setError(err.message || 'Failed to create account.');

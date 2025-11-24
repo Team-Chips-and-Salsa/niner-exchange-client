@@ -11,7 +11,7 @@ import { submitFullListing } from '../services/listingApi.js';
 export default function CreateListingPage() {
     const [viewMode, setViewMode] = useState('form');
     const [imageFiles, setImageFiles] = useState([]);
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     // Used this tutorial to learn to display images: https://reacthustle.com/blog/react-preview-images-before-uploading
     const urls = imageFiles.map((file) => URL.createObjectURL(file));
@@ -103,7 +103,7 @@ export default function CreateListingPage() {
         ) {
             setViewMode('calculator');
         } else {
-            setIsLoading(true)
+            setIsLoading(true);
             const newListing = await submitFullListing(formData, imageFiles);
             navigate(`/listing/${newListing}`);
         }
@@ -122,7 +122,6 @@ export default function CreateListingPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-            
             <main className="flex-1 flex items-center justify-center px-20 py-5">
                 {viewMode === 'form' ? (
                     <form
@@ -170,11 +169,18 @@ export default function CreateListingPage() {
                         <div className="flex flex-col gap-1">
                             {(formData.listing_type === 'TEXTBOOK' ||
                                 formData.listing_type === 'ITEM') && (
-                                    <small className="text-yellow-700">
-                                        *Price can be set in the next step with our{' '}
-                                        <em>"Fair Price Calculator"</em>
-                                    </small>
-                                )}
+                                <small className="text-yellow-700">
+                                    *Price can be set in the next step with our{' '}
+                                    <em>"Fair Price Calculator"</em>
+                                </small>
+                            )}
+                            {(formData.listing_type === 'TEXTBOOK' ||
+                                formData.listing_type === 'ITEM') && (
+                                <small className="text-yellow-700">
+                                    *Please be really specific with the title to
+                                    be able to use the fair price calculator
+                                </small>
+                            )}
                             <label htmlFor="title">Title: </label>
                             <input
                                 type="text"
@@ -219,19 +225,19 @@ export default function CreateListingPage() {
                         {/* Only want the price to show for this form for services and subleasing */}
                         {(formData.listing_type === 'SERVICE' ||
                             formData.listing_type === 'SUBLEASE') && (
-                                <div className="flex flex-col gap-1">
-                                    <label htmlFor="price">Price: </label>
-                                    <input
-                                        type="number"
-                                        name="price"
-                                        id="price"
-                                        placeholder={priceUnitLabel}
-                                        required
-                                        value={formData.price}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            )}
+                            <div className="flex flex-col gap-1">
+                                <label htmlFor="price">Price: </label>
+                                <input
+                                    type="number"
+                                    name="price"
+                                    id="price"
+                                    placeholder={priceUnitLabel}
+                                    required
+                                    value={formData.price}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        )}
                         <div>
                             <label
                                 htmlFor="images"
@@ -271,13 +277,12 @@ export default function CreateListingPage() {
                             disabled={isLoading}
                             className="my-3 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isLoading ? (
-                                'Processing...'
-                            ) : (
-                                formData.listing_type === 'SERVICE' || formData.listing_type === 'SUBLEASE'
-                                    ? 'Post'
-                                    : 'Go to Fair Price Calculator'
-                            )}
+                            {isLoading
+                                ? 'Processing...'
+                                : formData.listing_type === 'SERVICE' ||
+                                    formData.listing_type === 'SUBLEASE'
+                                  ? 'Post'
+                                  : 'Go to Fair Price Calculator'}
                         </button>
                     </form>
                 ) : (

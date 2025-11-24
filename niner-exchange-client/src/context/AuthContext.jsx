@@ -3,6 +3,7 @@
  * */
 
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { Loader2 } from 'lucide-react';
 import { auth } from '../firebase';
 import {
     signInWithCustomToken,
@@ -105,8 +106,9 @@ export function AuthProvider({ children }) {
     return (
         <AuthContext.Provider value={value}>
             {loading ? (
-                <div className="flex h-screen w-full items-center justify-center">
-                    <p className="text-xl text-emerald-600">
+                <div className="flex h-screen w-full flex-col items-center justify-center gap-4">
+                    <Loader2 className="h-12 w-12 animate-spin text-emerald-600" />
+                    <p className="text-xl font-medium text-gray-600">
                         Loading Authentication...
                     </p>
                 </div>

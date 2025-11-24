@@ -66,9 +66,21 @@ const UserProfilePage = () => {
 
         const loadListings = async () => {
             try {
+                console.log('Fetching current listings for user:', userId);
                 const current = await fetchCurrentListings(userId);
+                console.log('Current listings response:', current);
 
-                setCurrentListings(current);
+                if (Array.isArray(current)) {
+                    setCurrentListings(current);
+                } else if (Array.isArray(current?.results)) {
+                    setCurrentListings(current.results);
+                } else {
+                    console.warn(
+                        'Unexpected current listings format:',
+                        current,
+                    );
+                    setCurrentListings([]);
+                }
             } catch (e) {
                 console.error('Failed to fetch or process listings:', e);
             }
@@ -81,9 +93,18 @@ const UserProfilePage = () => {
 
         const loadListings = async () => {
             try {
+                console.log('Fetching sold listings for user:', userId);
                 const sold = await fetchSoldListings(userId);
+                console.log('Sold listings response:', sold);
 
-                setArchivedListings(sold);
+                if (Array.isArray(sold)) {
+                    setArchivedListings(sold);
+                } else if (Array.isArray(sold?.results)) {
+                    setArchivedListings(sold.results);
+                } else {
+                    console.warn('Unexpected sold listings format:', sold);
+                    setArchivedListings([]);
+                }
             } catch (e) {
                 console.error('Failed to fetch or process listings:', e);
             }
@@ -121,8 +142,19 @@ const UserProfilePage = () => {
         const loadListings = async () => {
             try {
                 const purchaseHistory = await fetchPurchaseHistory(userId);
+                console.log('Purchase history response:', purchaseHistory);
 
-                setHistory(purchaseHistory);
+                if (Array.isArray(purchaseHistory)) {
+                    setHistory(purchaseHistory.map((tx) => tx.listing));
+                } else if (Array.isArray(purchaseHistory?.results)) {
+                    setHistory(purchaseHistory.results.map((tx) => tx.listing));
+                } else {
+                    console.warn(
+                        'Unexpected purchase history format:',
+                        purchaseHistory,
+                    );
+                    setHistory([]);
+                }
             } catch (e) {
                 console.error('Failed to fetch or process listings:', e);
             }

@@ -10,7 +10,7 @@ export default function HomePage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchListings().then((data) => {
+        fetchListings({ status: 'ACTIVE' }).then((data) => {
             setListings(data);
         });
     }, []);

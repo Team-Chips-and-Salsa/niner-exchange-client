@@ -174,7 +174,7 @@ export default function PriceCard({ listing, formatDate }) {
                 </div>
 
                 <div className="space-y-3">
-                    {!isOwner && (
+                    {!isOwner && listing.status !== 'SOLD' && (
                         <button
                             onClick={handleSendMessage}
                             className="w-full border-2 border-emerald-600 text-emerald-600 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition flex items-center justify-center space-x-2"
@@ -195,18 +195,20 @@ export default function PriceCard({ listing, formatDate }) {
                     <div className="flex flex-row gap-3">
                         {isOwner ? (
                             <>
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        navigate(
-                                            `/listing/edit/${listing.listing_id}`,
-                                        )
-                                    }
-                                    className="flex-1 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-800 hover:bg-emerald-200 transition-colors space-x-2"
-                                >
-                                    <Pen className="w-5 h-5" />
-                                    <span>Edit</span>
-                                </button>
+                                {listing.status !== 'SOLD' && (
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            navigate(
+                                                `/listing/edit/${listing.listing_id}`,
+                                            )
+                                        }
+                                        className="flex-1 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-800 hover:bg-emerald-200 transition-colors space-x-2"
+                                    >
+                                        <Pen className="w-5 h-5" />
+                                        <span>Edit</span>
+                                    </button>
+                                )}
                                 <button
                                     type="button"
                                     onClick={() => setIsDeleteModalOpen(true)}

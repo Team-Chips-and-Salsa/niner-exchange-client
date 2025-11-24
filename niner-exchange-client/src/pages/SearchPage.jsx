@@ -30,7 +30,7 @@ export default function NinerListingsBrowser() {
         courseCode: '',
         keywords: '',
         priceNewRange: [0, 1500],
-        activeOnly: false,
+        activeOnly: true,
     };
 
     const [viewMode, setViewMode] = useState('grid');
@@ -87,7 +87,7 @@ export default function NinerListingsBrowser() {
                     : prev.priceRange,
             activeOnly: status
                 ? String(status).toUpperCase() === 'ACTIVE'
-                : false,
+                : true,
             conditions: parseCsv(conditionParam) ?? prev.conditions,
             listingTypes: parseCsv(listingTypesParam) ?? prev.listingTypes,
             propertyTypes: parseCsv(propertyTypesParam) ?? prev.propertyTypes,
@@ -205,7 +205,7 @@ export default function NinerListingsBrowser() {
 
         setOrDelete('min_price', draftFilters.priceRange?.[0]);
         setOrDelete('max_price', draftFilters.priceRange?.[1]);
-        setOrDelete('status', draftFilters.activeOnly ? 'ACTIVE' : undefined);
+        setOrDelete('status', draftFilters.activeOnly ? undefined : 'ALL');
 
         if (!currentType || currentType === 'ALL') {
             setOrDelete('listing_types', draftFilters.listingTypes.join(','));
